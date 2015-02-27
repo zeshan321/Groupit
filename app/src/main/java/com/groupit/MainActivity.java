@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.io.File;
+import java.sql.SQLException;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -16,6 +17,17 @@ public class MainActivity extends ActionBarActivity {
     boolean doneSetup = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        try {
+            if (MySQL.con == null || MySQL.con.isClosed()) {
+                MySQL.startUp();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        MySQL.saveValues("TESTING");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
