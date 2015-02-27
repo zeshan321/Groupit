@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.io.File;
 
@@ -20,13 +21,17 @@ public class MainActivity extends ActionBarActivity {
 
         dir = this.getFilesDir();
 
-        FileManager fm = new FileManager("Settings.yml");
+        DNManager fm = new DNManager("Settings.yml");
 
         doneSetup = fm.containsName();
 
         if (doneSetup == false) {
             startActivity(new Intent(MainActivity.this, DisplayActivity.class));
+            return;
         }
+
+        TextView et = (TextView) findViewById(R.id.textView3);
+        et.setText("Display: " + fm.getName());
     }
 
 

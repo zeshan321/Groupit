@@ -15,6 +15,7 @@ public class DisplayActivity extends ActionBarActivity {
         setContentView(R.layout.activity_display);
 
         firstButton(findViewById(R.id.button));
+        onEdit(findViewById(R.id.editText));
     }
 
     public void firstButton(View v) {
@@ -27,10 +28,21 @@ public class DisplayActivity extends ActionBarActivity {
 
                 String s = input.getText().toString();
 
-                FileManager fm = new FileManager("Settings.yml");
+                DNManager fm = new DNManager("Settings.yml");
 
                 fm.setName(s);
                 startActivity(new Intent(DisplayActivity.this, MainActivity.class));
+            }
+        });
+    }
+
+    public void onEdit(View v) {
+       final EditText text = (EditText) findViewById(R.id.editText);
+
+        text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                text.setText("");
             }
         });
     }

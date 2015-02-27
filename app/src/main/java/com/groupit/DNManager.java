@@ -1,8 +1,5 @@
 package com.groupit;
 
-import android.content.Context;
-import android.provider.ContactsContract;
-
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
@@ -10,20 +7,17 @@ import com.esotericsoftware.yamlbeans.YamlWriter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Scanner;
 
-public class FileManager {
+public class DNManager {
 
     private String name = null;
     private File file;
-    static FileManager obj;
+    static DNManager obj;
 
-    public FileManager(String Filename)  {
+    public DNManager(String Filename)  {
         this.name = Filename;
 
         file = new File(MainActivity.dir, Filename);
@@ -53,17 +47,17 @@ public class FileManager {
     public String getName() {
         String s = null;
         try {
-            YamlReader reader = new YamlReader(new FileReader(file));
-            Object object = reader.read();
+            BufferedReader br = new BufferedReader(new FileReader(file));
 
-            Map map = (Map) object;
-            s = map.get("Display").toString();
+            String line = br.readLine();
+            line = line.replace("Display: ", "").replace("'", "");
+
+            s = line;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (YamlException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
         return s;
     }
 
