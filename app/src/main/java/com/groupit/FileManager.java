@@ -37,18 +37,11 @@ public class FileManager {
         }
     }
 
-    public class Display {
-        public String Display;
-    }
-
     public void setName(String value) {
         try {
-            Display contact = new Display();
-            contact.Display = value;
-
             YamlWriter writer = new YamlWriter(new FileWriter(file));
 
-            writer.write(contact);
+            writer.write("Display: " + value);
             writer.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -78,15 +71,14 @@ public class FileManager {
         boolean contains = false;
         try {
             YamlReader reader = new YamlReader(new FileReader(file));
+
             Object object = reader.read();
 
             if (object == null) {
                 return contains;
             }
 
-            Map map = (Map) object;
-
-            if (map != null && map.isEmpty() != false && map.containsKey("Display")) {
+            if (object.toString().startsWith("Display: ")) {
                 contains = true;
             }
         } catch (FileNotFoundException e) {

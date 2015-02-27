@@ -27,7 +27,7 @@ public class DisplayActivity extends ActionBarActivity {
 
                 String s = input.getText().toString();
 
-                FileManager fm = new FileManager("Settings");
+                FileManager fm = new FileManager("Settings.yml");
 
                 fm.setName(s);
                 startActivity(new Intent(DisplayActivity.this, MainActivity.class));

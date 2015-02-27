@@ -20,14 +20,12 @@ public class MainActivity extends ActionBarActivity {
 
         dir = this.getFilesDir();
 
-        FileManager fm = new FileManager("Settings");
+        FileManager fm = new FileManager("Settings.yml");
 
         doneSetup = fm.containsName();
 
         if (doneSetup == false) {
             startActivity(new Intent(MainActivity.this, DisplayActivity.class));
-        } else {
-            System.out.println("asd");
         }
     }
 
