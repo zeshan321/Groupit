@@ -1,71 +1,48 @@
 package com.groupit;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.ActionBarActivity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.io.File;
-import java.sql.SQLException;
-
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
-    public static File dir = null;
-    boolean doneSetup = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        try {
-            if (MySQL.con == null || MySQL.con.isClosed()) {
-                MySQL.startUp();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        MySQL.saveValues("TESTING");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dir = this.getFilesDir();
-
-        DNManager fm = new DNManager("Settings.yml");
-
-        doneSetup = fm.containsName();
-
-        if (doneSetup == false) {
-            startActivity(new Intent(MainActivity.this, DisplayActivity.class));
-            return;
-        }
-
-        TextView et = (TextView) findViewById(R.id.textView3);
-        et.setText("Display: " + fm.getName());
+        firstButton(findViewById(R.id.button));
     }
 
+    public void firstButton(View v) {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+        Button button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText text = (EditText) findViewById(R.id.editText);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+                if (text.getText().toString().length() < 5) {
+                    Toast.makeText(MainActivity.this, "Display names need to be longer than 5 characters.", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+                MessageActivity.display = text.getText().toString();
+                startActivity(new Intent(MainActivity.this, MessageActivity.class));
+            }
+        });
     }
 }
