@@ -38,20 +38,25 @@ public class MessageHandler {
     }
 
     public void saveMessage() {
-        BufferedWriter stream = null;
-        try {
-            stream = new BufferedWriter(new FileWriter(file, true));
-            stream.write(message + "\n");
-            stream.close();
+        if (message != null || message.equals("null") == false) {
+            BufferedWriter stream = null;
+            try {
+                stream = new BufferedWriter(new FileWriter(file, true));
+                stream.write(message + "\n");
+                stream.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void loadMessages() {
+        MessageActivity.myAdapter.clear();
+        MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
@@ -66,10 +71,17 @@ public class MessageHandler {
                     try {
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
-                            System.out.println(line);
-                            MessageActivity.myAdapter.add(line);
-                            MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
-
+                            if (line != null || line.equals("null") == false) {
+                                if (JSONUtils.canUseMessage(line)) {
+                                    String message = JSONUtils.getMessage(line);
+                                    String name = JSONUtils.getName(line);
+                                    if (JSONUtils.getID(line).equals(MessageActivity.getID())) {
+                                        MessageActivity.addMessage(true, message, name);
+                                    } else {
+                                        MessageActivity.addMessage(false, message, name);
+                                    }
+                                }
+                            }
                         }
 
                         if (MessageActivity.display == null) {

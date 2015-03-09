@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class ClientMessage {
     public ClientMessage(Context cont) {
         con = cont;
         connectToServer();
+        sendData(JSONUtils.getJSONList());
     }
 
     private void connectToServer() {
@@ -33,6 +35,7 @@ public class ClientMessage {
             socket.setKeepAlive(true);
             inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             outputWriter = new PrintWriter(socket.getOutputStream(), true);
+            MessageActivity.finishedSetup = true;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -49,30 +52,36 @@ public class ClientMessage {
     private void receiveData() {
         try {
             while (true) {
-                 String data = inputReader.readLine();
+                final String data = inputReader.readLine();
 
                 if (data == null || data.equals("null") || con == null) {
                     return;
                 }
+                if (JSONUtils.canUseMessage(data) == false) {
+                    return;
+                }
                 final String message = JSONUtils.getMessage(data);
+                final String name = JSONUtils.getName(data);
                 final String id = JSONUtils.getID(data);
-
-                MessageActivity.msgLog.add(message);
+                final String group = JSONUtils.getGroupID(data);
 
                 ((Activity) con).runOnUiThread(new Runnable() {
                     public void run() {
 
-                        MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, message, con);
+                        MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, data, con);
                         mh.saveMessage();
-
-                        MessageActivity.myAdapter.add(message);
-                        MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
-                        MessageActivity.scrollDown();
+                        if (MessageActivity.currentGroup == Integer.parseInt(group)) {
+                        if (JSONUtils.getID(data).equals(MessageActivity.getID())) {
+                            MessageActivity.addMessage(true, message, name);
+                        } else {
+                            MessageActivity.addMessage(false, message, name);
+                        }
+                        }
                     }
                 });
 
-                if (MessageActivity.isLooking == false) {
-                    Notification("GroupIt", message);
+                if (MessageActivity.isLooking == false || MessageActivity.currentGroup == Integer.parseInt(group) == false) {
+                    Notification(name, message);
                 }
             }
         } catch (IOException e) {
@@ -82,24 +91,30 @@ public class ClientMessage {
 
     public static void Notification(String notificationTitle, String notificationMessage) {
 
-        NotificationManager notificationManager = (NotificationManager) con
-                .getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification noti = new NotificationCompat.Builder(con)
-                .setSmallIcon(R.mipmap.logo)
+        Intent myIntent = new Intent(con, MessageActivity.class);
+        myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        myIntent.setAction(Long.toString(System.currentTimeMillis()));
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                con,
+                0,
+                myIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification myNotification = new NotificationCompat.Builder(con)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationMessage)
+                .setTicker("GroupIt")
+                .setWhen(System.currentTimeMillis())
+                .setContentIntent(pendingIntent)
                 .setDefaults(Notification.DEFAULT_ALL)
-                .setAutoCancel(true).build();
-        noti.setLatestEventInfo(con, "GroupIt",
-                notificationMessage, PendingIntent.getActivity(con,
-                        0, new Intent(con, MessageActivity.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                        | Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                        PendingIntent.FLAG_CANCEL_CURRENT));
-        noti.flags |= Notification.FLAG_ONGOING_EVENT;
-        int notifyID = 0;
+                .setAutoCancel(true)
+                .setSmallIcon(R.mipmap.logo)
+                .build();
 
-        notificationManager.notify(notifyID, noti);
+        NotificationManager notificationManager =
+                (NotificationManager)con.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(0, myNotification);
     }
 
     public void sendData(String messageToSend) {

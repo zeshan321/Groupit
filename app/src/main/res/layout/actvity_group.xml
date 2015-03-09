@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tile_bg">
+
+    <ListView
+        android:id="@+id/list_group"
+        android:layout_above="@+id/listFooter"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:background="@null"
+        android:divider="@null">
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/listFooter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:src="@android:drawable/ic_menu_add"
+            android:height="14dp"
+            android:textSize="15sp"
+            android:textColor="#ffffff"
+            android:background="@color/actionbar"
+            android:layout_width="fill_parent"
+            android:layout_height="90px"
+            android:layout_weight="1"
+
+            android:id="@+id/Add"
+            android:layout_gravity="bottom">
+        </ImageButton>
+        <ImageButton
+            android:src="@android:drawable/ic_menu_edit"
+            android:background="@color/actionbar"
+            android:height="14dp"
+            android:textSize="15sp"
+            android:textColor="#ffffff"
+            android:layout_width="fill_parent"
+            android:layout_height="90px"
+            android:layout_weight="1"
+
+            android:id="@+id/Edit"
+            android:layout_gravity="bottom">
+        </ImageButton>
+        <ImageButton
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="@color/actionbar"
+            android:height="14dp"
+            android:textSize="15sp"
+            android:textColor="#ffffff"
+            android:layout_width="fill_parent"
+            android:layout_height="90px"
+            android:layout_weight="1"
+            android:id="@+id/Delete"
+            android:layout_gravity="bottom">
+        </ImageButton>
+
+    </LinearLayout>
+</RelativeLayout>
