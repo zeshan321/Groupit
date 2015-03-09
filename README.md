@@ -8,6 +8,8 @@ GroupIt is a annoymous group chatting app that requires no login or setup. All i
 * Joining groups
 * Separate chatting
 * Annoymous!
+* Does not require a lot of resources. (Does not lag)
+* Nice design
 
 
 <h1>Planned features</h1>
