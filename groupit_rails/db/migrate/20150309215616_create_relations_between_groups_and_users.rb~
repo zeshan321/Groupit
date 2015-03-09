@@ -1,0 +1,6 @@
+class CreateRelationsBetweenGroupsAndUsers < ActiveRecord::Migration
+  def change
+    create_table :relations_between_groups_and_users do |t|
+    end
+  end
+end
