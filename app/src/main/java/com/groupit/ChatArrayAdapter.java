@@ -49,7 +49,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         } else {
             row = inflater.inflate(R.layout.list_item_message_left, parent, false);
         }
-        
+
         chatText = (TextView) row.findViewById(R.id.txtMsg);
         chatText.setText(chatMessageObj.message);
 

@@ -10,8 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:background="@null"
-        android:divider="@null">
+        android:background="@null">
     </ListView>
 
     <LinearLayout
@@ -21,8 +20,8 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
-        <ImageButton
-            android:src="@android:drawable/ic_menu_add"
+        <Button
+            android:text="Create"
             android:height="14dp"
             android:textSize="15sp"
             android:textColor="#ffffff"
@@ -33,9 +32,9 @@
 
             android:id="@+id/Add"
             android:layout_gravity="bottom">
-        </ImageButton>
-        <ImageButton
-            android:src="@android:drawable/ic_menu_edit"
+        </Button>
+        <Button
+            android:text="Join"
             android:background="@color/actionbar"
             android:height="14dp"
             android:textSize="15sp"
@@ -46,19 +45,8 @@
 
             android:id="@+id/Edit"
             android:layout_gravity="bottom">
-        </ImageButton>
-        <ImageButton
-            android:src="@android:drawable/ic_menu_delete"
-            android:background="@color/actionbar"
-            android:height="14dp"
-            android:textSize="15sp"
-            android:textColor="#ffffff"
-            android:layout_width="fill_parent"
-            android:layout_height="90px"
-            android:layout_weight="1"
-            android:id="@+id/Delete"
-            android:layout_gravity="bottom">
-        </ImageButton>
+        </Button>
+
 
     </LinearLayout>
 </RelativeLayout>

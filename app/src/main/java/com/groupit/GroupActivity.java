@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -24,7 +26,7 @@ import java.util.List;
 public class GroupActivity  extends ActionBarActivity {
 
     public static ListView groupsList;
-    public static ArrayAdapter<String> myAdapter;
+    public static GroupArrayAdapter myAdapter;
     public static List<String> groups = new ArrayList<String>();
     Context con;
     ClientMessage cm;
@@ -38,7 +40,7 @@ public class GroupActivity  extends ActionBarActivity {
         setup();
 
         groupsList = (ListView) findViewById(R.id.list_group);
-        myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        myAdapter = new GroupArrayAdapter(getApplicationContext(), R.layout.groups_layout);
 
         loadGroups();
 
@@ -64,10 +66,9 @@ public class GroupActivity  extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-                Object o = groupsList.getItemAtPosition(position);
+                TextView textView = (TextView) arg1.findViewById(R.id.secondLine);
 
-                String[] s = o.toString().split(": ");
-                int group = Integer.parseInt(s[1]);
+                int group = Integer.parseInt(textView.getText().toString().replace("Code: ", ""));
 
                 Intent intent = new Intent(GroupActivity.this, MessageActivity.class);
                 startActivity(intent);
@@ -75,6 +76,7 @@ public class GroupActivity  extends ActionBarActivity {
 
             }
         });
+
     }
 
     public void setup() {
@@ -125,12 +127,25 @@ public class GroupActivity  extends ActionBarActivity {
                 String id = JSONUtils.getGroupID(line);
 
                 groups.add(id);
-                myAdapter.add(display + " : " + id);
+                addMessage(display, "Code: " + id);
             }
 
-            groupsList.setAdapter(myAdapter);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean addMessage(String text, String name) {
+        myAdapter.add(new GroupMessage(text, name));
+
+        groupsList.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        groupsList.setAdapter(myAdapter);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        ClientMessage.closeSocket();
     }
 }

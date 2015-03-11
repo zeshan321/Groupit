@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +30,7 @@ public class ClientMessage {
 
     private void connectToServer() {
         try {
+            closeSocket();
             socket = new Socket(InetAddress.getByName(MessageActivity.SocketAddress), MessageActivity.SocketServerPORT);
             socket.setKeepAlive(true);
             inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -51,41 +51,43 @@ public class ClientMessage {
 
     private void receiveData() {
         try {
-            while (true) {
-                final String data = inputReader.readLine();
+            String data;
+            while ((data = inputReader.readLine()) != null)
+            {
 
-                if (data == null || data.equals("null") || con == null) {
-                    return;
-                }
-                if (JSONUtils.canUseMessage(data) == false) {
-                    return;
-                }
-                final String message = JSONUtils.getMessage(data);
-                final String name = JSONUtils.getName(data);
-                final String id = JSONUtils.getID(data);
-                final String group = JSONUtils.getGroupID(data);
-
-                ((Activity) con).runOnUiThread(new Runnable() {
-                    public void run() {
-
-                        MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, data, con);
-                        mh.saveMessage();
-                        if (MessageActivity.currentGroup == Integer.parseInt(group)) {
-                        if (JSONUtils.getID(data).equals(MessageActivity.getID())) {
-                            MessageActivity.addMessage(true, message, name);
-                        } else {
-                            MessageActivity.addMessage(false, message, name);
-                        }
-                        }
+                    if (JSONUtils.canUseMessage(data) == false) {
+                        return;
                     }
-                });
 
-                if (MessageActivity.isLooking == false || MessageActivity.currentGroup == Integer.parseInt(group) == false) {
-                    Notification(name, message);
-                }
+                    final String data1 = data;
+                    final String message = JSONUtils.getMessage(data);
+                    final String name = JSONUtils.getName(data);
+                    final String id = JSONUtils.getID(data);
+                    final String group = JSONUtils.getGroupID(data);
+
+                    ((Activity) con).runOnUiThread(new Runnable() {
+                        public void run() {
+
+                            MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, data1, con);
+                            mh.saveMessage();
+                            if (MessageActivity.currentGroup == Integer.parseInt(group)) {
+                                if (JSONUtils.getID(data1).equals(MessageActivity.getID())) {
+                                    MessageActivity.addMessage(true, message, name);
+                                } else {
+                                    MessageActivity.addMessage(false, message, name);
+                                }
+                            }
+                        }
+                    });
+
+                    if (MessageActivity.isLooking == false || MessageActivity.currentGroup == Integer.parseInt(group) == false) {
+                        Notification(name, message);
+                    }
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+
         }
     }
 

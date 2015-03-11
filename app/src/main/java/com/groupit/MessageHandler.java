@@ -70,11 +70,12 @@ public class MessageHandler {
                 public void run() {
                     try {
                         String line;
+                        String name = null;
                         while ((line = bufferedReader.readLine()) != null) {
                             if (line != null || line.equals("null") == false) {
                                 if (JSONUtils.canUseMessage(line)) {
                                     String message = JSONUtils.getMessage(line);
-                                    String name = JSONUtils.getName(line);
+                                    name = JSONUtils.getName(line);
                                     if (JSONUtils.getID(line).equals(MessageActivity.getID())) {
                                         MessageActivity.addMessage(true, message, name);
                                     } else {
@@ -85,8 +86,7 @@ public class MessageHandler {
                         }
 
                         if (MessageActivity.display == null) {
-                            String[] displayn = line.split(":");
-                            MessageActivity.display = displayn[0];
+                            MessageActivity.display = name;
                         }
 
                     } catch (IOException e) {

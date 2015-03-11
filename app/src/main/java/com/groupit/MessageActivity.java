@@ -1,11 +1,10 @@
 package com.groupit;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.DataSetObserver;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -17,8 +16,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.Toast;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MessageActivity extends ActionBarActivity {
 
@@ -29,7 +31,6 @@ public class MessageActivity extends ActionBarActivity {
 
     EditText editTextSay;
     ImageButton buttonSend;
-    ScrollView scroll;
 
     public static String display;
     public static ClientMessage cm = null;
@@ -78,19 +79,38 @@ public class MessageActivity extends ActionBarActivity {
                             }
                         }
                     });
+                    thread.start();
                 }
 
                 cm.sendData(JSONUtils.getJSONMessage(getID(), currentGroup, msg, display));
                 editTextSay.setText("");
             }
         });
+
+        BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                ClientMessage.closeSocket();
+                                cm = new ClientMessage(con);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    thread.start();
+                }
+        };
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkStateReceiver, filter);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        ClientMessage.closeSocket();
-    }
 
     @Override
     protected void onResume() {
@@ -109,6 +129,7 @@ public class MessageActivity extends ActionBarActivity {
                     }
                 }
             });
+            thread.start();
         }
     }
 
