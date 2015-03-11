@@ -1,0 +1,15 @@
+<table>
+  <% @messages.each do |message| %>
+    <tr>
+      <td><%= message.user.name %>:</td>
+      <td><%= message.content %></td>
+    </tr>
+  <% end %>
+</table>
+<hr />
+<%= form_tag(controller: "messages", action: "create") do %>
+<%= text_field_tag "content" %>
+<input type = "hidden" name = "author" value = "<%= current_user.id %>">
+<input type = "hidden" name = "group" value = "<%= params[:id] %>">
+<%= submit_tag "Send" %>
+<% end %>
