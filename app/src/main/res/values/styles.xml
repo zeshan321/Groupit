@@ -9,6 +9,7 @@
     <style name="ActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="background">@color/actionbar</item>
         <item name="titleTextStyle">@style/MyActionBarTitleText</item>
+        <item name="icon">@mipmap/logo</item>
     </style>
 
     <style name="MyActionBarTitleText"

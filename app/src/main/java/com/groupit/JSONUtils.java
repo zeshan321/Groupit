@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class JSONUtils {
 
-    public static String getJSONMessage(String ID, int group, String message, String display) {
+    public static String getJSONMessage(String ID, String group, String message, String display) {
         String json = null;
 
         try {

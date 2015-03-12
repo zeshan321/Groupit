@@ -25,9 +25,10 @@ import java.util.concurrent.TimeUnit;
 public class MessageActivity extends ActionBarActivity {
 
     public static String SocketAddress = "104.236.60.137";
-    public static int SocketServerPORT = 8080;
+    public static int SocketServerPORT = 47687;
     public static ListView chatMsg;
     public static ArrayAdapter myAdapter;
+    public static Boolean allowReConnect = false;
 
     EditText editTextSay;
     ImageButton buttonSend;
@@ -35,9 +36,10 @@ public class MessageActivity extends ActionBarActivity {
     public static String display;
     public static ClientMessage cm = null;
     public static Context con;
-    public static int currentGroup = 0;
+    public static String currentGroup = "0";
     public static boolean isLooking = false;
     public static boolean finishedSetup = false;
+    public static String groupName = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class MessageActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.activity_display);
+
+        setTitle(groupName);
 
         isLooking = true;
         con = this;
@@ -62,18 +66,22 @@ public class MessageActivity extends ActionBarActivity {
         ImageButton b = (ImageButton)findViewById(R.id.send);
         b.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
-                String msg = editTextSay.getText().toString();
+                final String msg = editTextSay.getText().toString();
                 if (msg.equals("")) {
                     return;
                 }
 
-                if (ClientMessage.socket == null || ClientMessage.socket.isConnected() == false || ClientMessage.socket.isClosed()) {
+                try {
+                    cm.sendData(JSONUtils.getJSONMessage(getID(), currentGroup, msg, display));
+                    editTextSay.setText("");
+                } catch (NullPointerException e) {
                     ClientMessage.closeSocket();
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
                                 cm = new ClientMessage(con);
+                                cm.sendData(JSONUtils.getJSONMessage(getID(), currentGroup, msg, display));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -81,9 +89,6 @@ public class MessageActivity extends ActionBarActivity {
                     });
                     thread.start();
                 }
-
-                cm.sendData(JSONUtils.getJSONMessage(getID(), currentGroup, msg, display));
-                editTextSay.setText("");
             }
         });
 
@@ -96,8 +101,11 @@ public class MessageActivity extends ActionBarActivity {
                         @Override
                         public void run() {
                             try {
-                                ClientMessage.closeSocket();
-                                cm = new ClientMessage(con);
+                                if (allowReConnect == false) {
+                                    allowReConnect = true;
+                                    ClientMessage.closeSocket();
+                                    cm = new ClientMessage(con);
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -107,8 +115,12 @@ public class MessageActivity extends ActionBarActivity {
                 }
         };
 
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkStateReceiver, filter);
+        try {
+            con.unregisterReceiver(networkStateReceiver);
+        } catch (IllegalArgumentException e) {
+            IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(networkStateReceiver, filter);
+        }
     }
 
 
@@ -140,7 +152,7 @@ public class MessageActivity extends ActionBarActivity {
         super.onPause();
     }
 
-    public static void sendToast(String message) {
+    public static void sendToast(String message, Context con) {
         Toast toast = Toast.makeText(con, message, Toast.LENGTH_LONG);
         toast.show();
     }

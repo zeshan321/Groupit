@@ -30,7 +30,7 @@
             android:layout_height="90px"
             android:layout_weight="1"
 
-            android:id="@+id/Add"
+            android:id="@+id/Create"
             android:layout_gravity="bottom">
         </Button>
         <Button
@@ -43,7 +43,7 @@
             android:layout_height="90px"
             android:layout_weight="1"
 
-            android:id="@+id/Edit"
+            android:id="@+id/Join"
             android:layout_gravity="bottom">
         </Button>
 

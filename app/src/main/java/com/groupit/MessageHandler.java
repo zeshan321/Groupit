@@ -8,21 +8,19 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 
 public class MessageHandler {
 
     String message;
-    int group;
+    String group;
     File file = null;
     Context con = null;
 
 
-    public MessageHandler(int group, String message, Context con) {
+    public MessageHandler(String group, String message, Context con) {
         this.file = new File(MessageActivity.con.getFilesDir(), String.valueOf(group));
         this.message = message;
         this.group = group;

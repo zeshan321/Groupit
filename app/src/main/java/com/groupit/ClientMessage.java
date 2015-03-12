@@ -18,6 +18,8 @@ import java.net.Socket;
 public class ClientMessage {
 
     public static Socket socket = null;
+    public static ClientMessage cm = null;
+
     private BufferedReader inputReader;
     private PrintWriter outputWriter;
     private static Context con;
@@ -26,11 +28,11 @@ public class ClientMessage {
         con = cont;
         connectToServer();
         sendData(JSONUtils.getJSONList());
+        cm = this;
     }
 
     private void connectToServer() {
         try {
-            closeSocket();
             socket = new Socket(InetAddress.getByName(MessageActivity.SocketAddress), MessageActivity.SocketServerPORT);
             socket.setKeepAlive(true);
             inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -70,7 +72,7 @@ public class ClientMessage {
 
                             MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, data1, con);
                             mh.saveMessage();
-                            if (MessageActivity.currentGroup == Integer.parseInt(group)) {
+                            if (MessageActivity.currentGroup.equals(group)) {
                                 if (JSONUtils.getID(data1).equals(MessageActivity.getID())) {
                                     MessageActivity.addMessage(true, message, name);
                                 } else {
@@ -80,7 +82,7 @@ public class ClientMessage {
                         }
                     });
 
-                    if (MessageActivity.isLooking == false || MessageActivity.currentGroup == Integer.parseInt(group) == false) {
+                    if (MessageActivity.isLooking == false || MessageActivity.currentGroup.equals(group) == false) {
                         Notification(name, message);
                     }
             }
@@ -121,6 +123,7 @@ public class ClientMessage {
 
     public void sendData(String messageToSend) {
         outputWriter.println(messageToSend);
+        MessageActivity.allowReConnect = false;
     }
 
     public static boolean isClosed() {
