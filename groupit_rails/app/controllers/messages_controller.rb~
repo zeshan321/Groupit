@@ -1,0 +1,30 @@
+class MessagesController < WebsocketRails::BaseController
+	def create
+
+	#ans = message[:a] + message[:b]
+	send_message.trigger(:save, "it works", :namespace => :messages)
+=begin
+		new_message = Message.new
+		new_messgae.content = "TEST"
+		new_message.group_id = 1
+		new_message.user = 1
+		new_message.save
+
+		new_messgae.content = message.content
+		new_message.group_id = group_id
+		new_message.user = current_user
+		if new_message.save
+			send_message :save, "Message has been saved successfully!", :namespace => :messages
+			channel = WebSocketRails[:chat]
+			channel.trigger(:new,{:content => new_messgae.content, :author_name => current_user.name},:namespace => :messages)
+		else
+			send_message :save, "Message has some errors!", :namespace => :messages
+		end
+=end
+	end
+
+	private
+	def group_id
+		message[:channel].slice(1..-1).to_i
+	end
+end

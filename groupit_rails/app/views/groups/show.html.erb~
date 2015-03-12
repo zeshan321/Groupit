@@ -1,0 +1,47 @@
+<%= require websocket_rails/main %>
+<script>
+var dispatcher = new WebSocketRails('localhost:3000/websocket');
+
+var messages_channel = dispatcher.subscribe("chat");
+/*
+dispatcher.bind('client_connected',function(message){
+	console.log(message);
+});
+
+messages_channel.bind("messages.new", function(message){
+	console.log(message)
+	var message_tr = document.createElement('tr');
+	message_tr.innerHTML  = "<td>" + message.author_name + "</td>";
+	message_tr.innerHTML += "<td>" + message.content + "</td>";
+
+　	document.getElementById("messages_table").appendChild(message_tr);
+});
+*/
+dispatcher.bind("messages.save", function(message){
+	console.log(message)
+});
+
+var send_message = function(){
+/*
+	
+	dispatcher.trigger("messages.create",message_text);
+	document.getElementById("message_text").value = "";*/
+	var message_text = document.getElementById("message_text").value;
+	var message = {text:message_text};
+	messages_channel.trigger("messages.create",message) 
+	console.log("SENDING:"+message_text);
+};
+</script>
+<h1><%= @group.name %></h1>
+<hr />
+<table id="messages_table">
+  <% @messages.each do |message| %>
+    <tr>
+      <td><%= message.user.name %>:</td>
+      <td><%= message.content %></td>
+    </tr>
+  <% end %>
+</table>
+<hr />
+<input id="message_text" type="text">
+<input id="send" type="button" value="send" onclick="send_message();">
