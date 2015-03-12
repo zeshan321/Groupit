@@ -67,11 +67,14 @@ public class MessageActivity extends ActionBarActivity {
         b.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 final String msg = editTextSay.getText().toString();
+                String json = null;
                 if (msg.equals("")) {
                     return;
                 }
 
                 try {
+                    json = JSONUtils.getJSONMessage(getID(), currentGroup, msg, display);
+                    MessageActivity.addMessage(true, JSONUtils.getMessage(json), JSONUtils.getName(json));
                     cm.sendData(JSONUtils.getJSONMessage(getID(), currentGroup, msg, display));
                     editTextSay.setText("");
                 } catch (NullPointerException e) {

@@ -72,7 +72,7 @@ public class ClientMessage {
 
                             MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, data1, con);
                             mh.saveMessage();
-                            if (MessageActivity.currentGroup.equals(group)) {
+                            if (MessageActivity.currentGroup.equals(group) && id.equals(MessageActivity.getID()) == false) {
                                 if (JSONUtils.getID(data1).equals(MessageActivity.getID())) {
                                     MessageActivity.addMessage(true, message, name);
                                 } else {
@@ -82,7 +82,7 @@ public class ClientMessage {
                         }
                     });
 
-                    if (MessageActivity.isLooking == false || MessageActivity.currentGroup.equals(group) == false) {
+                    if (MessageActivity.isLooking == false || MessageActivity.currentGroup.equals(group) == false && id.equals(MessageActivity.getID()) == false) {
                         Notification(name, message);
                     }
             }
