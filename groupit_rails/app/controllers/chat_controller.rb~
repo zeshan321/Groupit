@@ -3,12 +3,19 @@ class ChatController < WebsocketRails::BaseController
 		new_message = Message.new
 		new_message.content = message[:text]
 		new_message.user = current_user
+		new_message.group_id = message[:group_id]
+
 		if new_message.save
 			#WebSocketRails[:chat].trigger :save, "YES", :namespace => :messages
-			send_message :save, "YES", :namespace => :messages
+			message_body = {:text => message[:text], :author_name => current_user.name}
+			broadcast_message :new, message_body, :namespace => :messages
+
+			#channel_name = ("g"+ message.group_id.to_s).to_sym
+			#message_body = {:text => new_message.content, :author_name => new_message.user.name}
+			#send_message :save, message_body[:text], :namespace => :messages
 		else
 			#WebSocketRails[:chat].trigger :save, "NO", :namespace => :messages
-			send_message :save, "NO", :namespace => :messages
+			broadcast_message :new, "NO", :namespace => :messages
 		end
 =begin
 		new_messgae.content = message.content
