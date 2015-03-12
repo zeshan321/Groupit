@@ -1,3 +1,14 @@
+<script>
+$(document).ready(function(){
+	$("#p_pass").hide();
+	$("#public_true").click(function(){
+		$("#p_pass").hide();
+	});
+	$("#public_false").click(function(){
+		$("#p_pass").show();
+	});
+});
+</script>
 <h2>Create Group</h2>
 <%= form_for @group do |f| %>
 	<% if @group.errors.any? %>
@@ -18,6 +29,16 @@
     <%= f.text_field :name %>
   </p>
   
+  <p>
+  	<%= radio_button_tag :public, true, true %>
+  	<%= label_tag 'Public' %>
+  	<%= radio_button_tag :public, false%>
+  	<%= label_tag 'Private' %>
+  </p>
+  
+  <p id="p_pass">
+  	<%= label_tag 'Password' %>
+  	<%= f.text_field :password %>
   <p>
     <%= f.submit %>
   </p>

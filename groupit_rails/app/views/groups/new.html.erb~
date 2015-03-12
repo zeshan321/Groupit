@@ -1,12 +1,12 @@
 <script>
 $(document).ready(function(){
-		$("#password").hide();
-    $("#public").click(function(){
-        $("#password").hide();
-    });
-    $("#private").click(function(){
-        $("#password").show();
-    });
+	$("p_pass").hide();
+	$("#public_true").click(function(){
+		$("p_pass").hide();
+	});
+	$("#public_false").click(function(){
+		$("#p_pass").show();
+	});
 });
 </script>
 <h2>Create Group</h2>
@@ -28,20 +28,17 @@ $(document).ready(function(){
     <%= f.label :name %><br>
     <%= f.text_field :name %>
   </p>
-	
-	<p> Public Private 
-		<%= radio_button_tag(:group_type, "Public",true) %>
-		<%= label_tag(:group_type, "Public") %>
-		
-  	<%= radio_button_tag(:group_type, "Private") %>
-		<%= label_tag(:group_type, "Private") %>
-	</p>
-
-	<p id="password">
-		<%= f.label :password %>
-    <%= f.text_field :password %>
-	</p>
-
+  
+  <p>
+  	<%= radio_button_tag :public, true, true %>
+  	<%= label_tag 'Public' %>
+  	<%= radio_button_tag :public, false%>
+  	<%= label_tag 'Private' %>
+  </p>
+  
+  <p id="p_pass">
+  	<%= label_tag 'Password' %>
+  	<%= f.text_field :password %>
   <p>
     <%= f.submit %>
   </p>

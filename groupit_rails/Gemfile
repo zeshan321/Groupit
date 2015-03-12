@@ -25,6 +25,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use devise for user accounts
 gem 'devise'
 # Use websocket-rails for websocket
+gem 'em-websocket'
 gem 'websocket-rails'
 
 # Use ActiveModel has_secure_password
