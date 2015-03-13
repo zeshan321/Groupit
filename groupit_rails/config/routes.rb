@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-	root to: "home#index"
+	root to: 'groups#index'
   devise_for :users
   resources :groups, only:[:show, :index, :new, :create] do
 		resources :messages, only:[:create]

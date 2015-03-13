@@ -1,14 +1,10 @@
 WebsocketRails::EventMap.describe do
 	subscribe :client_connected, :to => SocketController, :with_method => :client_connected
 	
-	#namespace :websocket_rails do
-	#	subscribe :subscribe_private, :to => SocketController, :with_method => :authorize_channels
-	#end
+	namespace :websocket_rails do
+		subscribe :subscribe_private, :to => SocketController, :with_method => :authorize_channels
+	end
 	#subscribe :client_connected,:to => ChatController, :with_method => :create
-	
-	namespace :messages do
-  	subscribe :create,'chat#create'
-  end
   # You can use this file to map incoming events to controller actions.
   # One event can be mapped to any number of controller actions. The
   # actions will be executed in the order they were subscribed.
