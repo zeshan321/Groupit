@@ -1,5 +1,5 @@
 <script>
-var dispatcher = new WebSocketRails('localhost:3000/websocket');
+var dispatcher = new WebSocketRails('<%= request.host_with_port() %>/websocket');
 var channel = dispatcher.subscribe_private("g<%= params[:id] %>")
 
 dispatcher.bind('client_connected',function(message){
