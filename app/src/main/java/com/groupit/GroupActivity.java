@@ -227,5 +227,7 @@ public class GroupActivity  extends ActionBarActivity {
     public void onBackPressed() {
         super.onBackPressed();
         ClientMessage.closeSocket();
+        Intent intent = new Intent(GroupActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 }

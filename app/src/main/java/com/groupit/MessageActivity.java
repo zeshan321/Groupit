@@ -1,10 +1,12 @@
 package com.groupit;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -74,7 +76,7 @@ public class MessageActivity extends ActionBarActivity {
 
                 try {
                     json = JSONUtils.getJSONMessage(getID(), currentGroup, msg, display);
-                    MessageActivity.addMessage(true, JSONUtils.getMessage(json), JSONUtils.getName(json));
+                    MessageActivity.addMessage(true, JSONUtils.getMessage(json), JSONUtils.getName(json), currentGroup);
                     cm.sendData(JSONUtils.getJSONMessage(getID(), currentGroup, msg, display));
                     editTextSay.setText("");
                 } catch (NullPointerException e) {
@@ -160,17 +162,28 @@ public class MessageActivity extends ActionBarActivity {
         toast.show();
     }
 
-    public static boolean addMessage(boolean right, String text, String name) {
-        myAdapter.add(new ChatMessage(right, text, name));
+    public static boolean addMessage(boolean right, String text, String name, String group) {
+        try {
+            myAdapter.add(new ChatMessage(right, text, name));
 
-        chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        chatMsg.setAdapter(myAdapter);
+            chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+            chatMsg.setAdapter(myAdapter);
+        } catch (NullPointerException e) {
+            MessageHandler mh = new MessageHandler(group, null, ClientMessage.con);
+            mh.saveMessage();
+        }
         return true;
     }
 
-    public static String getID() {
-        TelephonyManager telephonyManager = (TelephonyManager)con.getSystemService(Context.TELEPHONY_SERVICE);
-        return telephonyManager.getDeviceId();
+    public static String getID(){
+        String myAndroidDeviceId = "";
+        TelephonyManager mTelephony = (TelephonyManager) ClientMessage.con.getSystemService(Context.TELEPHONY_SERVICE);
+        if (mTelephony.getDeviceId() != null){
+            myAndroidDeviceId = mTelephony.getDeviceId();
+        }else{
+            myAndroidDeviceId = Settings.Secure.getString(ClientMessage.con.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        return myAndroidDeviceId;
     }
 
     @Override

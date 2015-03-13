@@ -22,7 +22,7 @@ public class ClientMessage {
 
     private BufferedReader inputReader;
     private PrintWriter outputWriter;
-    private static Context con;
+    public static Context con;
 
     public ClientMessage(Context cont) {
         con = cont;
@@ -70,20 +70,20 @@ public class ClientMessage {
                     ((Activity) con).runOnUiThread(new Runnable() {
                         public void run() {
 
-                            MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, data1, con);
+                            MessageHandler mh = new MessageHandler(group, data1, con);
                             mh.saveMessage();
                             if (MessageActivity.currentGroup.equals(group) && id.equals(MessageActivity.getID()) == false) {
                                 if (JSONUtils.getID(data1).equals(MessageActivity.getID())) {
-                                    MessageActivity.addMessage(true, message, name);
+                                    MessageActivity.addMessage(true, message, name, group);
                                 } else {
-                                    MessageActivity.addMessage(false, message, name);
+                                    MessageActivity.addMessage(false, message, name, group);
                                 }
                             }
                         }
                     });
 
                     if (MessageActivity.isLooking == false || MessageActivity.currentGroup.equals(group) == false && id.equals(MessageActivity.getID()) == false) {
-                        Notification(name, message);
+                        Notification(name, message, group);
                     }
             }
         } catch (IOException e) {
@@ -93,7 +93,7 @@ public class ClientMessage {
         }
     }
 
-    public static void Notification(String notificationTitle, String notificationMessage) {
+    public static void Notification(String notificationTitle, String notificationMessage, String group) {
 
         Intent myIntent = new Intent(con, MessageActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -108,7 +108,7 @@ public class ClientMessage {
         Notification myNotification = new NotificationCompat.Builder(con)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationMessage)
-                .setTicker("GroupIt")
+                .setTicker(notificationTitle + " @ " + group)
                 .setWhen(System.currentTimeMillis())
                 .setContentIntent(pendingIntent)
                 .setDefaults(Notification.DEFAULT_ALL)

@@ -21,25 +21,25 @@ public class MessageHandler {
 
 
     public MessageHandler(String group, String message, Context con) {
-        this.file = new File(MessageActivity.con.getFilesDir(), String.valueOf(group));
-        this.message = message;
-        this.group = group;
-        this.con = con;
-
-        if (file.exists() == false) {
+        if (new File(ClientMessage.con.getFilesDir(), group).isFile()) {
+            this.file = new File(ClientMessage.con.getFilesDir(), group);
+        } else {
             try {
-                file.createNewFile();
+                new File(ClientMessage.con.getFilesDir(), group).createNewFile();
+                this.file = new File(ClientMessage.con.getFilesDir(), group);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        this.message = message;
+        this.group = group;
+        this.con = con;
     }
 
     public void saveMessage() {
-        if (message != null || message.equals("null") == false) {
-            BufferedWriter stream = null;
+        if (message == null == false && message.equals("null") == false) {
             try {
-                stream = new BufferedWriter(new FileWriter(file, true));
+                BufferedWriter stream = new BufferedWriter(new FileWriter(file, true));
                 stream.write(message + "\n");
                 stream.close();
 
@@ -52,48 +52,52 @@ public class MessageHandler {
     }
 
     public void loadMessages() {
-        MessageActivity.myAdapter.clear();
-        MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+        try {
+            MessageActivity.myAdapter.clear();
+            MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
 
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        final BufferedReader bufferedReader = new BufferedReader(isr);
-        try {
-            ((Activity) con).runOnUiThread(new Runnable() {
-                public void run() {
-                    try {
-                        String line;
-                        String name = null;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            if (line != null || line.equals("null") == false) {
-                                if (JSONUtils.canUseMessage(line)) {
-                                    String message = JSONUtils.getMessage(line);
-                                    name = JSONUtils.getName(line);
-                                    if (JSONUtils.getID(line).equals(MessageActivity.getID())) {
-                                        MessageActivity.addMessage(true, message, name);
-                                    } else {
-                                        MessageActivity.addMessage(false, message, name);
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            InputStreamReader isr = new InputStreamReader(fis);
+            final BufferedReader bufferedReader = new BufferedReader(isr);
+            try {
+                ((Activity) con).runOnUiThread(new Runnable() {
+                    public void run() {
+                        try {
+                            String line;
+                            String name = null;
+                            while ((line = bufferedReader.readLine()) != null) {
+                                if (line != null || line.equals("null") == false) {
+                                    if (JSONUtils.canUseMessage(line)) {
+                                        String message = JSONUtils.getMessage(line);
+                                        name = JSONUtils.getName(line);
+                                        if (JSONUtils.getID(line).equals(MessageActivity.getID())) {
+                                            MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup);
+                                        } else {
+                                            MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup);
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        if (MessageActivity.display == null) {
-                            MessageActivity.display = name;
-                        }
+                            if (MessageActivity.display == null) {
+                                MessageActivity.display = name;
+                            }
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
-        } finally {
-            System.out.println("Loaded.");
+                });
+            } finally {
+                System.out.println("Loaded.");
+            }
+        } catch (NullPointerException e) {
+            return;
         }
     }
 }
