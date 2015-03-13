@@ -22,13 +22,14 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
         if (ClientMessage.socket != null && ClientMessage.socket.isConnected()) {
             startActivity(new Intent(MainActivity.this, MessageActivity.class));
             return;
         }
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         firstButton(findViewById(R.id.button));
     }

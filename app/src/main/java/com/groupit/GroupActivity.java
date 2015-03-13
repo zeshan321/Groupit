@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,8 @@ public class GroupActivity  extends ActionBarActivity {
     public static ListView groupsList;
     public static GroupArrayAdapter myAdapter;
     public static List<String> groups = new ArrayList<String>();
+    private static final int TIME_INTERVAL = 2000;
+    private long mBackPressed;
     Context con;
     ClientMessage cm;
 
@@ -224,10 +227,19 @@ public class GroupActivity  extends ActionBarActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        ClientMessage.closeSocket();
-        Intent intent = new Intent(GroupActivity.this, MainActivity.class);
-        startActivity(intent);
+    public void onBackPressed()
+    {
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
+        {
+            super.onBackPressed();
+            finish();
+            System.exit(0);
+            return;
+        }
+        else {
+            Toast.makeText(getBaseContext(), "Press again to quit", Toast.LENGTH_SHORT).show();
+        }
+
+        mBackPressed = System.currentTimeMillis();
     }
 }
