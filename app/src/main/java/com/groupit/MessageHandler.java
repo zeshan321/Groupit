@@ -21,7 +21,7 @@ public class MessageHandler {
 
 
     public MessageHandler(String group, String message, Context con) {
-        if (new File(ClientMessage.con.getFilesDir(), group).isFile()) {
+        if (new File(ClientMessage.con.getFilesDir(), group).exists()) {
             this.file = new File(ClientMessage.con.getFilesDir(), group);
         } else {
             try {

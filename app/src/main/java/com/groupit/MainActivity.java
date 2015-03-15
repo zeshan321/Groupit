@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
+    Context con;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +28,13 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
-        if (ClientMessage.socket != null && ClientMessage.socket.isConnected()) {
-            startActivity(new Intent(MainActivity.this, MessageActivity.class));
+        con = this;
+
+        NameHandler nh = new NameHandler(null, con);
+
+        if (nh.getName() != null) {
+            MessageActivity.display = nh.getName();
+            startActivity(new Intent(MainActivity.this, GroupActivity.class));
             return;
         }
 
@@ -42,12 +49,16 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 EditText text = (EditText) findViewById(R.id.editText);
 
-                if (text.getText().toString().length() < 5) {
+                if (text.getText().toString().length() < 5 && text.getText().toString().startsWith(" ") == false) {
                     Toast.makeText(MainActivity.this, "Display names need to be longer than 5 characters.", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                MessageActivity.display = text.getText().toString();
+                MessageActivity.display = text.getText().toString().replaceAll("\\s+$", "");
+
+                NameHandler nh = new NameHandler(text.getText().toString().replaceAll("\\s+$", ""), con);
+                nh.saveName();
+
                 startActivity(new Intent(MainActivity.this, GroupActivity.class));
             }
         });

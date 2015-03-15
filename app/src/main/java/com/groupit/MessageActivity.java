@@ -87,6 +87,7 @@ public class MessageActivity extends ActionBarActivity {
                             try {
                                 cm = new ClientMessage(con);
                                 cm.sendData(JSONUtils.getJSONMessage(getID(), currentGroup, msg, display));
+                                editTextSay.setText("");
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

@@ -233,7 +233,6 @@ public class GroupActivity  extends ActionBarActivity {
         {
             super.onBackPressed();
             finish();
-            System.exit(0);
             return;
         }
         else {
