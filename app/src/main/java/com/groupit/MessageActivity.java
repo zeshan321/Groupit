@@ -1,8 +1,10 @@
 package com.groupit;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -11,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -218,6 +221,28 @@ public class MessageActivity extends ActionBarActivity {
         });
     }
 
+    public void showSettings() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(con);
+        LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View v = inflater.inflate(R.layout.dialog_locker, null);
+
+        builder.setView(v)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+
+                }
+        });
+        builder.create();
+        builder.show();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -232,6 +257,7 @@ public class MessageActivity extends ActionBarActivity {
                 }
                 return true;
             case 0:
+                showSettings();
                 return  true;
             default:
                 return super.onOptionsItemSelected(item);
