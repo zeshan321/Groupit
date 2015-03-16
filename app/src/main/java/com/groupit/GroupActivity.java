@@ -1,11 +1,13 @@
 package com.groupit;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,7 +49,11 @@ public class GroupActivity  extends ActionBarActivity {
     public static GroupArrayAdapter myAdapter;
     public static List<String> groups = new ArrayList<String>();
     private static final int TIME_INTERVAL = 2000;
+    public static List<String> owns = new ArrayList<String>();
+    public static String ID = null;
+
     private long mBackPressed;
+
     Context con;
     ClientMessage cm;
 
@@ -84,6 +90,26 @@ public class GroupActivity  extends ActionBarActivity {
             });
 
             thread.start();
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
+
+            query.whereEqualTo("owner", ID);
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+
+                @Override
+                public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                    for (ParseObject groups : parseObjects) {
+                        if (groups != null) {
+                            String post = groups.getString("groupID");
+                            owns.add(post);
+                        }
+                    }
+                    if (MessageActivity.con != null) {
+                        ActivityCompat.invalidateOptionsMenu((Activity) MessageActivity.con);
+                    }
+                }
+            });
         }
 
         groupsList.setClickable(true);
@@ -181,10 +207,12 @@ public class GroupActivity  extends ActionBarActivity {
 
                                                     ParseObject addGroup = new ParseObject("groups");
                                                     addGroup.put("groupID", es2);
-                                                    addGroup.put("owner", MessageActivity.getID());
+                                                    addGroup.put("owner", ID);
                                                     addGroup.put("locked", false);
-                                                    addGroup.put("pass", null);
+                                                    addGroup.put("pass", "null");
                                                     addGroup.saveInBackground();
+
+                                                    owns.add(es2);
                                                 }
                                             } else {
                                                 Toast toast = Toast.makeText(con, "Oops! Something went wrong.", Toast.LENGTH_LONG);

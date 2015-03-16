@@ -31,6 +31,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -42,10 +44,6 @@ public class MessageActivity extends ActionBarActivity {
     public static ListView chatMsg;
     public static ArrayAdapter myAdapter;
     public static Boolean allowReConnect = false;
-
-    EditText editTextSay;
-    ImageButton buttonSend;
-
     public static String display;
     public static ClientMessage cm = null;
     public static Context con;
@@ -55,7 +53,9 @@ public class MessageActivity extends ActionBarActivity {
     public static String groupName = null;
 
     public BroadcastReceiver networkStateReceiver = null;
-    public boolean isOwner = false;
+
+    EditText editTextSay;
+    ImageButton buttonSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +76,6 @@ public class MessageActivity extends ActionBarActivity {
         MessageHandler mh = new MessageHandler(currentGroup, null, con);
         mh.loadMessages();
 
-        isOwner();
-
         editTextSay = (EditText)findViewById(R.id.say);
         buttonSend = (ImageButton)findViewById(R.id.send);
 
@@ -91,9 +89,9 @@ public class MessageActivity extends ActionBarActivity {
                 }
 
                 try {
-                    json = JSONUtils.getJSONMessage(getID(), currentGroup, msg, display);
+                    json = JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display);
                     MessageActivity.addMessage(true, JSONUtils.getMessage(json), JSONUtils.getName(json), currentGroup);
-                    cm.sendData(JSONUtils.getJSONMessage(getID(), currentGroup, msg, display));
+                    cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display));
                     editTextSay.setText("");
                 } catch (NullPointerException e) {
                     ClientMessage.closeSocket();
@@ -102,7 +100,7 @@ public class MessageActivity extends ActionBarActivity {
                         public void run() {
                             try {
                                 cm = new ClientMessage(con);
-                                cm.sendData(JSONUtils.getJSONMessage(getID(), currentGroup, msg, display));
+                                cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display));
                                 editTextSay.setText("");
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -192,35 +190,6 @@ public class MessageActivity extends ActionBarActivity {
         return true;
     }
 
-    public static String getID(){
-        String myAndroidDeviceId = "";
-        TelephonyManager mTelephony = (TelephonyManager) ClientMessage.con.getSystemService(Context.TELEPHONY_SERVICE);
-        if (mTelephony.getDeviceId() != null){
-            myAndroidDeviceId = mTelephony.getDeviceId();
-        }else{
-            myAndroidDeviceId = Settings.Secure.getString(ClientMessage.con.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        }
-        return myAndroidDeviceId;
-    }
-
-    public void isOwner() {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
-        query.whereEqualTo("groupID", currentGroup);
-        query.whereEqualTo("owner", getID());
-
-        query.getFirstInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject parseObject, com.parse.ParseException e) {
-                if (parseObject == null) {
-
-                } else {
-                    isOwner = true;
-                    invalidateOptionsMenu();
-                }
-            }
-        });
-    }
-
     public void showSettings() {
         AlertDialog.Builder builder = new AlertDialog.Builder(con);
         LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -268,7 +237,7 @@ public class MessageActivity extends ActionBarActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.clear();
 
-        if (isOwner) {
+        if (GroupActivity.owns.contains(currentGroup)) {
             menu.add(0, 0, 0, "Settings");
         }
 

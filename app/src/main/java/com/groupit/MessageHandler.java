@@ -75,7 +75,7 @@ public class MessageHandler {
                                     if (JSONUtils.canUseMessage(line)) {
                                         String message = JSONUtils.getMessage(line);
                                         name = JSONUtils.getName(line);
-                                        if (JSONUtils.getID(line).equals(MessageActivity.getID())) {
+                                        if (JSONUtils.getID(line).equals(GroupActivity.ID)) {
                                             MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup);
                                         } else {
                                             MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup);

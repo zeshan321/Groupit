@@ -9,7 +9,9 @@ import java.net.UnknownHostException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.TelephonyManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +34,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         con = this;
+        GroupActivity.ID = getID();
 
         NameHandler nh = new NameHandler(null, con);
 
@@ -42,6 +45,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         firstButton(findViewById(R.id.button));
+
 
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "Z3eykoUuP71TBbOAagQryHbPnntPajAVQiNQGgOD", "xeQS9Hd3x9LS97GGoA0nbQenLB0qjIafjzWVKyem");
@@ -69,6 +73,17 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
+    }
+
+    public String getID(){
+        String myAndroidDeviceId = "";
+        TelephonyManager mTelephony = (TelephonyManager) con.getSystemService(Context.TELEPHONY_SERVICE);
+        if (mTelephony.getDeviceId() != null){
+            myAndroidDeviceId = mTelephony.getDeviceId();
+        }else{
+            myAndroidDeviceId = Settings.Secure.getString(con.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        return myAndroidDeviceId;
     }
 
     @Override
