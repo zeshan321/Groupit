@@ -10,6 +10,8 @@ import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
@@ -20,6 +22,12 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
+import com.parse.Parse;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.text.ParseException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +51,9 @@ public class MessageActivity extends ActionBarActivity {
     public static boolean finishedSetup = false;
     public static String groupName = null;
 
+    public BroadcastReceiver networkStateReceiver = null;
+    public boolean isOwner = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +72,8 @@ public class MessageActivity extends ActionBarActivity {
 
         MessageHandler mh = new MessageHandler(currentGroup, null, con);
         mh.loadMessages();
+
+        isOwner();
 
         editTextSay = (EditText)findViewById(R.id.say);
         buttonSend = (ImageButton)findViewById(R.id.send);
@@ -98,7 +111,7 @@ public class MessageActivity extends ActionBarActivity {
             }
         });
 
-        BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+        networkStateReceiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -187,6 +200,24 @@ public class MessageActivity extends ActionBarActivity {
         return myAndroidDeviceId;
     }
 
+    public void isOwner() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
+        query.whereEqualTo("groupID", currentGroup);
+        query.whereEqualTo("owner", getID());
+
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, com.parse.ParseException e) {
+                if (parseObject == null) {
+
+                } else {
+                    isOwner = true;
+                    invalidateOptionsMenu();
+                }
+            }
+        });
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -195,9 +226,26 @@ public class MessageActivity extends ActionBarActivity {
                 Intent intent = new Intent(this, GroupActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intent);
+
+                if (networkStateReceiver != null) {
+                    unregisterReceiver(networkStateReceiver);
+                }
                 return true;
+            case 0:
+                return  true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+
+        if (isOwner) {
+            menu.add(0, 0, 0, "Settings");
+        }
+
+        return super.onCreateOptionsMenu(menu);
     }
 }

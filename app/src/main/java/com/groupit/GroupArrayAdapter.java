@@ -44,6 +44,10 @@ class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
         return this.chatMessageList.get(index);
     }
 
+    public void removeChat(int index) {
+        chatMessageList.remove(index);
+    }
+
     public View getView(int position, View convertView, ViewGroup parent) {
         GroupMessage chatMessageObj = getItem(position);
         View row = convertView;

@@ -19,6 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 public class MainActivity extends ActionBarActivity {
     Context con;
 
@@ -39,6 +42,9 @@ public class MainActivity extends ActionBarActivity {
         }
 
         firstButton(findViewById(R.id.button));
+
+        Parse.enableLocalDatastore(this);
+        Parse.initialize(this, "Z3eykoUuP71TBbOAagQryHbPnntPajAVQiNQGgOD", "xeQS9Hd3x9LS97GGoA0nbQenLB0qjIafjzWVKyem");
     }
 
     public void firstButton(View v) {
@@ -60,6 +66,7 @@ public class MainActivity extends ActionBarActivity {
                 nh.saveName();
 
                 startActivity(new Intent(MainActivity.this, GroupActivity.class));
+
             }
         });
     }

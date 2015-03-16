@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ClientMessage {
 
@@ -86,10 +87,11 @@ public class ClientMessage {
                         Notification(name, message, group);
                     }
             }
+        } catch (SocketException e) {
+            ClientMessage.closeSocket();
+            MessageActivity.cm = new ClientMessage(MessageActivity.con);
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (NullPointerException e) {
-
         }
     }
 

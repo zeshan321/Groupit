@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -18,17 +20,26 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.Parse;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.security.acl.Group;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class GroupActivity  extends ActionBarActivity {
 
@@ -44,6 +55,8 @@ public class GroupActivity  extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actvity_group);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         con = this;
 
         setup();
@@ -54,6 +67,10 @@ public class GroupActivity  extends ActionBarActivity {
         loadGroups();
 
         if (MessageActivity.finishedSetup == false) {
+
+            Parse.enableLocalDatastore(this);
+            Parse.initialize(this, "Z3eykoUuP71TBbOAagQryHbPnntPajAVQiNQGgOD", "xeQS9Hd3x9LS97GGoA0nbQenLB0qjIafjzWVKyem");
+
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -70,6 +87,7 @@ public class GroupActivity  extends ActionBarActivity {
         }
 
         groupsList.setClickable(true);
+        groupsList.setLongClickable(true);
         groupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -89,6 +107,47 @@ public class GroupActivity  extends ActionBarActivity {
             }
         });
 
+        groupsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                TextView textView = (TextView) view.findViewById(R.id.secondLine);
+                TextView textView1 = (TextView) view.findViewById(R.id.firstLine);
+
+                final String group = textView.getText().toString().replace("Code: ", "");
+                final String name = textView1.getText().toString();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(con);
+                LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View v = inflater.inflate(R.layout.dialog_delete, null);
+                builder.setView(v)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                myAdapter.removeChat(position);
+                                groupsList.setAdapter(myAdapter);
+
+                                removeGroup(JSONUtils.getJSOnGroup(name, group));
+
+                                groups.remove(group);
+
+                                if (ClientMessage.cm != null) {
+                                    ClientMessage.cm.sendData(JSONUtils.getJSONList());
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.create();
+                builder.show();
+                return true;
+            }
+        });
+
         Button b = (Button) findViewById(R.id.Create);
         b.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
@@ -103,12 +162,36 @@ public class GroupActivity  extends ActionBarActivity {
                                 EditText e1 = (EditText) v.findViewById(R.id.CreateName);
                                 EditText e2 = (EditText) v.findViewById(R.id.CreateCode);
 
-                                String es1 = e1.getText().toString();
-                                String es2 = e2.getText().toString();
+                                final String es1 = e1.getText().toString();
+                                final String es2 = e2.getText().toString();
 
                                 if (es1.length() > 0 && es2.length() > 0 && es1.startsWith(" ") == false && es2.startsWith(" ") == false) {
-                                    addGroup(es1, es2);
-                                    addMessage(es1, "Code: " + es2);
+
+                                    ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
+                                    query.whereEqualTo("groupID", es2);
+                                    query.findInBackground(new FindCallback<ParseObject>() {
+                                        public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                                            if (e == null) {
+                                                if (parseObjects.size() > 0) {
+                                                    Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
+                                                    toast.show();
+                                                } else {
+                                                    addGroup(es1, es2);
+                                                    addMessage(es1, "Code: " + es2);
+
+                                                    ParseObject addGroup = new ParseObject("groups");
+                                                    addGroup.put("groupID", es2);
+                                                    addGroup.put("owner", MessageActivity.getID());
+                                                    addGroup.put("locked", false);
+                                                    addGroup.put("pass", null);
+                                                    addGroup.saveInBackground();
+                                                }
+                                            } else {
+                                                Toast toast = Toast.makeText(con, "Oops! Something went wrong.", Toast.LENGTH_LONG);
+                                                toast.show();
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         })
@@ -137,12 +220,35 @@ public class GroupActivity  extends ActionBarActivity {
                                 EditText e1 = (EditText) v.findViewById(R.id.JoinName);
                                 EditText e2 = (EditText) v.findViewById(R.id.JoinCode);
 
-                                String es1 = e1.getText().toString();
-                                String es2 = e2.getText().toString();
+                                final String es1 = e1.getText().toString();
+                                final String es2 = e2.getText().toString();
 
                                 if (es1.length() > 0 && es2.length() > 0 && es1.startsWith(" ") == false && es2.startsWith(" ") == false) {
-                                    addGroup(es1, es2);
-                                    addMessage(es1, "Code: " + es2);
+
+                                    if (groupExists(JSONUtils.getJSOnGroup(es1, es2))) {
+                                        Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
+                                        toast.show();
+                                        return;
+                                    }
+
+                                    ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
+                                    query.whereEqualTo("groupID", es2);
+                                    query.findInBackground(new FindCallback<ParseObject>() {
+                                        public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                                            if (e == null) {
+                                                if (parseObjects.size() > 0) {
+                                                    addGroup(es1, es2);
+                                                    addMessage(es1, "Code: " + es2);
+                                                } else {
+                                                    Toast toast = Toast.makeText(con, "Group not found!", Toast.LENGTH_LONG);
+                                                    toast.show();
+                                                }
+                                            } else {
+                                                Toast toast = Toast.makeText(con, "Oops! Something went wrong.", Toast.LENGTH_LONG);
+                                                toast.show();
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         })
@@ -187,7 +293,7 @@ public class GroupActivity  extends ActionBarActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (ClientMessage.cm == null) {
+        if (ClientMessage.cm != null) {
             ClientMessage.cm.sendData(JSONUtils.getJSONList());
         }
     }
@@ -218,6 +324,71 @@ public class GroupActivity  extends ActionBarActivity {
         }
     }
 
+    public void removeGroup(String lineToRemove) {
+
+        try {
+
+            File inFile = new File(this.getFilesDir(), "groups");
+
+            if (!inFile.isFile()) {
+                System.out.println("Parameter is not an existing file");
+                return;
+            }
+
+            File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
+
+            BufferedReader br = new BufferedReader(new FileReader(inFile));
+            PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+
+            String line = null;
+
+            while ((line = br.readLine()) != null) {
+
+                if (!line.trim().equals(lineToRemove)) {
+
+                    pw.println(line);
+                    pw.flush();
+                }
+            }
+            pw.close();
+            br.close();
+
+            //Delete the original file
+            if (!inFile.delete()) {
+                System.out.println("Could not delete file");
+                return;
+            }
+
+            //Rename the new file to the filename the original file had.
+            if (!tempFile.renameTo(inFile))
+                System.out.println("Could not rename file");
+
+        }
+        catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public boolean groupExists(String json) {
+        File file = new File(this.getFilesDir(), "groups");
+        try {
+            Scanner scanner = new Scanner(file);
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if(line.equals(json)) {
+                    return true;
+                }
+            }
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static boolean addMessage(String text, String name) {
         myAdapter.add(new GroupMessage(text, name));
 
@@ -240,5 +411,55 @@ public class GroupActivity  extends ActionBarActivity {
         }
 
         mBackPressed = System.currentTimeMillis();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                changeName();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 0, 0, "Display name");
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void changeName() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(con);
+        LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View v = inflater.inflate(R.layout.dialog_changename, null);
+
+        EditText et = (EditText) v.findViewById(R.id.ChangeName);
+        et.setText(MessageActivity.display);
+        builder.setView(v)
+                .setPositiveButton("Change", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        EditText text = (EditText) v.findViewById(R.id.ChangeName);
+
+                        if (text.getText().toString().length() < 5 && text.getText().toString().startsWith(" ") == false) {
+                            Toast.makeText(con, "Display names need to be longer than 5 characters.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        MessageActivity.display = text.getText().toString().replaceAll("\\s+$", "");
+
+                        NameHandler nh = new NameHandler(text.getText().toString().replaceAll("\\s+$", ""), con);
+                        nh.saveName();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.create();
+        builder.show();
     }
 }
