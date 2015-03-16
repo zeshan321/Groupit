@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.widget.AbsListView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,6 +68,7 @@ public class ClientMessage {
                     final String name = JSONUtils.getName(data);
                     final String id = JSONUtils.getID(data);
                     final String group = JSONUtils.getGroupID(data);
+                    final Boolean isImage = JSONUtils.isImage(data);
 
                     ((Activity) con).runOnUiThread(new Runnable() {
                         public void run() {
@@ -75,24 +77,46 @@ public class ClientMessage {
                             mh.saveMessage();
                             if (MessageActivity.currentGroup.equals(group) && id.equals(GroupActivity.ID) == false) {
                                 if (JSONUtils.getID(data1).equals(GroupActivity.ID)) {
-                                    MessageActivity.addMessage(true, message, name, group);
+                                    if (isImage) {
+                                        MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, null, true));
+
+                                        MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                        MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                                    } else {
+                                        MessageActivity.addMessage(true, message, name, group);
+                                    }
                                 } else {
-                                    MessageActivity.addMessage(false, message, name, group);
+                                    if (isImage) {
+                                        MessageActivity.myAdapter.add(new ChatMessage(false, message, name, true, null, true));
+
+                                        MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                        MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                                    } else {
+                                        MessageActivity.addMessage(false, message, name, group);
+                                    }
                                 }
                             }
                         }
                     });
 
                     if (MessageActivity.isLooking == false || MessageActivity.currentGroup.equals(group) == false && id.equals(GroupActivity.ID) == false) {
-                        Notification(name, message, group);
+                        if (isImage) {
+                            Notification(name, "Image", group);
+                        } else {
+                            Notification(name, message, group);
+                        }
                     }
             }
         } catch (SocketException e) {
             ClientMessage.closeSocket();
             MessageActivity.cm = new ClientMessage(MessageActivity.con);
         } catch (IOException e) {
-            e.printStackTrace();
-        }
+            ClientMessage.closeSocket();
+            MessageActivity.cm = new ClientMessage(MessageActivity.con);
+        } catch (NullPointerException e) {
+        ClientMessage.closeSocket();
+        MessageActivity.cm = new ClientMessage(MessageActivity.con);
+    }
     }
 
     public static void Notification(String notificationTitle, String notificationMessage, String group) {

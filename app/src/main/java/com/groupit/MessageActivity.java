@@ -1,18 +1,17 @@
 package com.groupit;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.provider.Settings;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.util.Log;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,17 +24,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.parse.GetCallback;
-import com.parse.Parse;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.io.ByteArrayOutputStream;
 
 public class MessageActivity extends ActionBarActivity {
 
@@ -51,8 +40,6 @@ public class MessageActivity extends ActionBarActivity {
     public static boolean isLooking = false;
     public static boolean finishedSetup = false;
     public static String groupName = null;
-
-    public BroadcastReceiver networkStateReceiver = null;
 
     EditText editTextSay;
     ImageButton buttonSend;
@@ -76,10 +63,10 @@ public class MessageActivity extends ActionBarActivity {
         MessageHandler mh = new MessageHandler(currentGroup, null, con);
         mh.loadMessages();
 
-        editTextSay = (EditText)findViewById(R.id.say);
-        buttonSend = (ImageButton)findViewById(R.id.send);
+        editTextSay = (EditText) findViewById(R.id.say);
+        buttonSend = (ImageButton) findViewById(R.id.send);
 
-        ImageButton b = (ImageButton)findViewById(R.id.send);
+        ImageButton b = (ImageButton) findViewById(R.id.send);
         b.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 final String msg = editTextSay.getText().toString();
@@ -89,18 +76,19 @@ public class MessageActivity extends ActionBarActivity {
                 }
 
                 try {
-                    json = JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display);
+                    json = JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false);
                     MessageActivity.addMessage(true, JSONUtils.getMessage(json), JSONUtils.getName(json), currentGroup);
-                    cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display));
+                    cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false));
                     editTextSay.setText("");
                 } catch (NullPointerException e) {
-                    ClientMessage.closeSocket();
                     Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
+                                System.out.println("RECONNECTING: 1");
+                                ClientMessage.closeSocket();
                                 cm = new ClientMessage(con);
-                                cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display));
+                                cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false));
                                 editTextSay.setText("");
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -111,36 +99,6 @@ public class MessageActivity extends ActionBarActivity {
                 }
             }
         });
-
-        networkStateReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                if (allowReConnect == false) {
-                                    allowReConnect = true;
-                                    ClientMessage.closeSocket();
-                                    cm = new ClientMessage(con);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                    thread.start();
-                }
-        };
-
-        try {
-            con.unregisterReceiver(networkStateReceiver);
-        } catch (IllegalArgumentException e) {
-            IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-            registerReceiver(networkStateReceiver, filter);
-        }
     }
 
 
@@ -155,6 +113,7 @@ public class MessageActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     try {
+                        System.out.println("RECONNECTING: 3");
                         cm = new ClientMessage(con);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -177,9 +136,9 @@ public class MessageActivity extends ActionBarActivity {
         toast.show();
     }
 
-    public static boolean addMessage(boolean right, String text, String name, String group) {
+    public static void addMessage(boolean right, String text, String name, String group) {
         try {
-            myAdapter.add(new ChatMessage(right, text, name));
+            myAdapter.add(new ChatMessage(right, text, name, false, null, false));
 
             chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
             chatMsg.setAdapter(myAdapter);
@@ -187,7 +146,6 @@ public class MessageActivity extends ActionBarActivity {
             MessageHandler mh = new MessageHandler(group, null, ClientMessage.con);
             mh.saveMessage();
         }
-        return true;
     }
 
     public void showSettings() {
@@ -206,8 +164,8 @@ public class MessageActivity extends ActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
-                }
-        });
+                    }
+                });
         builder.create();
         builder.show();
     }
@@ -220,14 +178,16 @@ public class MessageActivity extends ActionBarActivity {
                 Intent intent = new Intent(this, GroupActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intent);
-
-                if (networkStateReceiver != null) {
-                    unregisterReceiver(networkStateReceiver);
-                }
                 return true;
             case 0:
                 showSettings();
-                return  true;
+                return true;
+            case 1:
+                Intent inte = new Intent();
+                inte.setType("image/*");
+                inte.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(inte, "Select Picture"), 1);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -240,7 +200,46 @@ public class MessageActivity extends ActionBarActivity {
         if (GroupActivity.owns.contains(currentGroup)) {
             menu.add(0, 0, 0, "Settings");
         }
-
+        menu.add(1, 1, 1, "Attach");
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK) {
+
+            if (requestCode == 1) {
+
+                Uri currImageURI = data.getData();
+
+                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", display, true, currImageURI, false));
+
+                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+
+                Bitmap bitmap = BitmapFactory.decodeFile(getRealPathFromURI(currImageURI));
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+                byte[] byte_img_data = baos.toByteArray();
+                String encodedImage = Base64.encodeToString(byte_img_data, Base64.DEFAULT);
+
+                cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, encodedImage, display, true));
+            }
+        }
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = managedQuery(contentUri,
+                proj,
+                null,
+                null,
+                null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+
+        return cursor.getString(column_index);
     }
 }

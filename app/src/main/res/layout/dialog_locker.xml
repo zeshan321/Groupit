@@ -19,20 +19,12 @@
         android:textIsSelectable="true"
         android:textAlignment="center" />
 
-    <RadioButton
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Public"
-        android:id="@+id/radioButton"
-        android:layout_weight="1"
-        />
-
-    <RadioButton
-        android:layout_width="fill_parent"
+    <Switch
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Private"
-        android:layout_weight="1"
-        android:id="@+id/radioButton2" />
+        android:id="@+id/switch1"
+        android:layout_gravity="center_horizontal" />
 
     <EditText
         android:id="@+id/passCode"

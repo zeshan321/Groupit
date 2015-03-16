@@ -1,14 +1,20 @@
 package com.groupit;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +22,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
     private TextView chatText;
     private TextView chatName;
+    private ImageView chatImage;
     private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
     private Context context;
 
@@ -44,17 +51,37 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (chatMessageObj.left) {
-            row = inflater.inflate(R.layout.list_item_message_right, parent, false);
+            if (chatMessageObj.image) {
+                row = inflater.inflate(R.layout.list_item_message_right_image, parent, false);
+            } else {
+                row = inflater.inflate(R.layout.list_item_message_right, parent, false);
+            }
 
         } else {
-            row = inflater.inflate(R.layout.list_item_message_left, parent, false);
+            if (chatMessageObj.image) {
+                row = inflater.inflate(R.layout.list_item_message_left_image, parent, false);
+            } else {
+                row = inflater.inflate(R.layout.list_item_message_left, parent, false);
+            }
         }
-
-        chatText = (TextView) row.findViewById(R.id.txtMsg);
-        chatText.setText(chatMessageObj.message);
 
         chatName = (TextView) row.findViewById(R.id.lblMsgFrom);
         chatName.setText(chatMessageObj.display);
+
+        if (chatMessageObj.image) {
+            chatImage = (ImageView) row.findViewById(R.id.imageMsg);
+            if (chatMessageObj.useByte) {
+                byte[] decodedString = Base64.decode(chatMessageObj.message, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                
+                chatImage.setImageBitmap(decodedByte);
+            } else {
+                chatImage.setImageURI(chatMessageObj.imageU);
+            }
+        } else {
+            chatText = (TextView) row.findViewById(R.id.txtMsg);
+            chatText.setText(chatMessageObj.message);
+        }
         return row;
     }
 }

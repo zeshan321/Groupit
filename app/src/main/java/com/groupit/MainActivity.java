@@ -46,9 +46,6 @@ public class MainActivity extends ActionBarActivity {
 
         firstButton(findViewById(R.id.button));
 
-
-        Parse.enableLocalDatastore(this);
-        Parse.initialize(this, "Z3eykoUuP71TBbOAagQryHbPnntPajAVQiNQGgOD", "xeQS9Hd3x9LS97GGoA0nbQenLB0qjIafjzWVKyem");
     }
 
     public void firstButton(View v) {

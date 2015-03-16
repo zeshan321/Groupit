@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 public class JSONUtils {
 
-    public static String getJSONMessage(String ID, String group, String message, String display) {
+    public static String getJSONMessage(String ID, String group, String message, String display, boolean isImage) {
         String json = null;
 
         try {
@@ -14,6 +14,7 @@ public class JSONUtils {
             jObj.put("group", String.valueOf(group));
             jObj.put("message", message);
             jObj.put("display", display);
+            jObj.put("image", isImage);
 
             json = jObj.toString();
         } catch (JSONException e) {
@@ -21,6 +22,23 @@ public class JSONUtils {
         }
 
         return json;
+    }
+
+    public  static Boolean isImage(String json) {
+        try {
+            JSONObject jObj = new JSONObject(json);
+
+            if (jObj.isNull("image")) {
+                return false;
+            }
+
+            if (jObj.get("image") == true) {
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static Boolean canUseMessage(String json) {

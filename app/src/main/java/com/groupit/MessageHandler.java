@@ -2,6 +2,7 @@ package com.groupit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.widget.AbsListView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,19 +22,20 @@ public class MessageHandler {
 
 
     public MessageHandler(String group, String message, Context con) {
-        if (new File(ClientMessage.con.getFilesDir(), group).exists()) {
-            this.file = new File(ClientMessage.con.getFilesDir(), group);
+        this.con = con;
+        this.message = message;
+        this.group = group;
+
+        if (new File(con.getFilesDir(), group).exists()) {
+            this.file = new File(con.getFilesDir(), group);
         } else {
             try {
-                new File(ClientMessage.con.getFilesDir(), group).createNewFile();
-                this.file = new File(ClientMessage.con.getFilesDir(), group);
+                new File(con.getFilesDir(), group).createNewFile();
+                this.file = new File(con.getFilesDir(), group);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        this.message = message;
-        this.group = group;
-        this.con = con;
     }
 
     public void saveMessage() {
@@ -74,18 +76,29 @@ public class MessageHandler {
                                 if (line != null || line.equals("null") == false) {
                                     if (JSONUtils.canUseMessage(line)) {
                                         String message = JSONUtils.getMessage(line);
+                                        boolean isImage = JSONUtils.isImage(line);
                                         name = JSONUtils.getName(line);
                                         if (JSONUtils.getID(line).equals(GroupActivity.ID)) {
-                                            MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup);
+                                            if (isImage) {
+                                                MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, null, true));
+
+                                                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                                            } else {
+                                                MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup);
+                                            }
                                         } else {
-                                            MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup);
+                                            if (isImage) {
+                                                MessageActivity.myAdapter.add(new ChatMessage(false, message, name, true, null, true));
+
+                                                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                                            } else {
+                                                MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup);
+                                            }
                                         }
                                     }
                                 }
-                            }
-
-                            if (MessageActivity.display == null) {
-                                MessageActivity.display = name;
                             }
 
                         } catch (IOException e) {

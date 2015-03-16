@@ -74,6 +74,7 @@ public class GroupActivity  extends ActionBarActivity {
 
         if (MessageActivity.finishedSetup == false) {
 
+            MessageActivity.finishedSetup = true;
             Parse.enableLocalDatastore(this);
             Parse.initialize(this, "Z3eykoUuP71TBbOAagQryHbPnntPajAVQiNQGgOD", "xeQS9Hd3x9LS97GGoA0nbQenLB0qjIafjzWVKyem");
 
