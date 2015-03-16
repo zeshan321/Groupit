@@ -18,8 +18,9 @@
 <%= render partial:"bubble_style" %>
 <%= render partial:"messages_script" %>
 <div id="main">
-<h1><%= @group.name%></h1>
-<hr />
+<h1 style="float:left;"><%= @group.name %></h1>
+<%= link_to 'QR Code',group_qr_path(@group), style:'float:right;' %>
+<hr style="clear:both;"/>
 <div id="messages_table">
   <% @messages.each do |message| %>
 		<% if message.user == current_user %>
@@ -27,16 +28,17 @@
 		<% else %>
 		<div class="bubble">
 		<% end %>
-      <%= message.user.name %>:<%= message.content %>
+      <%= message.user.name %>:<%= message.text %>
     </div>
   <% end %>
 </div>
 <hr style="clear:both;"/>
 <div>
-<%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, id:'message_form') do %>
-<%= text_field_tag :text %>
+<%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, id:'message_form', style:'display:none;') do %>
+<%= hidden_field_tag :text, "OK" %>
 <% end %>
-<input type="button" onclick="send_message()" value="send">
+<input type="text" id="message_text">
+<input type="button" onclick="send_message(); $('#message_text').focus();" value="send">
 </div>
 
 </div>

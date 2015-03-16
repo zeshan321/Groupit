@@ -25,12 +25,22 @@ channel.bind("messages.new", function(message){
 });
 
 var send_message = function(){
+	var text = $('#message_text').val()
+	$('#message_form #text').val(text)
+	$('#message_text').val('')
 	$('#message_form').submit()
-	$('#message_form #text').val('');
 };
 
 $(document).ready(function(){
 	$('#messages_table').scrollTop($('#messages_table')[0].scrollHeight);
+
+	$('#message_text').keyup(function(event){
+			if(event.keyCode == 13){
+				console.log("ENTER");
+				send_message();
+			}
+	});
+
 });
 
 

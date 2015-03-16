@@ -15,7 +15,7 @@ $(document).ready(function(){
     <div id="error_explanation">
       <h2>
         <%= pluralize(@group.errors.count, "error") %> prohibited
-        this article from being saved:
+        this group from being created:
       </h2>
       <ul>
         <% @group.errors.full_messages.each do |msg| %>
@@ -28,14 +28,14 @@ $(document).ready(function(){
     <%= f.label :name %><br>
     <%= f.text_field :name %>
   </p>
-  
+
   <p>
   	<%= radio_button_tag :public, true, true %>
   	<%= label_tag 'Public' %>
   	<%= radio_button_tag :public, false%>
   	<%= label_tag 'Private' %>
   </p>
-  
+
   <p id="p_pass">
   	<%= label_tag 'Password' %>
   	<%= f.text_field :password %>

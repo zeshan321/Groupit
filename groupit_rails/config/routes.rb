@@ -1,9 +1,21 @@
 Rails.application.routes.draw do
-	root to: 'groups#index'
-  devise_for :users
-  resources :groups, only:[:show, :index, :new, :create] do
-		resources :messages, only:[:create]
-	end
+  root 'groups#index'
+
+  resources :users, only:[:create, :new, :edit, :update]
+
+  resources :groups, only:[:index, :show, :new, :create] do
+    resources :messages, only:[:create]
+  end
+
+  get 'groups/:id/join' => 'groups#join', as: 'join_group'
+  post 'groups/:id/join' => 'groups#authorize'
+
+  get 'join/:join_token' => 'groups#quick_join'
+  get 'groups/wrong_token' => 'groups#wrong_token'
+  get 'groups/:id/qr' => 'groups#show_qr_code', as: 'group_qr'
+
+  get 'groups/:id/old' => 'groups#old_message'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
