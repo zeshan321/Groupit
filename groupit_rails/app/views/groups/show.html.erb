@@ -1,3 +1,11 @@
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 <style>
 #messages_table {
 	overflow-y: scroll;
@@ -19,6 +27,7 @@
 <%= render partial:"messages_script" %>
 <div id="main">
 <h1 style="float:left;"><%= @group.name %></h1>
+<div class="fb-share-button" data-href="<%= request.original_url %>/" data-layout="button" style="float:right;">Join <%= @group.name %> on Groupit></div>
 <%= link_to 'QR Code',group_qr_path(@group), style:'float:right;' %>
 <hr style="clear:both;"/>
 <div id="messages_table">
