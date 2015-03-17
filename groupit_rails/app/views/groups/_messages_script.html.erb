@@ -19,6 +19,10 @@ channel.bind("messages.new", function(message){
 	appendMessage(message.text,message.author_name,(message.author_id == <%= current_user.id%>));
 });
 
+dispatcher.bind("subscriber_join", function(message){
+	console.log(message);
+});
+
 dispatcher.bind("log", function(message){
 	console.log(message);
 });
