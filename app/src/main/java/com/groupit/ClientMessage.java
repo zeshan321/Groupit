@@ -21,18 +21,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
 public class ClientMessage extends Service {
 
-    public static BufferedReader inputReader;
-    private static PrintWriter outputWriter;
     private Socket socket;
     private NotificationManager mNM;
+    private BroadcastReceiver networkStateReceiver;
+
     public static Context con = null;
     public static Context tempCon;
-
+    public static BufferedReader inputReader;
+    private static PrintWriter outputWriter;
     private static final int NO_CONNECTION_TYPE = -1;
     private static int sLastType = NO_CONNECTION_TYPE;
     public static boolean firstTime = false;
@@ -56,7 +58,7 @@ public class ClientMessage extends Service {
 
         showNotification();
 
-        BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+       networkStateReceiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -75,6 +77,8 @@ public class ClientMessage extends Service {
                             firstTime = true;
                         } else {
                             firstTime = false;
+                            stopService(new Intent(ClientMessage.this, ClientMessage.class));
+                            startService(new Intent(ClientMessage.this, ClientMessage.class));
                         }
                     }
 
@@ -111,6 +115,7 @@ public class ClientMessage extends Service {
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(networkStateReceiver);
         try {
             socket.close();
         } catch (IOException e) {
