@@ -3,12 +3,12 @@ module GroupsHelper
     if group.public_group
       return true
     else
-      return group.users.exists?(current_user)
+      return group.users.exists?(id:current_user)
     end
   end
 
   def user_join group
-    unless group.users.exists?(current_user)
+    unless group.users.exists?(id:current_user)
       group.users << current_user
     end
   end
