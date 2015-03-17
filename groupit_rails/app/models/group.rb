@@ -26,14 +26,7 @@ class Group < ActiveRecord::Base
   end
 
   def generate_join_token
-    token = random_token
-    i = 0
-    #Retry until the unique join_token is found
-    while Group.exists?(:join_token => token)
-      i += 1
-      length = (0.05*i*i + 6).floor
-      token = random_token(length)
-    end
+    token = SecureRandom.urlsafe_base64 + self.id.to_s(36)
     update_attribute :join_token, token
   end
 
@@ -44,13 +37,5 @@ class Group < ActiveRecord::Base
   def generate_qr_image(path)
     qr = RQRCode::QRCode.new(quick_join_url(path), :size => 4, :level => :h )
     png = qr.to_img.resize(200,200).to_data_url
-  end
-
-  private
-  def random_token(length=6)
-    chars = 'abcdefghkmnpqrstwxyz23456789'
-    token = ''
-    length.times { token << chars[rand(chars.size)] }
-    token
   end
 end
