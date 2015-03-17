@@ -4,8 +4,15 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Binder;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.widget.AbsListView;
 
@@ -17,40 +24,98 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class ClientMessage {
+public class ClientMessage extends Service {
 
-    public static Socket socket = null;
-    public static ClientMessage cm = null;
+    public static BufferedReader inputReader;
+    private static PrintWriter outputWriter;
+    private Socket socket;
+    private NotificationManager mNM;
+    public static Context con = null;
+    public static Context tempCon;
 
-    private BufferedReader inputReader;
-    private PrintWriter outputWriter;
-    public static Context con;
+    private static final int NO_CONNECTION_TYPE = -1;
+    private static int sLastType = NO_CONNECTION_TYPE;
+    public static boolean firstTime = false;
 
-    public ClientMessage(Context cont) {
-        con = cont;
-        connectToServer();
-        sendData(JSONUtils.getJSONList());
-        cm = this;
+    public class LocalBinder extends Binder {
+        ClientMessage getService() {
+            return ClientMessage.this;
+        }
     }
 
-    private void connectToServer() {
-        try {
-            socket = new Socket(InetAddress.getByName(MessageActivity.SocketAddress), MessageActivity.SocketServerPORT);
-            socket.setKeepAlive(true);
-            inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            outputWriter = new PrintWriter(socket.getOutputStream(), true);
-            MessageActivity.finishedSetup = true;
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
 
+    private final IBinder mBinder = new LocalBinder();
+
+    @Override
+    public void onCreate() {
+        mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+
+        showNotification();
+
+        BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                ConnectivityManager connectivityManager = (ConnectivityManager)
+                        context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                final int currentType = activeNetworkInfo != null
+                        ? activeNetworkInfo.getType() : NO_CONNECTION_TYPE;
+
+                if (sLastType != currentType) {
+                    if (activeNetworkInfo != null) {
+                        boolean isConnectedOrConnecting = activeNetworkInfo.isConnectedOrConnecting();
+
+                        if (firstTime == false) {
+                            firstTime = true;
+                        } else {
+                            firstTime = false;
+                        }
+                    }
+
+                    sLastType = currentType;
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkStateReceiver, filter);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    socket = new Socket(InetAddress.getByName(MessageActivity.SocketAddress), MessageActivity.SocketServerPORT);
+                    inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    outputWriter = new PrintWriter(socket.getOutputStream(), true);
+
+                    sendData(JSONUtils.getJSONList());
+                    openInput();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        try {
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        new Thread() {
-            @Override
-            public void run() {
-                receiveData();
-            }
-        }.start();
     }
 
     private void receiveData() {
@@ -59,17 +124,20 @@ public class ClientMessage {
             while ((data = inputReader.readLine()) != null)
             {
 
-                    if (JSONUtils.canUseMessage(data) == false) {
-                        return;
-                    }
+                if (JSONUtils.canUseMessage(data) == false) {
+                    return;
+                }
 
-                    final String data1 = data;
-                    final String message = JSONUtils.getMessage(data);
-                    final String name = JSONUtils.getName(data);
-                    final String id = JSONUtils.getID(data);
-                    final String group = JSONUtils.getGroupID(data);
-                    final Boolean isImage = JSONUtils.isImage(data);
+                final String data1 = data;
+                final String message = JSONUtils.getMessage(data);
+                final String name = JSONUtils.getName(data);
+                final String id = JSONUtils.getID(data);
+                final String group = JSONUtils.getGroupID(data);
+                final Boolean isImage = JSONUtils.isImage(data);
 
+
+                System.out.println(message);
+                if (con != null) {
                     ((Activity) con).runOnUiThread(new Runnable() {
                         public void run() {
 
@@ -98,40 +166,41 @@ public class ClientMessage {
                             }
                         }
                     });
+                } else {
+                    MessageHandler mh = new MessageHandler(group, data1, tempCon);
+                    mh.saveMessage();
+                }
 
-                    if (MessageActivity.isLooking == false || MessageActivity.currentGroup.equals(group) == false && id.equals(GroupActivity.ID) == false) {
-                        if (isImage) {
-                            Notification(name, "Image", group);
-                        } else {
-                            Notification(name, message, group);
-                        }
+                if (MessageActivity.isLooking == false || MessageActivity.currentGroup.equals(group) == false && id.equals(GroupActivity.ID) == false) {
+                    if (isImage) {
+                        Notification(name, "Image", group);
+                    } else {
+                        Notification(name, message, group);
                     }
+                }
             }
         } catch (SocketException e) {
-            ClientMessage.closeSocket();
-            MessageActivity.cm = new ClientMessage(MessageActivity.con);
+           e.printStackTrace();
         } catch (IOException e) {
-            ClientMessage.closeSocket();
-            MessageActivity.cm = new ClientMessage(MessageActivity.con);
+            e.printStackTrace();
         } catch (NullPointerException e) {
-        ClientMessage.closeSocket();
-        MessageActivity.cm = new ClientMessage(MessageActivity.con);
-    }
+            e.printStackTrace();
+        }
     }
 
-    public static void Notification(String notificationTitle, String notificationMessage, String group) {
+    public void Notification(String notificationTitle, String notificationMessage, String group) {
 
-        Intent myIntent = new Intent(con, MessageActivity.class);
+        Intent myIntent = new Intent(this, GroupActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         myIntent.setAction(Long.toString(System.currentTimeMillis()));
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
-                con,
+                this,
                 0,
                 myIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification myNotification = new NotificationCompat.Builder(con)
+        Notification myNotification = new NotificationCompat.Builder(this)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationMessage)
                 .setTicker(notificationTitle + " @ " + group)
@@ -142,34 +211,38 @@ public class ClientMessage {
                 .setSmallIcon(R.mipmap.logo)
                 .build();
 
-        NotificationManager notificationManager =
-                (NotificationManager)con.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0, myNotification);
+        mNM.notify(0, myNotification);
     }
 
-    public void sendData(String messageToSend) {
-        outputWriter.println(messageToSend);
-        MessageActivity.allowReConnect = false;
-    }
-
-    public static boolean isClosed() {
-        if (socket == null || socket.isClosed()) {
-            return true;
-        }
-        return false;
-    }
-
-    public static ClientMessage reconnect() {
-        return new ClientMessage(MessageActivity.con);
-    }
-
-    public static void closeSocket() {
-        if (socket != null) {
-            try {
-                socket.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+    public void openInput() {
+        new Thread() {
+            @Override
+            public void run() {
+                receiveData();
             }
+        }.start();
+    }
+
+    public static void sendData(String messageToSend) {
+        try {
+            outputWriter.println(messageToSend);
+            MessageActivity.allowReConnect = false;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    private void showNotification() {
+        Notification notification = new Notification(R.mipmap.logo, "Starting GroupIt",
+                System.currentTimeMillis());
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, ClientMessage.class), 0);
+
+        notification.setLatestEventInfo(this, "GroupIt",
+                "GroupIt is running", contentIntent);
+        notification.flags|=Notification.FLAG_NO_CLEAR;
+
+        startForeground(4756, notification);
     }
 }

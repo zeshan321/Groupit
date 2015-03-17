@@ -73,7 +73,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
             if (chatMessageObj.useByte) {
                 byte[] decodedString = Base64.decode(chatMessageObj.message, Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                
+
                 chatImage.setImageBitmap(decodedByte);
             } else {
                 chatImage.setImageURI(chatMessageObj.imageU);

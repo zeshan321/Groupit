@@ -2,7 +2,6 @@ package com.groupit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -37,8 +35,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.security.acl.Group;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -55,7 +51,6 @@ public class GroupActivity  extends ActionBarActivity {
     private long mBackPressed;
 
     Context con;
-    ClientMessage cm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,19 +73,9 @@ public class GroupActivity  extends ActionBarActivity {
             Parse.enableLocalDatastore(this);
             Parse.initialize(this, "Z3eykoUuP71TBbOAagQryHbPnntPajAVQiNQGgOD", "xeQS9Hd3x9LS97GGoA0nbQenLB0qjIafjzWVKyem");
 
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        cm = new ClientMessage(con);
-                        MessageActivity.cm = cm;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            thread.start();
+            // Open socket
+            ClientMessage.con = this;
+            startService(new Intent(this, ClientMessage.class));
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
 
@@ -158,9 +143,7 @@ public class GroupActivity  extends ActionBarActivity {
 
                                 groups.remove(group);
 
-                                if (ClientMessage.cm != null) {
-                                    ClientMessage.cm.sendData(JSONUtils.getJSONList());
-                                }
+                                ClientMessage.sendData(JSONUtils.getJSONList());
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -322,9 +305,7 @@ public class GroupActivity  extends ActionBarActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (ClientMessage.cm != null) {
-            ClientMessage.cm.sendData(JSONUtils.getJSONList());
-        }
+        ClientMessage.sendData(JSONUtils.getJSONList());
     }
 
     public void loadGroups() {
@@ -352,6 +333,30 @@ public class GroupActivity  extends ActionBarActivity {
             e.printStackTrace();
         }
     }
+
+    public static void loadGroupMem(Context con) {
+        File file = new File(con.getFilesDir(), "groups");
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader bufferedReader = new BufferedReader(isr);
+
+        String line;
+        try {
+            while ((line = bufferedReader.readLine()) != null) {
+                String id = JSONUtils.getGroupID(line);
+                groups.add(id);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void removeGroup(String lineToRemove) {
 

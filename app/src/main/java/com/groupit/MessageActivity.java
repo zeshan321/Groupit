@@ -34,7 +34,6 @@ public class MessageActivity extends ActionBarActivity {
     public static ArrayAdapter myAdapter;
     public static Boolean allowReConnect = false;
     public static String display;
-    public static ClientMessage cm = null;
     public static Context con;
     public static String currentGroup = "0";
     public static boolean isLooking = false;
@@ -56,8 +55,9 @@ public class MessageActivity extends ActionBarActivity {
 
         isLooking = true;
         con = this;
-        myAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.list_item_message_left);
+        ClientMessage.con = this;
 
+        myAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.list_item_message_left);
         chatMsg = (ListView) findViewById(R.id.list_view_messages);
 
         MessageHandler mh = new MessageHandler(currentGroup, null, con);
@@ -75,28 +75,10 @@ public class MessageActivity extends ActionBarActivity {
                     return;
                 }
 
-                try {
-                    json = JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false);
-                    MessageActivity.addMessage(true, JSONUtils.getMessage(json), JSONUtils.getName(json), currentGroup);
-                    cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false));
-                    editTextSay.setText("");
-                } catch (NullPointerException e) {
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                System.out.println("RECONNECTING: 1");
-                                ClientMessage.closeSocket();
-                                cm = new ClientMessage(con);
-                                cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false));
-                                editTextSay.setText("");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                    thread.start();
-                }
+                json = JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false);
+                MessageActivity.addMessage(true, JSONUtils.getMessage(json), JSONUtils.getName(json), currentGroup);
+                ClientMessage.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false));
+                editTextSay.setText("");
             }
         });
     }
@@ -107,21 +89,6 @@ public class MessageActivity extends ActionBarActivity {
         super.onResume();
 
         isLooking = true;
-        if (ClientMessage.socket == null || ClientMessage.socket.isConnected() == false) {
-            ClientMessage.closeSocket();
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        System.out.println("RECONNECTING: 3");
-                        cm = new ClientMessage(con);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            thread.start();
-        }
     }
 
     @Override
@@ -224,7 +191,7 @@ public class MessageActivity extends ActionBarActivity {
                 byte[] byte_img_data = baos.toByteArray();
                 String encodedImage = Base64.encodeToString(byte_img_data, Base64.DEFAULT);
 
-                cm.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, encodedImage, display, true));
+                ClientMessage.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, encodedImage, display, true));
             }
         }
     }

@@ -72,6 +72,12 @@ public class MessageHandler {
                         try {
                             String line;
                             String name = null;
+
+                            if (MessageActivity.display == null) {
+                                NameHandler nh = new NameHandler(null, con);
+                                MessageActivity.display = nh.getName();
+                            }
+
                             while ((line = bufferedReader.readLine()) != null) {
                                 if (line != null || line.equals("null") == false) {
                                     if (JSONUtils.canUseMessage(line)) {

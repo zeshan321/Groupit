@@ -28,4 +28,5 @@ dependencies {
     compile 'com.cocosw.accessory:connectivity:0.4.1'
     compile files('libs/Parse-1.8.3.jar')
     compile files('libs/bolts-android-1.1.4.jar')
+    compile 'com.github.nkzawa:socket.io-client:0.4.2'
 }
