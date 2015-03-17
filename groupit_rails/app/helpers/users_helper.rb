@@ -20,6 +20,9 @@ module UsersHelper
         if user.authenticated? cookies[:remember_token]
           session[:user_id] = user_id
           @current_user = login_user(user)
+        else
+          cookies.delete :user_id
+          cookies.delete :remember_token
         end
       end
     end
