@@ -26,7 +26,7 @@ class Group < ActiveRecord::Base
   end
 
   def generate_join_token
-    token = SecureRandom.urlsafe_base64 + self.id.to_s(36)
+    token = SecureRandom.urlsafe_base64(8) + self.id.to_s(36)
     update_attribute :join_token, token
   end
 
@@ -35,7 +35,7 @@ class Group < ActiveRecord::Base
   end
 
   def generate_qr_image(path)
-    qr = RQRCode::QRCode.new(quick_join_url(path), :size => 4, :level => :h )
+    qr = RQRCode::QRCode.new(quick_join_url(path), :size => 6, :level => :h )
     png = qr.to_img.resize(200,200).to_data_url
   end
 end
