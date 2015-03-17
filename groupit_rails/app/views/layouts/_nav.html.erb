@@ -1,0 +1,41 @@
+<style>
+nav{
+	height:24px;
+	padding: 10px;
+	background-color:#16a085;
+	vertical-align: middle;
+}
+
+nav a.user_button{
+	float: right;
+	position: relative;
+	bottom: 2px;
+	text-decoration:none;
+	color:white;
+	padding:6px 10px 6px 10px;
+	margin-left:20px;
+	border:1px solid white;
+	border-radius:4px;
+	vertical-align: middle;
+}
+
+nav a.home{
+	position: relative;
+	float:left;
+	text-decoration:none;
+	font-size: 26px;
+	font-weight: bold;
+	color: white;
+}
+
+nav a.user_button:hover{
+	background-color:white;
+	color:#16a085;
+}
+</style>
+<nav>
+<%= link_to "Groupit", root_path, class: :home %>
+<% if user_signed_in? %>
+	<%= link_to "Hi, #{current_user.name}", edit_user_path(current_user), class: :user_button %>
+<% end %>
+</nav>

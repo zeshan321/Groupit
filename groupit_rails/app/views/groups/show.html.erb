@@ -1,15 +1,44 @@
-<table>
+<style>
+#messages_table {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	height:400px;
+	width:100%;
+}
+#main {
+	width:70%;
+	left:15%;
+	position:relative;
+}
+#message_form {
+	display:inline-block;
+	margin-right:20px;
+}
+</style>
+<%= render partial:"bubble_style" %>
+<%= render partial:"messages_script" %>
+<div id="main">
+<h1 style="float:left;"><%= @group.name %></h1>
+<%= link_to 'QR Code',group_qr_path(@group), style:'float:right;' %>
+<hr style="clear:both;"/>
+<div id="messages_table">
   <% @messages.each do |message| %>
-    <tr>
-      <td><%= message.user.name %>:</td>
-      <td><%= message.content %></td>
-    </tr>
+		<% if message.user == current_user %>
+    <div class="bubble bubble--alt">
+		<% else %>
+		<div class="bubble">
+		<% end %>
+      <%= message.user.name %>:<%= message.text %>
+    </div>
   <% end %>
-</table>
-<hr />
-<%= form_tag(controller: "messages", action: "create") do %>
-<%= text_field_tag "content" %>
-<input type = "hidden" name = "author" value = "<%= current_user.id %>">
-<input type = "hidden" name = "group" value = "<%= params[:id] %>">
-<%= submit_tag "Send" %>
+</div>
+<hr style="clear:both;"/>
+<div>
+<%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, id:'message_form', style:'display:none;') do %>
+<%= hidden_field_tag :text, "OK" %>
 <% end %>
+<input type="text" id="message_text">
+<input type="button" onclick="send_message(); $('#message_text').focus();" value="send">
+</div>
+
+</div>

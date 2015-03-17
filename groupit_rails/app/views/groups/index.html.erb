@@ -1,15 +1,24 @@
 <h1>All Groups</h1>
+Total&nbsp;<%= pluralize(@groups.count,'group') %>
+&nbsp;&nbsp;&nbsp;
 <%= link_to 'New group', new_group_path %>
+<hr/>
 <table>
+  <style>
+  th,td {
+    padding:5px 10px 5px 10px;
+    text-align: center;
+  }
+  </style>
   <tr>
-    <th>Name</th>
-    <th colspan="2"></th>
+    <th>Group</th>
+    <th>Type</th>
   </tr>
- 
+
   <% @groups.each do |group| %>
     <tr>
-      <td><%= group.name %></td>
-      <td><%= link_to 'Show', group_path(group) %></td>
+      <td><%= link_to group.name, group_path(group) %></td>
+      <td><%= group.public_group ? "Public" : "Private" %></td>
     </tr>
   <% end %>
 </table>

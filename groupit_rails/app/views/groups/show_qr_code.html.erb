@@ -1,0 +1,9 @@
+<div style="text-align:center;">
+<h1>Join <%= @group.name %></h1>
+<%= image_tag @group.generate_qr_image "#{request.host_with_port}"%>
+<br/>
+<h2>or</h2>
+<br/>
+<h1><% join_url = @group.quick_join_url "#{request.host_with_port}" %><h1>
+<%= link_to join_url,join_url %>
+</div>
