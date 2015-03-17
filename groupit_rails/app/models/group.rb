@@ -38,7 +38,7 @@ class Group < ActiveRecord::Base
   end
 
   def quick_join_url(path)
-    path + '/join/' + self.join_token
+    'http://'+ path + '/join/' + self.join_token
   end
 
   def generate_qr_image(path)
