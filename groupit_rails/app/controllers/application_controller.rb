@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   include UsersHelper
-
+  include GroupsHelper
   def page_not_found
     render :file => "#{Rails.root}/public/404.html",  :status => 404
   end

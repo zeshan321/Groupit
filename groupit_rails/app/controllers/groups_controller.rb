@@ -1,5 +1,4 @@
 class GroupsController < ApplicationController
-  include GroupsHelper
   before_filter :authenticate_user, only: [:show,:quick_join,:old_message]
   rescue_from ActiveRecord::RecordNotFound, :with => :page_not_found
 
@@ -17,10 +16,29 @@ class GroupsController < ApplicationController
     @group = Group.find(params[:id])
   end
 
+  def new
+    @group = Group.new
+  end
 
-	def new
-		@group = Group.new
+  def create
+		group_params = params.require(:group)
+		@group = Group.new(group_params.permit(:name))
+		if params[:public] == 'false'
+			@group.public_group = false
+			@group.password = group_params[:password]
+		end
+		if @group.save
+      @group.generate_join_token
+			redirect_to group_path(@group)
+		else
+			render 'new'
+		end
 	end
+
+  def join
+    @group = Group.find(params[:id])
+    @wrong_password_err = false
+  end
 
   def authorize
     @group = Group.find(params[:id])
@@ -48,26 +66,6 @@ class GroupsController < ApplicationController
   def wrong_token
 
   end
-
-  def join
-    @group = Group.find(params[:id])
-    @wrong_password_err = false
-  end
-
-	def create
-		group_params = params.require(:group)
-		@group = Group.new(group_params.permit(:name))
-		if params[:public] == 'false'
-			@group.public_group = false
-			@group.password = group_params[:password]
-		end
-		if @group.save
-      @group.generate_join_token
-			redirect_to group_path(@group)
-		else
-			render 'new'
-		end
-	end
 
   def old_message
     @group = Group.find(params[:id])

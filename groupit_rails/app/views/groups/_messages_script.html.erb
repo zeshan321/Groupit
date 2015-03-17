@@ -1,10 +1,6 @@
 <script>
 var dispatcher = new WebSocketRails('<%= request.host_with_port() %>/websocket');
-var channel = dispatcher.subscribe_private("g<%= params[:id] %>")
-
-dispatcher.bind('client_connected',function(message){
-	console.log(message);
-});
+var channel = dispatcher.subscribe_private("G<%= params[:id] %>")
 
 var appendMessage = function(text,author_name,self_message){
 	var message_div = document.createElement('div');
@@ -19,9 +15,16 @@ var appendMessage = function(text,author_name,self_message){
 }
 
 channel.bind("messages.new", function(message){
-	console.log("GOT IT");
 	console.log(message);
 	appendMessage(message.text,message.author_name,(message.author_id == <%= current_user.id%>));
+});
+
+dispatcher.bind("subscriber_join", function(message){
+	console.log(message);
+});
+
+dispatcher.bind("log", function(message){
+	console.log(message);
 });
 
 var send_message = function(){

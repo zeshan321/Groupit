@@ -24,14 +24,20 @@ class UsersController < ApplicationController
 
   def edit
     @user = current_user
-    if @user.id != params[:id]
+    if @user.id != params[:id].to_i
       page_unauthorized
     end
   end
 
   def update
     @user = current_user
-    if @user.update_attributes(:name => params.require(:user)[name])
+    old_name = @user.name
+    @user.name = params.require(:user)[:name]
+    if @user.save
+      redirect_to root_path
+    else
+      @user.name = old_name
+      render :edit
     end
   end
 end
