@@ -1,5 +1,4 @@
 class GroupsController < ApplicationController
-  include GroupsHelper
   before_filter :authenticate_user, only: [:show,:quick_join,:old_message]
   rescue_from ActiveRecord::RecordNotFound, :with => :page_not_found
 
