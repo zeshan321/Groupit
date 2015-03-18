@@ -32,6 +32,10 @@ gem 'websocket-rails'
 # Use rqrcode_png for qr code
 gem 'rqrcode_png'
 
+# Use bootstrap-sass for styling
+gem 'bootstrap-sass', '~> 3.2.0'
+gem 'autoprefixer-rails'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 

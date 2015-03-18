@@ -1,31 +1,25 @@
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
 <style>
-nav{
-	height:24px;
-	padding: 10px;
-	background-color:#16a085;
-	vertical-align: middle;
+.navbar{
+background-color:#00B85C;
+}
+.nav.navbar-nav.navbar-right li a{
+    color: white;
 }
 
 nav a.user_button{
-	float: right;
-	position: relative;
-	bottom: 2px;
-	text-decoration:none;
+	margin-top:10%;
+	margin-right:10%;
 	color:white;
 	padding:6px 10px 6px 10px;
-	margin-left:20px;
 	border:1px solid white;
 	border-radius:4px;
 	vertical-align: middle;
-}
-
-nav a.home{
-	position: relative;
-	float:left;
-	text-decoration:none;
-	font-size: 26px;
-	font-weight: bold;
-	color: white;
 }
 
 nav a.user_button:hover{
@@ -33,9 +27,20 @@ nav a.user_button:hover{
 	color:#16a085;
 }
 </style>
-<nav>
-<%= link_to "Groupit", root_path, class: :home %>
-<% if user_signed_in? %>
-	<%= link_to "Hi, #{current_user.name}", edit_user_path(current_user), class: :user_button %>
-<% end %>
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header" style="color:white">
+      <a class="navbar-brand" href="/" style="font-size:200%;color:white;"><b>Groupit</b></a>
+    </div>
+    <div>
+      <ul class="nav navbar-nav navbar-right" style="color:white">
+        <li style="font-size:135%;color:white;"><a class="user_button" href="/">Home</a></li>
+        <li style="font-size:135%;color:white;"><%= link_to "#{current_user.name}", edit_user_path(current_user), class: :user_button %></li>
+        
+      </ul>
+    </div>
+  </div>
 </nav>

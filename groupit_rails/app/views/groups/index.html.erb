@@ -1,24 +1,40 @@
-<h1>All Groups</h1>
-Total&nbsp;<%= pluralize(@groups.count,'group') %>
+<style>
+hr{
+background-color: #eee;
+border: 0 none;
+height: 2px;
+}
+a.button:hover{
+text-decoration:none;
+}
+</style>
+<center>  
+<h2 style="padding:10px">All Groups</h2>
+<div>
+
+<%-# pluralize(@groups.count,'group') -%>
+
+<a class="button" href="/groups/new">
+<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Create Group</button>
+</a>
 &nbsp;&nbsp;&nbsp;
-<%= link_to 'New group', new_group_path %>
+<a class="button" href="/groups/join">
+<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Join Group</button>
+</a>
+</div>
 <hr/>
 <table>
-  <style>
-  th,td {
-    padding:5px 10px 5px 10px;
-    text-align: center;
-  }
-  </style>
-  <tr>
-    <th>Group</th>
-    <th>Type</th>
+ <tr>
+    <th style="padding-right:180px;padding-bottom:15px;padding-top:5px;">Group</th>
+    <th style="padding-top:5px;padding-bottom:15px;">Type</th>
   </tr>
 
   <% @groups.each do |group| %>
     <tr>
-      <td><%= link_to group.name, group_path(group) %></td>
-      <td><%= group.public_group ? "Public" : "Private" %></td>
+      <td style="padding:3px;"><%= link_to group.name, group_path(group) %></td>
+      <td style="padding:3px;"><%= group.public_group ? "Public" : "Private" %></td>
     </tr>
   <% end %>
+    
 </table>
+</center>
