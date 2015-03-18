@@ -16,20 +16,16 @@ text-decoration:none;
 <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Create Group</button>
 </a>
 </div>
-<!--
-<a class="button" href="/groups/join">
-<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Search Group</button>
-</a>
--->
+
 <div style="display:inline-block;">
-<form class="form-inline float-right" role="form">
+<%= form_tag '/search', class:'form-inline float-right', role:'form' do%>
 <div class="input-group">
-<input type="text" class="form-control" placeholder="Search groups...">
+<%= text_field_tag :text, nil, class:'form-control', placeholder:'Search groups...' %>
 <span class="input-group-btn">
-  <button class="btn btn-default" type="button">Go!</button>
+  <%= submit_tag 'Go!', class:'btn btn-default' %>
 </span>
 </div>
-</form>
+<% end %>
 </div>
 </div>
 <hr/>
