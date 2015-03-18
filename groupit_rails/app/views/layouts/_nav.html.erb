@@ -1,4 +1,18 @@
 <style>
+#group-list, .list-groups{
+color:white;
+background-color:#00B85C;
+}
+#group-list:hover{
+color:#00B85C;
+background-color:white;
+}
+ul li:hover ul{
+display:block;
+}
+ul li ul{
+display:none;
+}
 #buttonOne:hover{
 color:white;
 background-color:#4DDB94;	
@@ -7,17 +21,9 @@ background-color:#4DDB94;
 color:white;
 background-color:#4DDB94;	
 }
-.list-groups{
-cursor:default;
-color:white;
-background-color:#00B85C;
-}
-li.list-groups:hover{
-cursor:default;
-color:#00B85C;
-background-color:white;
-}
+
 </style>
+
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header" style="color:white">
@@ -30,13 +36,12 @@ background-color:white;
 	<li><a href="#" class="user_button" data-toggle="dropdown" style="font-size:135%;color:white;" id="buttonOne">Groups</a>  
 	<ul class="dropdown-menu list-groups" role="menu" aria-labelledby="groups-menu">
 	
+	<% current_user.groups.each do |group| %>
 	<li class="list-groups">
-	Group 1
+	<%= link_to group.name, group_path(group), id: :'group-list' %>
 	</li>
-	<li class="list-groups">
-	Group 2
-	</li>
-	
+	<% end %>
+
 	</ul>	
 	
 	</li>

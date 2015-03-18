@@ -58,7 +58,7 @@ Share
 <%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, id:'message_form', style:'display:none;') do %>
 <%= hidden_field_tag :text, "OK" %>
 <% end %>
-<input type="text" id="message_text" placeholder="Enter message here...">
+<input type="text" id="message_text" placeholder="Enter message here..." autofocus>
 <input type="button" class="btn btn-success" onclick="send_message(); $('#message_text').focus();" value="send">
 </div>
 </div>

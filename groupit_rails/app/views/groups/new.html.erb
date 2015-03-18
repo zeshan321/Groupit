@@ -1,3 +1,17 @@
+<style>
+.create-box{
+text-align:center;
+}
+.text-input{
+padding:5px;
+}
+a{
+color:#00B85C;
+}
+a:hover{
+color:#00743A;
+}
+</style>
 <script>
 $(document).ready(function(){
 	$("#p_pass").hide();
@@ -9,7 +23,8 @@ $(document).ready(function(){
 	});
 });
 </script>
-<h2>Create Group</h2>
+<div class="create-box">
+<h2 style="padding-bottom:10px;"><a href="/"><span class="glyphicon glyphicon-arrow-left" style="font-size:20px"></span></a>&nbsp;&nbsp;Create Group</h2>
 <%= form_for @group do |f| %>
 	<% if @group.errors.any? %>
     <div id="error_explanation">
@@ -24,22 +39,19 @@ $(document).ready(function(){
       </ul>
     </div>
   <% end %>
-  <p>
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
-  </p>
 
-  <p>
+  <p style="padding:6px;">
   	<%= radio_button_tag :public, true, true %>
-  	<%= label_tag 'Public' %>
+  	<%= label_tag 'Public' %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   	<%= radio_button_tag :public, false%>
   	<%= label_tag 'Private' %>
   </p>
 
-  <p id="p_pass">
-  	<%= label_tag 'Password' %>
-  	<%= f.text_field :password %>
-  <p>
-    <%= f.submit %>
+  <p id="p_pass" style="padding-bottom:10px;">
+  	<%= f.text_field :password, placeholder: :"Group Password..." %>
+  <p style="padding:5px;">
+    <%= f.text_field :name, placeholder: :"Name", :class => 'text-input' %>
+    <%= f.submit 'Create Group', :class => 'btn btn-success' %>
   </p>
+</div>
 <% end %>
