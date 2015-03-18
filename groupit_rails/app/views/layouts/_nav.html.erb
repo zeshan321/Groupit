@@ -1,7 +1,21 @@
 <style>
+#buttonOne:hover{
+color:white;
+background-color:#4DDB94;	
+}
+#buttonTwo:hover{
+color:white;
+background-color:#4DDB94;	
+}
 .list-groups{
+cursor:default;
 color:white;
 background-color:#00B85C;
+}
+li.list-groups:hover{
+cursor:default;
+color:#00B85C;
+background-color:white;
 }
 </style>
 <nav class="navbar navbar-default">
@@ -13,8 +27,8 @@ background-color:#00B85C;
     <div>
       <ul class="nav navbar-nav navbar-right" style="color:white">      
 	
-	<li><a class="user_button dropdown-toggle" type="button" 		id="groups-menu" data-toggle="dropdown" style="font-size:135%;color:white;">Groups</a>  
-	<ul class="dropdown-menu" role="menu" aria-labelledby="groups-menu">
+	<li><a href="#" class="user_button" data-toggle="dropdown" style="font-size:135%;color:white;" id="buttonOne">Groups</a>  
+	<ul class="dropdown-menu list-groups" role="menu" aria-labelledby="groups-menu">
 	
 	<li class="list-groups">
 	Group 1
@@ -27,7 +41,7 @@ background-color:#00B85C;
 	
 	</li>
 
-        <li style="font-size:135%;color:white;"><%= link_to "#{current_user.name}", edit_user_path(current_user), class: :user_button %></li>
+        <li style="font-size:135%;color:white;"><%= link_to "#{current_user.name}", edit_user_path(current_user), class: :user_button, id: :buttonTwo %></li>
       </ul>
     </div>
     <% end %>
