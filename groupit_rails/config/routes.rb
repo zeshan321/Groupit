@@ -3,6 +3,8 @@ Rails.application.routes.draw do
 
   resources :users, only:[:create, :new, :edit, :update]
 
+  get 'api/users/new' => 'users#create_api'
+
   resources :groups, only:[:index, :show, :new, :create] do
     resources :messages, only:[:create]
   end
