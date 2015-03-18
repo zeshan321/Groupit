@@ -1,35 +1,3 @@
-<!--
-<meta property="fb:app_id" content="792700110784962" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="<%= request.original_url %>" />
-<meta property="og:title" content="Introducing our New Site" />
-<meta property="og:description" content="http://samples.ogp.me/390580850990722" />
-
-<div id="fb-root"></div>
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '792700110784962',
-      xfbml      : true,
-      version    : 'v2.2'
-    });
-    FB.ui({
-    method: 'share',
-    href: '<%= request.original_url %>',
-    }, function(response){});
-
-  };
-
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-
-</script>
--->
 <style>
 #messages_table {
 	overflow-y: scroll;
@@ -47,8 +15,10 @@
 	margin-right:20px;
 }
 </style>
+
 <%= render partial:"bubble_style" %>
 <%= render partial:"messages_script" %>
+
 <div id="main">
 <div id="title" style="clear:both;">
 <span style="font-size:35px;font-weight:bold;"><%= @group.name %></span>
@@ -60,11 +30,13 @@ Share
 </div>
 <hr style="clear:both;"/>
 <div id="messages_table">
+
   <% @messages.each do |message| %>
 		<div class="bubble <%= raw (message.user == current_user)? 'bubble--alt':"" %>">
       <%= message.user.name %>:<%= message.text %>
     </div>
   <% end %>
+	
 </div>
 <hr style="clear:both;"/>
 <div>
