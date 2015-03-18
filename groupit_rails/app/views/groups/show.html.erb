@@ -14,14 +14,29 @@
 	display:inline-block;
 	margin-right:20px;
 }
+#message_text{
+padding:5px;
+width:50%;
+}
+a{
+color:#00B85C;
+}
+a:hover{
+color:#00743A;
+}
+hr{
+color:#eee;
+background-color:#eee;
+height:1px;
+}
 </style>
 
 <%= render partial:"bubble_style" %>
 <%= render partial:"messages_script" %>
 
 <div id="main">
-<div id="title" style="clear:both;">
-<span style="font-size:35px;font-weight:bold;"><%= @group.name %></span>
+<div id="title" style="clear:both;"><a href="/"><span class="glyphicon glyphicon-arrow-left" style="font-size:20px;"></span></a>
+<span style="font-size:35px;font-weight:bold;color:#00743A;">&nbsp;&nbsp;<%= @group.name %></span>
 <a href="<%= @group.id %>/qr" style="float:right;font-size:150%;">
 <span class="glyphicon glyphicon-qrcode">
 </span>
@@ -39,12 +54,11 @@ Share
 	
 </div>
 <hr style="clear:both;"/>
-<div>
+<div style="text-align:center;">
 <%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, id:'message_form', style:'display:none;') do %>
 <%= hidden_field_tag :text, "OK" %>
 <% end %>
-<input type="text" id="message_text">
-<input type="button" onclick="send_message(); $('#message_text').focus();" value="send">
+<input type="text" id="message_text" placeholder="Enter message here...">
+<input type="button" class="btn btn-success" onclick="send_message(); $('#message_text').focus();" value="send">
 </div>
-
 </div>
