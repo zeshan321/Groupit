@@ -1,6 +1,8 @@
 class User < ActiveRecord::Base
   attr_accessor :remember_token
 
+  has_and_belongs_to_many :groups
+
   has_many :messages
 
   validates :name, presence: true, length: { minimum: 3, maximum: 32}
