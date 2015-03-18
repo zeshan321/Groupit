@@ -1,0 +1,40 @@
+<center>
+<div style="display:inline-block;">
+<%= form_tag '/search', method:'get', class:'form-inline float-right', role:'form' do%>
+<div class="input-group">
+<%= text_field_tag :text, params[:text], class:'form-control', placeholder:'Search groups...' %>
+<span class="input-group-btn">
+  <%= submit_tag 'Go!', class:'btn btn-default' %>
+</span>
+</div>
+<% end %>
+</div>
+<hr/>
+<% unless @quick_join_group.nil? %>
+<table>
+  <tr>
+     <th style="padding-right:180px;padding-bottom:15px;padding-top:5px;">Quick Join Group</th>
+     <th style="padding-top:5px;padding-bottom:15px;">Type</th>
+  </tr>
+  <tr>
+    <td style="padding:3px;"><%= link_to @quick_join_group[1], "/join/#{@keywords[0]}" %></td>
+    <td style="padding:3px;"><%= @quick_join_group[2] ? "Public" : "Private" %></td>
+  </tr>
+</table>
+<hr/>
+<% end %>
+<table>
+ <tr>
+    <th style="padding-right:180px;padding-bottom:15px;padding-top:5px;">Group</th>
+    <th style="padding-top:5px;padding-bottom:15px;">Type</th>
+  </tr>
+
+  <% @like_groups.each do |group| %>
+    <tr>
+      <td style="padding:3px;"><%= link_to group[1], group_path(group[0]) %></td>
+      <td style="padding:3px;"><%= group[2] ? "Public" : "Private" %></td>
+    </tr>
+  <% end %>
+
+</table>
+</center>

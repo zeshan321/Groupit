@@ -6,7 +6,7 @@ class Group < ActiveRecord::Base
   has_many :messages
   has_and_belongs_to_many :users
 
-  validates :name, presence: true, uniqueness: true, length: { minimum: 3, maximum: 64}
+  validates :name, presence: true, uniqueness: {:case_sensitive => false}, length: { minimum: 3, maximum: 64}
   validates_with NameValidator
 
   validates :password, presence: true, unless: :public_group
@@ -37,5 +37,18 @@ class Group < ActiveRecord::Base
   def generate_qr_image(path)
     qr = RQRCode::QRCode.new(quick_join_url(path), :size => 6, :level => :h )
     png = qr.to_img.resize(200,200).to_data_url
+  end
+
+  def self.search(keywords,limit=30)
+    if keywords.length > 0
+      query = '( name LIKE ? )'
+      (keywords.length - 1).times do
+        query << ' OR ( name LIKE ? )'
+      end
+      search_params = [query] + keywords.map{ |k| k = "%#{sanitize_sql_like(k)}%" }
+      self.where(search_params).limit(limit).pluck(:id, :name, :public_group)
+    else
+      none
+    end
   end
 end

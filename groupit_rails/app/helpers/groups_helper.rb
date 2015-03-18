@@ -12,7 +12,7 @@ module GroupsHelper
   end
 
   def user_join group
-    unless group.users.exists?(id:current_user.id)
+    unless user_allow_access? group
       group.users << current_user
     end
   end
