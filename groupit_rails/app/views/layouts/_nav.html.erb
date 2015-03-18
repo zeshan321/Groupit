@@ -3,13 +3,13 @@
     <div class="navbar-header" style="color:white">
       <a class="navbar-brand" href="/" style="font-size:200%;color:white;"><b>Groupit</b></a>
     </div>
+    <% if user_signed_in? %>
     <div>
       <ul class="nav navbar-nav navbar-right" style="color:white">
-        <li style="font-size:135%;color:white;"><a class="user_button" href="/">Home</a></li>
-        <% if user_signed_in? %>
+        <li style="font-size:135%;color:white;"><a class="user_button" href="/">Groups</a></li>
         <li style="font-size:135%;color:white;"><%= link_to "#{current_user.name}", edit_user_path(current_user), class: :user_button %></li>
-        <% end %>
       </ul>
     </div>
+    <% end %>
   </div>
 </nav>

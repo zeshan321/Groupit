@@ -8,19 +8,29 @@ a.button:hover{
 text-decoration:none;
 }
 </style>
-<center>  
+<center>
 <h2 style="padding:10px">All Groups</h2>
-<div>
-
-<%-# pluralize(@groups.count,'group') -%>
-
+<div class="row">
+<div style="display:inline-block;margin-right:2%">
 <a class="button" href="/groups/new">
 <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Create Group</button>
 </a>
-&nbsp;&nbsp;&nbsp;
+</div>
+<!--
 <a class="button" href="/groups/join">
-<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Join Group</button>
+<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Search Group</button>
 </a>
+-->
+<div style="display:inline-block;">
+<form class="form-inline float-right" role="form">
+<div class="input-group">
+<input type="text" class="form-control" placeholder="Search groups...">
+<span class="input-group-btn">
+  <button class="btn btn-default" type="button">Go!</button>
+</span>
+</div>
+</form>
+</div>
 </div>
 <hr/>
 <table>
@@ -35,6 +45,6 @@ text-decoration:none;
       <td style="padding:3px;"><%= group.public_group ? "Public" : "Private" %></td>
     </tr>
   <% end %>
-    
+
 </table>
 </center>
