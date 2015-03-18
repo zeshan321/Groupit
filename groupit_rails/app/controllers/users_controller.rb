@@ -25,13 +25,16 @@ class UsersController < ApplicationController
   def create_api
     api_key = params[:key]
     name = params[:name]
+    allow_cookies = (params[:allow_cookies] == 'false')? false : true
     flag = false
     if api_key == 'PI314'
       user = User.new name: name
       if user.save
         user.generate_remember_token
-        cookies.permanent[:remember_token] = user.generate_remember_token
-        cookies.permanent.signed[:user_id] = user.id
+        if allow_cookies
+          cookies.permanent[:remember_token] = user.generate_remember_token
+          cookies.permanent.signed[:user_id] = user.id
+        end
         login_user user
         flag = true
         render json:['OK',user.id,user.remember_token], status:202
