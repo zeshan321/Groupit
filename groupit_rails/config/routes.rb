@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   root 'groups#index'
 
+  get '/search' => 'searches#show'
+
   resources :users, only:[:create, :new, :edit, :update]
 
   get 'api/users/new' => 'users#create_api'

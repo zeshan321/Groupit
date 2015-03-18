@@ -18,7 +18,7 @@ text-decoration:none;
 </div>
 
 <div style="display:inline-block;">
-<%= form_tag '/search', class:'form-inline float-right', role:'form' do%>
+<%= form_tag '/search', method:'get', class:'form-inline float-right', role:'form' do%>
 <div class="input-group">
 <%= text_field_tag :text, nil, class:'form-control', placeholder:'Search groups...' %>
 <span class="input-group-btn">
