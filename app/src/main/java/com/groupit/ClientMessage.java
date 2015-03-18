@@ -21,13 +21,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
 public class ClientMessage extends Service {
 
-    private Socket socket;
+    private static Socket socket;
     private NotificationManager mNM;
     private BroadcastReceiver networkStateReceiver;
 
@@ -128,7 +127,8 @@ public class ClientMessage extends Service {
             String data;
             while ((data = inputReader.readLine()) != null)
             {
-
+                inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                System.out.println("Test");
                 if (JSONUtils.canUseMessage(data) == false) {
                     return;
                 }
@@ -230,6 +230,7 @@ public class ClientMessage extends Service {
 
     public static void sendData(String messageToSend) {
         try {
+            outputWriter = new PrintWriter(socket.getOutputStream(), true);
             outputWriter.println(messageToSend);
             MessageActivity.allowReConnect = false;
         } catch (Exception e) {
