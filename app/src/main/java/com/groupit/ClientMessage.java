@@ -75,7 +75,6 @@ public class ClientMessage extends Service {
                         if (firstTime == false) {
                             firstTime = true;
                         } else {
-                            firstTime = false;
                             stopService(new Intent(ClientMessage.this, ClientMessage.class));
                             startService(new Intent(ClientMessage.this, ClientMessage.class));
                         }
@@ -128,7 +127,7 @@ public class ClientMessage extends Service {
             while ((data = inputReader.readLine()) != null)
             {
                 inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                System.out.println("Test");
+
                 if (JSONUtils.canUseMessage(data) == false) {
                     return;
                 }
@@ -140,8 +139,6 @@ public class ClientMessage extends Service {
                 final String group = JSONUtils.getGroupID(data);
                 final Boolean isImage = JSONUtils.isImage(data);
 
-
-                System.out.println(message);
                 if (con != null) {
                     ((Activity) con).runOnUiThread(new Runnable() {
                         public void run() {
@@ -232,7 +229,6 @@ public class ClientMessage extends Service {
         try {
             outputWriter = new PrintWriter(socket.getOutputStream(), true);
             outputWriter.println(messageToSend);
-            MessageActivity.allowReConnect = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -242,8 +238,12 @@ public class ClientMessage extends Service {
         Notification notification = new Notification(R.mipmap.logo, "Starting GroupIt",
                 System.currentTimeMillis());
 
+        Intent myIntent = new Intent(this, GroupActivity.class);
+        myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        myIntent.setAction(Long.toString(System.currentTimeMillis()));
+
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, ClientMessage.class), 0);
+                myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         notification.setLatestEventInfo(this, "GroupIt",
                 "GroupIt is running", contentIntent);

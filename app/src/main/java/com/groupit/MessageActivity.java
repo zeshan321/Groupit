@@ -32,7 +32,6 @@ public class MessageActivity extends ActionBarActivity {
     public static int SocketServerPORT = 47687;
     public static ListView chatMsg;
     public static ArrayAdapter myAdapter;
-    public static Boolean allowReConnect = false;
     public static String display;
     public static Context con;
     public static String currentGroup = "0";
