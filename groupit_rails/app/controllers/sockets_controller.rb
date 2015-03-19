@@ -1,5 +1,5 @@
 class SocketsController < WebsocketRails::BaseController
-	def authorize_channels
+	def authorize_channel
 		channel_name = message[:channel]
 		channel = WebsocketRails[channel_name]
 		flag = false
@@ -24,4 +24,17 @@ class SocketsController < WebsocketRails::BaseController
 			send_message :log, 'Deny channel:'+channel_name
 		end
 	end
+=begin
+	def client_connected
+		current_user.socket_connected.each do |group_id|
+			WebsocketRails["G#{group_id}"].trigger('join','1',namespace:'subscribers')
+		end
+	end
+
+	def client_disconnected
+		current_user.socket_connected.each do |group_id|
+			WebsocketRails["G#{group_id}"].trigger('part','1',namespace:'subscribers')
+		end
+	end
+=end
 end

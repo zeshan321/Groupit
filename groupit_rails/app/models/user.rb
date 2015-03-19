@@ -21,4 +21,21 @@ class User < ActiveRecord::Base
   def authenticated?(remember_token)
     BCrypt::Password.new(remember_digest).is_password?(remember_token)
   end
+=begin
+  def socket_connected
+    active_groups = self.groups.pluck(:id)
+    active_groups.each do |group_id|
+      Group.increment_counter(:active_users_count,group_id)
+    end
+    active_groups
+  end
+
+  def socket_disconnected
+    active_groups = self.groups.pluck(:id)
+    active_groups.each do |group_id|
+      Group.decrement_counter(:active_users_count,group_id)
+    end
+    active_groups
+  end
+=end
 end

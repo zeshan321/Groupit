@@ -11,15 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150315200343) do
+ActiveRecord::Schema.define(version: 20150319013216) do
 
   create_table "groups", force: :cascade do |t|
-    t.string   "name",                           null: false
-    t.boolean  "public_group",    default: true, null: false
+    t.string   "name",                              null: false
+    t.boolean  "public_group",       default: true, null: false
     t.string   "password_digest"
     t.string   "join_token"
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.integer  "active_users_count", default: 0,    null: false
   end
 
   add_index "groups", ["join_token"], name: "index_groups_on_join_token"
