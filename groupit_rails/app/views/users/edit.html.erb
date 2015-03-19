@@ -1,3 +1,9 @@
+<style>
+.text-box{
+padding:4px;
+}
+</style>
+<center>
 <%= form_for @user do |f| %>
 	<% if @user.errors.any? %>
     <div id="error_explanation">
@@ -14,11 +20,10 @@
   <% end %>
 
   <p>
-    <%= f.label 'Display name' %><br>
-    <%= f.text_field :name %>
+    <%= f.label 'Display name' %><br><br>
+    <%= f.text_field :name, :class => 'text-box' %>
+<%= f.submit 'Update', :class => 'btn btn-default' %>
   </p>
 
-  <p>
-    <%= f.submit 'update' %>
-  </p>
 <% end %>
+</center>
