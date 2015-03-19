@@ -36,6 +36,12 @@ gem 'rqrcode_png'
 gem 'bootstrap-sass', '~> 3.2.0'
 gem 'autoprefixer-rails'
 
+# Use carrierwave for image upload management
+gem 'carrierwave'
+
+# Use remotipart for ajax file upload
+gem 'remotipart'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 

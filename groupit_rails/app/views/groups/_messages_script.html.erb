@@ -2,21 +2,31 @@
 var dispatcher = new WebSocketRails('<%= request.host_with_port() %>/websocket');
 var channel = dispatcher.subscribe_private("G<%= params[:id] %>")
 
-var appendMessage = function(text,author_name,self_message){
+var appendMessage = function(text,author_name,self_message,image){
 	var message_div = document.createElement('div');
 	if (self_message) {
 		 message_div.className = "bubble bubble--alt";
 	}else{
 		message_div.className = "bubble";
 	}
-	message_div.innerHTML  = author_name + ":" + text;
-　	document.getElementById("messages_table").appendChild( message_div);
+	message_div.innerHTML = '';
+
+	if (image){
+		var message_img = document.createElement('img');
+		message_img.src = image.path;
+		message_img.width = image.width;
+		message_img.height = image.height;
+		message_div.appendChild(message_img);
+	}
+
+	message_div.innerHTML += author_name + ":" + text;
+　	document.getElementById("messages_table").appendChild(message_div);
 　	$('#messages_table').scrollTop($('#messages_table')[0].scrollHeight);
 }
 
 channel.bind("messages.new", function(message){
 	console.log(message);
-	appendMessage(message.text,message.author_name,(message.author_id == <%= current_user.id%>));
+	appendMessage(message.text,message.author_name,(message.author_id == <%= current_user.id%>),message.image);
 });
 
 dispatcher.bind("log", function(message){

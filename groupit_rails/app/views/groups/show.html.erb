@@ -48,6 +48,10 @@ Share
 
   <% @messages.each do |message| %>
 		<div class="bubble <%= raw (message.user == current_user)? 'bubble--alt':"" %>">
+			<% if message.has_image %>
+			<% size = message.limit_img_tag_size(500) %>
+			<%= image_tag(message.image.url, size: "#{size[0]}x#{size[1]}", alt: "image") %>
+			<% end %>
       <%= message.user.name %>:<%= message.text %>
     </div>
   <% end %>
@@ -55,10 +59,12 @@ Share
 </div>
 <hr style="clear:both;"/>
 <div style="text-align:center;">
-<%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, id:'message_form', style:'display:none;') do %>
-<%= hidden_field_tag :text, "OK" %>
+<%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, multipart: true, id:'message_form', style:'display:none;') do %>
+<%= hidden_field_tag :text,'OK' %>
+<%= file_field_tag :image %>
 <% end %>
-<input type="text" id="message_text" placeholder="Enter message here..." autofocus>
-<input type="button" class="btn btn-success" onclick="send_message(); $('#message_text').focus();" value="send">
+<input type="text" id="message_text" placeholder="Enter message here..." autofocus/>
+<input type="button" class="btn btn-success" onclick="send_message(); $('#message_text').focus();" value="send"/>
+<input type="button" value="image" onclick="$('#message_form #image').click(); return false"/>
 </div>
 </div>
