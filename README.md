@@ -16,4 +16,5 @@ GroupIt is an group chatting app that requires no login or setup.
 * Voice chatting
 * File transfer
 * Screensharing
-* Encrypt message
+* Encrypt messages
+* Save messages if user is offline
