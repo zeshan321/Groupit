@@ -39,6 +39,8 @@ public class MessageHandler {
     }
 
     public void saveMessage() {
+        String message = new StringHandler(StringHandler.Type.COMPRESS, this.message).run();
+
         if (message == null == false && message.equals("null") == false) {
             try {
                 BufferedWriter stream = new BufferedWriter(new FileWriter(file, true));
@@ -80,6 +82,7 @@ public class MessageHandler {
 
                             while ((line = bufferedReader.readLine()) != null) {
                                 if (line != null || line.equals("null") == false) {
+                                    line = new StringHandler(StringHandler.Type.DECOMPRESS, line).run();
                                     if (JSONUtils.canUseMessage(line)) {
                                         String message = JSONUtils.getMessage(line);
                                         boolean isImage = JSONUtils.isImage(line);

@@ -127,6 +127,7 @@ public class ClientMessage extends Service {
             while ((data = inputReader.readLine()) != null)
             {
                 inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                data = new StringHandler(StringHandler.Type.DECOMPRESS, data).run();
 
                 if (JSONUtils.canUseMessage(data) == false) {
                     return;
@@ -228,6 +229,8 @@ public class ClientMessage extends Service {
     public static void sendData(String messageToSend) {
         try {
             outputWriter = new PrintWriter(socket.getOutputStream(), true);
+
+            messageToSend = new StringHandler(StringHandler.Type.COMPRESS, messageToSend).run();
             outputWriter.println(messageToSend);
         } catch (Exception e) {
             e.printStackTrace();
