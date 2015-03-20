@@ -96,7 +96,6 @@ public class GroupActivity  extends ActionBarActivity {
 
                             owns.add(post);
                             settings.put(post, post1 + " , " + post2 + " , " + pass);
-                            System.out.println(post1 + " , " + post2 + " , " + pass);
                         }
                     }
                     if (MessageActivity.con != null) {
@@ -194,7 +193,7 @@ public class GroupActivity  extends ActionBarActivity {
                                                     Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
                                                     toast.show();
                                                 } else {
-                                                    addGroup(es1, es2);
+                                                    addGroup(es1, es2, true);
                                                     addMessage(es1, "Code: " + es2);
 
                                                     ParseObject addGroup = new ParseObject("groups");
@@ -272,7 +271,7 @@ public class GroupActivity  extends ActionBarActivity {
                                                                     String password = groups.getString("pass");
 
                                                                     if (post == false) {
-                                                                        addGroup(es1, es2);
+                                                                        addGroup(es1, es2, true);
                                                                         addMessage(es1, "Code: " + es2);
                                                                     } else {
                                                                         hasPasswrod(password, es1, es2);
@@ -320,11 +319,11 @@ public class GroupActivity  extends ActionBarActivity {
                 e.printStackTrace();
             }
 
-            addGroup("GroupIt", "0");
+            addGroup("GroupIt", "0", false);
         }
     }
 
-    public void addGroup(String display, String group) {
+    public void addGroup(String display, String group, boolean update) {
         File file = new File(this.getFilesDir(), "groups");
 
         BufferedWriter stream = null;
@@ -338,7 +337,9 @@ public class GroupActivity  extends ActionBarActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ClientMessage.sendData(JSONUtils.getJSONList());
+        if (update) {
+            ClientMessage.sendData(JSONUtils.getJSONList());
+        }
     }
 
     public void loadGroups() {
@@ -545,7 +546,7 @@ public class GroupActivity  extends ActionBarActivity {
                         String text = et.getText().toString().replaceAll("\\s+$", "");
 
                         if (text.equals(password)) {
-                            addGroup(es1, es2);
+                            addGroup(es1, es2, true);
                             addMessage(es1, "Code: " + es2);
                         } else {
                             Toast.makeText(con, "Incorrect password!", Toast.LENGTH_LONG).show();
