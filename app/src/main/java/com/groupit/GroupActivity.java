@@ -53,6 +53,7 @@ public class GroupActivity  extends ActionBarActivity {
     private long mBackPressed;
 
     Context con;
+    boolean finishedSetup = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +70,9 @@ public class GroupActivity  extends ActionBarActivity {
 
         loadGroups();
 
-        if (MessageActivity.finishedSetup == false) {
+        if (finishedSetup == false) {
 
-            MessageActivity.finishedSetup = true;
+            finishedSetup = true;
             Parse.enableLocalDatastore(this);
             Parse.initialize(this, "Z3eykoUuP71TBbOAagQryHbPnntPajAVQiNQGgOD", "xeQS9Hd3x9LS97GGoA0nbQenLB0qjIafjzWVKyem");
 

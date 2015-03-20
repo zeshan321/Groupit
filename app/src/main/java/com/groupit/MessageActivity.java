@@ -40,7 +40,6 @@ public class MessageActivity extends ActionBarActivity {
     public static Context con;
     public static String currentGroup = "0";
     public static boolean isLooking = false;
-    public static boolean finishedSetup = false;
     public static String groupName = null;
 
     EditText editTextSay;
