@@ -174,11 +174,13 @@ public class ClientMessage extends Service {
                     mh.saveMessage();
                 }
 
-                if (MessageActivity.isLooking == false || MessageActivity.currentGroup.equals(group) == false && id.equals(GroupActivity.ID) == false) {
-                    if (isImage) {
-                        Notification(name, "Image", group);
-                    } else {
-                        Notification(name, message, group);
+                if ((!MessageActivity.isLooking || !MessageActivity.currentGroup.equals(group))) {
+                    if (!(id.equals(GroupActivity.ID))) {
+                        if (isImage) {
+                            Notification(name, "Image", group);
+                        } else {
+                            Notification(name, message, group);
+                        }
                     }
                 }
             }
