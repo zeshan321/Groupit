@@ -133,9 +133,12 @@ public class MessageActivity extends ActionBarActivity {
             sw.setChecked(true);
         }
 
+        if (settings.length >= 3) {
         if (!(settings[2].equals("null"))) {
-            et.setText(settings[2]);
+                et.setText(settings[2]);
+            }
         }
+
         builder.setView(v)
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
@@ -146,7 +149,7 @@ public class MessageActivity extends ActionBarActivity {
                         if (sw.isChecked()) {
                             isPrivate = true;
                             password = et.getText().toString();
-                            if (password.length() < 5 && password.startsWith(" ") == false) {
+                            if (password.length() < 1 && password.startsWith(" ") == false) {
                                 Toast.makeText(con, "Password needs to be greater then 1 character.", Toast.LENGTH_LONG).show();
                                 return;
                             }
