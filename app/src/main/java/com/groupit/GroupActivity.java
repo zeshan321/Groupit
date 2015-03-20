@@ -511,6 +511,7 @@ public class GroupActivity  extends ActionBarActivity {
 
                         if (text.getText().toString().length() < 5 && text.getText().toString().startsWith(" ") == false) {
                             Toast.makeText(con, "Display names need to be longer than 5 characters.", Toast.LENGTH_LONG).show();
+                            changeName();
                             return;
                         }
 
@@ -541,7 +542,7 @@ public class GroupActivity  extends ActionBarActivity {
                 .setPositiveButton("Join", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        String text = et.getText().toString();
+                        String text = et.getText().toString().replaceAll("\\s+$", "");
 
                         if (text.equals(password)) {
                             addGroup(es1, es2);

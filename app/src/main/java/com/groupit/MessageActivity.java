@@ -163,10 +163,10 @@ public class MessageActivity extends ActionBarActivity {
                             @Override
                             public void done(ParseObject values, ParseException e) {
                                 values.put("locked", p1);
-                                values.put("pass", p2);
+                                values.put("pass", p2.replaceAll("\\s+$", ""));
                                 values.saveInBackground();
 
-                                GroupActivity.settings.put(currentGroup, settings[0] + " , " + p1 + " , " + p2);
+                                GroupActivity.settings.put(currentGroup, settings[0] + " , " + p1 + " , " + p2.replaceAll("\\s+$", ""));
                             }
                         });
                     }
