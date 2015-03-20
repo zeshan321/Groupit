@@ -51,8 +51,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-    </application>
-
     <service android:name="com.parse.PushService" />
     <receiver android:name="com.parse.ParseBroadcastReceiver">
         <intent-filter>
@@ -77,4 +75,5 @@
             <category android:name="com.groupit" />
         </intent-filter>
     </receiver>
+    </application>
 </manifest>

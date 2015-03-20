@@ -34,8 +34,6 @@ import java.io.ByteArrayOutputStream;
 
 public class MessageActivity extends ActionBarActivity {
 
-    public static String SocketAddress = "104.236.60.137";
-    public static int SocketServerPORT = 47687;
     public static ListView chatMsg;
     public static ArrayAdapter myAdapter;
     public static String display;

@@ -15,3 +15,7 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keep class com.parse.** { *; }
+-dontwarn com.parse.*
+-keep class com.mysql.jdbc.** { *; }
+-dontwarn com.mysql.jdbc.*

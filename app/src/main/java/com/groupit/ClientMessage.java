@@ -95,7 +95,7 @@ public class ClientMessage extends Service {
             @Override
             public void run() {
                 try {
-                    socket = new Socket(InetAddress.getByName(MessageActivity.SocketAddress), MessageActivity.SocketServerPORT);
+                    socket = new Socket(InetAddress.getByName("104.236.60.137"), 47687);
                     inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     outputWriter = new PrintWriter(socket.getOutputStream(), true);
 
