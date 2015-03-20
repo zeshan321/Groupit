@@ -36,6 +36,13 @@ public class MainActivity extends ActionBarActivity {
         con = this;
         GroupActivity.ID = getID();
 
+        if (ClientMessage.parseEnabled == false) {
+            ClientMessage.parseEnabled = true;
+
+            Parse.enableLocalDatastore(this);
+            Parse.initialize(this, "Z3eykoUuP71TBbOAagQryHbPnntPajAVQiNQGgOD", "xeQS9Hd3x9LS97GGoA0nbQenLB0qjIafjzWVKyem");
+        }
+
         NameHandler nh = new NameHandler(null, con);
 
         if (nh.getName() != null) {

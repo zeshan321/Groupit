@@ -37,6 +37,7 @@ public class ClientMessage extends Service {
     private static final int NO_CONNECTION_TYPE = -1;
     private static int sLastType = NO_CONNECTION_TYPE;
     public static boolean firstTime = false;
+    public static boolean parseEnabled = false;
 
     public class LocalBinder extends Binder {
         ClientMessage getService() {
@@ -53,6 +54,7 @@ public class ClientMessage extends Service {
 
     @Override
     public void onCreate() {
+
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         showNotification();
