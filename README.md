@@ -2,6 +2,10 @@
 
 GroupIt is an group chatting app that requires no login or setup. 
 
+<h1>Download</h1>
+
+[Click here to download latest version.](https://github.com/zeshan321/Groupit/blob/master/app/app-release.apk?raw=true) 
+
 <h1>Current features</h1>
 * Creating groups
 * Joining groups
