@@ -22,7 +22,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
+
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
 
@@ -118,18 +124,54 @@ public class MessageActivity extends ActionBarActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(con);
         LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View v = inflater.inflate(R.layout.dialog_locker, null);
+        final String[] settings = GroupActivity.settings.get(currentGroup).split(" , ");
 
+        final Switch sw = (Switch) v.findViewById(R.id.switch1);
+        final EditText et = (EditText) v.findViewById(R.id.passCode);
+
+        if (settings[1].equalsIgnoreCase("true")) {
+            sw.setChecked(true);
+        }
+
+        if (!(settings[2].equals("null"))) {
+            et.setText(settings[2]);
+        }
         builder.setView(v)
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                       boolean isPrivate = false;
+                       String password = "";
 
+                        if (sw.isChecked()) {
+                            isPrivate = true;
+                            password = et.getText().toString();
+                            if (password.length() < 5 && password.startsWith(" ") == false) {
+                                Toast.makeText(con, "Password needs to be greater then 1 character.", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+
+                        final boolean p1 = isPrivate;
+                        final String p2 = password;
+
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
+                        query.getInBackground(settings[0], new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject values, ParseException e) {
+                                values.put("locked", p1);
+                                values.put("pass", p2);
+                                values.saveInBackground();
+
+                                GroupActivity.settings.put(currentGroup, settings[0] + " , " + p1 + " , " + p2);
+                            }
+                        });
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
+                        dialog.dismiss();
                     }
                 });
         builder.create();

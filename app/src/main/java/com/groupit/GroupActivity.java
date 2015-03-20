@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -47,6 +48,7 @@ public class GroupActivity  extends ActionBarActivity {
     private static final int TIME_INTERVAL = 2000;
     public static List<String> owns = new ArrayList<String>();
     public static String ID = null;
+    public static HashMap<String, String> settings = new HashMap<String, String>();
 
     private long mBackPressed;
 
@@ -88,7 +90,13 @@ public class GroupActivity  extends ActionBarActivity {
                     for (ParseObject groups : parseObjects) {
                         if (groups != null) {
                             String post = groups.getString("groupID");
+                            String post1 = groups.getObjectId();
+                            boolean post2 = groups.getBoolean("locked");
+                            String pass = groups.getString("pass");
+
                             owns.add(post);
+                            settings.put(post, post1 + " , " + post2 + " , " + pass);
+                            System.out.println(post1 + " , " + post2 + " , " + pass);
                         }
                     }
                     if (MessageActivity.con != null) {
@@ -197,6 +205,7 @@ public class GroupActivity  extends ActionBarActivity {
                                                     addGroup.saveInBackground();
 
                                                     owns.add(es2);
+                                                    settings.put(es2, addGroup.getObjectId() + " , " + "false" + " , " + "null");
                                                 }
                                             } else {
                                                 Toast toast = Toast.makeText(con, "Oops! Something went wrong.", Toast.LENGTH_LONG);
@@ -226,7 +235,7 @@ public class GroupActivity  extends ActionBarActivity {
                 final View v = inflater.inflate(R.layout.dialog_joingroup, null);
 
                 builder.setView(v)
-                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Join", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 EditText e1 = (EditText) v.findViewById(R.id.JoinName);
@@ -249,8 +258,32 @@ public class GroupActivity  extends ActionBarActivity {
                                         public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
                                             if (e == null) {
                                                 if (parseObjects.size() > 0) {
-                                                    addGroup(es1, es2);
-                                                    addMessage(es1, "Code: " + es2);
+                                                    ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
+
+                                                    query.whereEqualTo("groupID", es2);
+
+                                                    query.findInBackground(new FindCallback<ParseObject>() {
+
+                                                        @Override
+                                                        public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                                                            for (ParseObject groups : parseObjects) {
+                                                                if (groups != null) {
+                                                                    boolean post = groups.getBoolean("locked");
+                                                                    String password = groups.getString("pass");
+
+                                                                    if (post == false) {
+                                                                        addGroup(es1, es2);
+                                                                        addMessage(es1, "Code: " + es2);
+                                                                    } else {
+                                                                        hasPasswrod(password, es1, es2);
+                                                                    }
+                                                                }
+                                                            }
+                                                            if (MessageActivity.con != null) {
+                                                                ActivityCompat.invalidateOptionsMenu((Activity) MessageActivity.con);
+                                                            }
+                                                        }
+                                                    });
                                                 } else {
                                                     Toast toast = Toast.makeText(con, "Group not found!", Toast.LENGTH_LONG);
                                                     toast.show();
@@ -485,6 +518,38 @@ public class GroupActivity  extends ActionBarActivity {
 
                         NameHandler nh = new NameHandler(text.getText().toString().replaceAll("\\s+$", ""), con);
                         nh.saveName();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.create();
+        builder.show();
+    }
+
+    public void hasPasswrod(final String password, final String es1, final String es2) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(con);
+        LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View v = inflater.inflate(R.layout.dialog_password, null);
+
+        final EditText et = (EditText) v.findViewById(R.id.GroupPassCode);
+
+        builder.setView(v)
+                .setPositiveButton("Join", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        String text = et.getText().toString();
+
+                        if (text.equals(password)) {
+                            addGroup(es1, es2);
+                            addMessage(es1, "Code: " + es2);
+                        } else {
+                            Toast.makeText(con, "Incorrect password!", Toast.LENGTH_LONG).show();
+                            hasPasswrod(password, es1, es2);
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

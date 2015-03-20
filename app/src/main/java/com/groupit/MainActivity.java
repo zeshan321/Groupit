@@ -57,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
                 EditText text = (EditText) findViewById(R.id.editText);
 
                 if (text.getText().toString().length() < 5 && text.getText().toString().startsWith(" ") == false) {
-                    Toast.makeText(MainActivity.this, "Display names need to be longer than 5 characters.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Display name needs to be greater then 5 characters.", Toast.LENGTH_LONG).show();
                     return;
                 }
 
