@@ -10,14 +10,11 @@
 	left:15%;
 	position:relative;
 }
-#message_form {
-	display:inline-block;
-	margin-right:20px;
-}
+/*
 #message_text{
 padding:5px;
 width:50%;
-}
+}*/
 a{
 color:#00B85C;
 }
@@ -48,11 +45,12 @@ Share
 
   <% @messages.each do |message| %>
 		<div class="bubble <%= raw (message.user == current_user)? 'bubble--alt':"" %>">
+			<%= message.user.name %>:
 			<% if message.has_image %>
 			<% size = message.limit_img_tag_size(500) %>
 			<%= image_tag(message.image.url, size: "#{size[0]}x#{size[1]}", alt: "image") %>
 			<% end %>
-      <%= message.user.name %>:<%= message.text %>
+      <%= message.text %>
     </div>
   <% end %>
 
@@ -63,8 +61,21 @@ Share
 <%= hidden_field_tag :text,'OK' %>
 <%= file_field_tag :image %>
 <% end %>
-<input type="text" id="message_text" placeholder="Enter message here..." autofocus/>
-<input type="button" class="btn btn-success" onclick="send_message(); $('#message_text').focus();" value="send"/>
-<input type="button" value="image" onclick="$('#message_form #image').click(); return false"/>
+
+<div class="row">
+<div class="col-xs-10">
+  <div class="input-group">
+    <input type="text" id="message_text" class="form-control" placeholder="Enter message here..." autofocus/>
+    <span class="input-group-btn">
+      <button class="btn btn-default" id="open_image" onclick="$('#message_form #image').click(); return false" type="button">Image</button>
+    </span>
+  </div>
+</div>
+
+<div  class="col-xs-2-pull-right">
+<input type="button" style="display:inline_block;" class="btn btn-success" onclick="send_message(); $('#message_text').focus();" value="send"/>
+</div>
+
+</div>
 </div>
 </div>

@@ -50,6 +50,15 @@ $(document).ready(function(){
 			}
 	});
 
+	$('#message_form #image').on('change',function(){
+		path = $('#message_form #image').val();
+		name = path.substr(path.lastIndexOf('\\') + 1);
+		if (name.length > 20) {
+			name = name.substr(0,17) + '...';
+		}
+		$('#open_image').html(name);
+	});
+
 });
 
 
