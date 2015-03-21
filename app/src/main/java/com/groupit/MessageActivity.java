@@ -77,9 +77,9 @@ public class MessageActivity extends ActionBarActivity {
                     return;
                 }
 
-                json = JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false);
-                MessageActivity.addMessage(true, JSONUtils.getMessage(json), JSONUtils.getName(json), currentGroup);
-                ClientMessage.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false));
+                json = new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false);
+                MessageActivity.addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup);
+                ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false));
                 editTextSay.setText("");
             }
         });
@@ -232,7 +232,7 @@ public class MessageActivity extends ActionBarActivity {
                 byte[] byte_img_data = baos.toByteArray();
                 String encodedImage = Base64.encodeToString(byte_img_data, Base64.DEFAULT);
 
-                ClientMessage.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, encodedImage, display, true));
+                ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, encodedImage, display, true));
             }
         }
     }

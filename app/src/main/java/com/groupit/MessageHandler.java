@@ -83,11 +83,11 @@ public class MessageHandler {
                             while ((line = bufferedReader.readLine()) != null) {
                                 if (line != null || line.equals("null") == false) {
                                     line = new StringHandler(StringHandler.Type.DECOMPRESS, line).run();
-                                    if (JSONUtils.canUseMessage(line)) {
-                                        String message = JSONUtils.getMessage(line);
-                                        boolean isImage = JSONUtils.isImage(line);
-                                        name = JSONUtils.getName(line);
-                                        if (JSONUtils.getID(line).equals(GroupActivity.ID)) {
+                                    if (new JSONUtils().canUseMessage(line)) {
+                                        String message = new JSONUtils().getMessage(line);
+                                        boolean isImage = new JSONUtils().isImage(line);
+                                        name = new JSONUtils().getName(line);
+                                        if (new JSONUtils().getID(line).equals(GroupActivity.ID)) {
                                             if (isImage) {
                                                 MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, null, true));
 

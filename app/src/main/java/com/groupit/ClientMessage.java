@@ -53,6 +53,10 @@ public class ClientMessage extends Service {
 
     @Override
     public void onCreate() {
+        if (GroupActivity.ID == null) {
+            GroupActivity.ID = new UserData(this).getID();
+        }
+
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         showNotification();
@@ -99,7 +103,7 @@ public class ClientMessage extends Service {
                     inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     outputWriter = new PrintWriter(socket.getOutputStream(), true);
 
-                    sendData(JSONUtils.getJSONList());
+                    sendData(new JSONUtils().getJSONList());
                     openInput();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -129,16 +133,16 @@ public class ClientMessage extends Service {
                 inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 data = new StringHandler(StringHandler.Type.DECOMPRESS, data).run();
 
-                if (JSONUtils.canUseMessage(data) == false) {
+                if (new JSONUtils().canUseMessage(data) == false) {
                     return;
                 }
 
                 final String data1 = data;
-                final String message = JSONUtils.getMessage(data);
-                final String name = JSONUtils.getName(data);
-                final String id = JSONUtils.getID(data);
-                final String group = JSONUtils.getGroupID(data);
-                final Boolean isImage = JSONUtils.isImage(data);
+                final String message = new JSONUtils().getMessage(data);
+                final String name = new JSONUtils().getName(data);
+                final String id = new JSONUtils().getID(data);
+                final String group = new JSONUtils().getGroupID(data);
+                final Boolean isImage = new JSONUtils().isImage(data);
 
                 if (con != null) {
                     ((Activity) con).runOnUiThread(new Runnable() {
@@ -147,7 +151,7 @@ public class ClientMessage extends Service {
                             MessageHandler mh = new MessageHandler(group, data1, con);
                             mh.saveMessage();
                             if (MessageActivity.currentGroup.equals(group) && id.equals(GroupActivity.ID) == false) {
-                                if (JSONUtils.getID(data1).equals(GroupActivity.ID)) {
+                                if (new JSONUtils().getID(data1).equals(GroupActivity.ID)) {
                                     if (isImage) {
                                         MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, null, true));
 

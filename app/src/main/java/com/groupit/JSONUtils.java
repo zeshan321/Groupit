@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 
 public class JSONUtils {
 
-    public static String getJSONMessage(String ID, String group, String message, String display, boolean isImage) {
+    public String getJSONMessage(String ID, String group, String message, String display, boolean isImage) {
         String json = null;
 
         try {
@@ -31,7 +31,7 @@ public class JSONUtils {
         return json;
     }
 
-    public  static Boolean isImage(String json) {
+    public  Boolean isImage(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
 
@@ -48,7 +48,7 @@ public class JSONUtils {
         return false;
     }
 
-    public static Boolean canUseMessage(String json) {
+    public Boolean canUseMessage(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
 
@@ -61,7 +61,7 @@ public class JSONUtils {
         return false;
     }
 
-    public static String getMessage(String json) {
+    public String getMessage(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("message");
@@ -72,7 +72,7 @@ public class JSONUtils {
         return null;
     }
 
-    public static String getID(String json) {
+    public String getID(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("ID");
@@ -83,7 +83,7 @@ public class JSONUtils {
         return null;
     }
 
-    public static String getName(String json) {
+    public String getName(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("display");
@@ -95,7 +95,7 @@ public class JSONUtils {
     }
 
     // Groups
-    public static String getJSOnGroup(String display, String group) {
+    public String getJSOnGroup(String display, String group) {
         String json = null;
 
         try {
@@ -111,7 +111,7 @@ public class JSONUtils {
         return json;
     }
 
-    public static String getGroupDisplay(String json) {
+    public String getGroupDisplay(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("display");
@@ -122,7 +122,7 @@ public class JSONUtils {
         return null;
     }
 
-    public static String getGroupID(String json) {
+    public String getGroupID(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("group");
@@ -133,7 +133,7 @@ public class JSONUtils {
         return null;
     }
 
-    public static String getJSONList() {
+    public String getJSONList() {
         String json = null;
 
         try {

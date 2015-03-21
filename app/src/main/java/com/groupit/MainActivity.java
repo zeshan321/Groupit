@@ -34,7 +34,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         con = this;
-        GroupActivity.ID = getID();
+        GroupActivity.ID = new UserData(con).getID();
 
         NameHandler nh = new NameHandler(null, con);
 
@@ -70,17 +70,6 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
-    }
-
-    public String getID(){
-        String myAndroidDeviceId = "";
-        TelephonyManager mTelephony = (TelephonyManager) con.getSystemService(Context.TELEPHONY_SERVICE);
-        if (mTelephony.getDeviceId() != null){
-            myAndroidDeviceId = mTelephony.getDeviceId();
-        }else{
-            myAndroidDeviceId = Settings.Secure.getString(con.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        }
-        return myAndroidDeviceId;
     }
 
     @Override

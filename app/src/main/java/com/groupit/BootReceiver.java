@@ -15,18 +15,7 @@ public class BootReceiver extends BroadcastReceiver {
             Intent serviceIntent = new Intent(context, ClientMessage.class);
             context.startService(serviceIntent);
             ClientMessage.tempCon = context;
-            GroupActivity.ID = getID(context);
+            GroupActivity.ID = new UserData(context).getID();
         }
-    }
-
-    public String getID(Context con){
-        String myAndroidDeviceId = "";
-        TelephonyManager mTelephony = (TelephonyManager) con.getSystemService(Context.TELEPHONY_SERVICE);
-        if (mTelephony.getDeviceId() != null){
-            myAndroidDeviceId = mTelephony.getDeviceId();
-        }else{
-            myAndroidDeviceId = Settings.Secure.getString(con.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        }
-        return myAndroidDeviceId;
     }
 }

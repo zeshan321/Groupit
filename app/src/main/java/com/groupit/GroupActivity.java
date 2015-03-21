@@ -145,11 +145,11 @@ public class GroupActivity  extends ActionBarActivity {
                                 myAdapter.removeChat(position);
                                 groupsList.setAdapter(myAdapter);
 
-                                removeGroup(JSONUtils.getJSOnGroup(name, group));
+                                removeGroup(new JSONUtils().getJSOnGroup(name, group));
 
                                 groups.remove(group);
 
-                                ClientMessage.sendData(JSONUtils.getJSONList());
+                                ClientMessage.sendData(new JSONUtils().getJSONList());
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -244,7 +244,7 @@ public class GroupActivity  extends ActionBarActivity {
 
                                 if (es1.length() > 0 && es2.length() > 0 && es1.startsWith(" ") == false && es2.startsWith(" ") == false) {
 
-                                    if (groupExists(JSONUtils.getJSOnGroup(es1, es2))) {
+                                    if (groupExists(new JSONUtils().getJSOnGroup(es1, es2))) {
                                         Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
                                         toast.show();
                                         return;
@@ -328,7 +328,7 @@ public class GroupActivity  extends ActionBarActivity {
         BufferedWriter stream = null;
         try {
             stream = new BufferedWriter(new FileWriter(file, true));
-            stream.write(JSONUtils.getJSOnGroup(display, group) + "\n");
+            stream.write(new JSONUtils().getJSOnGroup(display, group) + "\n");
             stream.close();
             groups.add(group);
         } catch (FileNotFoundException e) {
@@ -337,7 +337,7 @@ public class GroupActivity  extends ActionBarActivity {
             e.printStackTrace();
         }
         if (update) {
-            ClientMessage.sendData(JSONUtils.getJSONList());
+            ClientMessage.sendData(new JSONUtils().getJSONList());
         }
     }
 
@@ -355,8 +355,8 @@ public class GroupActivity  extends ActionBarActivity {
         String line;
         try {
             while ((line = bufferedReader.readLine()) != null) {
-                String display = JSONUtils.getGroupDisplay(line);
-                String id = JSONUtils.getGroupID(line);
+                String display = new JSONUtils().getGroupDisplay(line);
+                String id = new JSONUtils().getGroupID(line);
 
                 groups.add(id);
                 addMessage(display, "Code: " + id);
@@ -381,7 +381,7 @@ public class GroupActivity  extends ActionBarActivity {
         String line;
         try {
             while ((line = bufferedReader.readLine()) != null) {
-                String id = JSONUtils.getGroupID(line);
+                String id = new JSONUtils().getGroupID(line);
                 groups.add(id);
             }
 
