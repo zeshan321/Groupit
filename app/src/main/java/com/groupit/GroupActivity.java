@@ -69,6 +69,10 @@ public class GroupActivity  extends ActionBarActivity {
 
         loadGroups();
 
+        if (MessageActivity.myAdapter != null) {
+            MessageActivity.myAdapter.clear();
+        }
+
         if (finishedSetup == false) {
 
             finishedSetup = true;
