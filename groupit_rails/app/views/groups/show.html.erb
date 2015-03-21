@@ -11,10 +11,17 @@
 	position:relative;
 }
 /*
+#basic-addon1,
+#basic-addon2{
+background-color:white;
+margin:none;
+padding:none;
+height:0px;
+}
+*/
 #message_text{
-padding:5px;
-width:50%;
-}*/
+width:100%;
+}
 a{
 color:#00B85C;
 }
@@ -56,26 +63,25 @@ Share
 
 </div>
 <hr style="clear:both;"/>
-<div style="text-align:center;">
+<div class="row">
+
 <%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, multipart: true, id:'message_form', style:'display:none;') do %>
 <%= hidden_field_tag :text,'OK' %>
 <%= file_field_tag :image %>
 <% end %>
+<div class="input-group">
 
-<div class="row">
-<div class="col-xs-10">
-  <div class="input-group">
-    <input type="text" id="message_text" class="form-control" placeholder="Enter message here..." autofocus/>
-    <span class="input-group-btn">
-      <button class="btn btn-default" id="open_image" onclick="$('#message_form #image').click(); return false" type="button">Image</button>
-    </span>
-  </div>
-</div>
+<span class="input-group-btn">
+<button class="btn btn-default" id="open_image" onclick="$('#message_form #image').click(); return false" type="button"><span class="glyphicon glyphicon-plus"></span></button>    
+</span>
 
-<div  class="col-xs-2-pull-right">
+<input type="text" id="message_text" class="form-control" placeholder="Enter message here..." autofocus/>
+
+<span class="input-group-btn">
 <input type="button" style="display:inline_block;" class="btn btn-success" onclick="send_message(); $('#message_text').focus();" value="send"/>
-</div>
+</span>
+</div><!-- /input-group -->
 
-</div>
-</div>
-</div>
+
+</div> <!-- /row -->
+</div> <!-- /main -->
