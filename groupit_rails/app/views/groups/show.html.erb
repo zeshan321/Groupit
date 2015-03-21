@@ -52,12 +52,13 @@ Share
 
   <% @messages.each do |message| %>
 		<div class="bubble <%= raw (message.user == current_user)? 'bubble--alt':"" %>">
-			<%= message.user.name %>:
+			<div class="b-sender"><%= message.user.name %></div>
+			<div class="b-text">
+			<%= message.text %>
 			<% if message.has_image %>
-			<% size = message.limit_img_tag_size(500) %>
-			<%= image_tag(message.image.url, size: "#{size[0]}x#{size[1]}", alt: "image") %>
+			<%= image_tag(message.image.url, alt: "image") %>
 			<% end %>
-      <%= message.text %>
+		</div>
     </div>
   <% end %>
 
@@ -72,7 +73,7 @@ Share
 <div class="input-group">
 
 <div class="input-group-btn">
-<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button"><span class="glyphicon glyphicon-plus"></span></button>    
+<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button"><span class="glyphicon glyphicon-plus"></span></button>
 <ul class="dropdown-menu" role="menu">
           <li id="open_image" onclick="$('#message_form #image').click(); return false"><a href="#"><span>Image</span></a></li>
           <li><a href="#">Document</a></li>

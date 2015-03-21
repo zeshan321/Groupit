@@ -9,17 +9,22 @@ var appendMessage = function(text,author_name,self_message,image){
 	}else{
 		message_div.className = "bubble";
 	}
-	message_div.innerHTML = '';
+	var message_sender_div = document.createElement('div');
+	message_sender_div.className = "b-sender";
+	message_sender_div.innerHTML = author_name;
+	message_div.appendChild(message_sender_div);
+
+	var message_text_div = document.createElement('div');
+	message_text_div.className = "b-text";
+	message_text_div.innerHTML = text;
+	message_div.appendChild(message_text_div);
 
 	if (image){
 		var message_img = document.createElement('img');
 		message_img.src = image.path;
-		message_img.width = image.width;
-		message_img.height = image.height;
-		message_div.appendChild(message_img);
+		message_img.alt = "image";
+		message_text_div.appendChild(message_img);
 	}
-
-	message_div.innerHTML += author_name + ":" + text;
 　	document.getElementById("messages_table").appendChild(message_div);
 　	$('#messages_table').scrollTop($('#messages_table')[0].scrollHeight);
 }
@@ -49,7 +54,7 @@ $(document).ready(function(){
 				send_message();
 			}
 	});
-
+/*
 	$('#message_form #image').on('change',function(){
 		path = $('#message_form #image').val();
 		name = path.substr(path.lastIndexOf('\\') + 1);
@@ -58,7 +63,7 @@ $(document).ready(function(){
 		}
 		$('#open_image').html(name);
 	});
-
+*/
 });
 
 
