@@ -141,6 +141,7 @@ public class GroupActivity  extends ActionBarActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(con);
                 LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final View v = inflater.inflate(R.layout.dialog_delete, null);
+
                 builder.setView(v)
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override

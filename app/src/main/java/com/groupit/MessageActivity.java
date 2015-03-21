@@ -17,12 +17,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.GetCallback;
@@ -35,7 +37,7 @@ import java.io.ByteArrayOutputStream;
 public class MessageActivity extends ActionBarActivity {
 
     public static ListView chatMsg;
-    public static ArrayAdapter myAdapter;
+    public static ChatArrayAdapter myAdapter;
     public static String display;
     public static Context con;
     public static String currentGroup = "0";
@@ -83,14 +85,46 @@ public class MessageActivity extends ActionBarActivity {
                 editTextSay.setText("");
             }
         });
+
+        chatMsg.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(con);
+                LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View v = inflater.inflate(R.layout.dialog_delete, null);
+
+                TextView tv = (TextView) v.findViewById(R.id.dialog);
+                tv.setText("Delete Message");
+                builder.setView(v)
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                myAdapter.removeChat(position);
+                                chatMsg.setAdapter(myAdapter);
+
+                                new MessageHandler(currentGroup, null, con).removeGroup(position);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                builder.create();
+                builder.show();
+                return true;
+            }
+        });
     }
 
 
     @Override
     protected void onResume() {
-        super.onResume();
-
         isLooking = true;
+
+        super.onResume();
     }
 
     @Override

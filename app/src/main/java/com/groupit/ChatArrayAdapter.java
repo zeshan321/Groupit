@@ -45,9 +45,15 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         return this.chatMessageList.get(index);
     }
 
+    public void removeChat(int index) {
+        chatMessageList.remove(index);
+    }
+
     @Override
     public void clear() {
         this.chatMessageList.clear();
+
+        super.clear();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
