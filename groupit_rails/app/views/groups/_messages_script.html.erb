@@ -25,6 +25,8 @@ var appendMessage = function(text,author_name,self_message,image){
 		message_img.alt = "image";
 		message_text_div.appendChild(message_img);
 	}
+	document.getElementById("messages_table").appendChild(message_div);
+	$('#messages_table').scrollTop($('#messages_table')[0].scrollHeight);
 }
 
 channel.bind("messages.new", function(message){
@@ -48,8 +50,12 @@ var send_message = function(){
 	open_image.innerHTML = '<span class="glyphicon glyphicon-plus"></span>';
 };
 
-$(document).ready(function(){
+$(window).load(function(){
+	$('#messages_table').scrollTop($('#messages_table')[0].scrollHeight);
 
+});
+
+$(document).ready(function(){
 	$('#message_text').keyup(function(event){
 			if(event.keyCode == 13){
 				console.log("ENTER");
