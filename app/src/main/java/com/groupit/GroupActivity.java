@@ -59,7 +59,6 @@ public class GroupActivity  extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actvity_group);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         con = this;
 

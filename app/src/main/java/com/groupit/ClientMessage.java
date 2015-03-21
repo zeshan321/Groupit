@@ -24,6 +24,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
+import groupitapi.groupit.com.Main;
+
 public class ClientMessage extends Service {
 
     private static Socket socket;
@@ -99,7 +101,7 @@ public class ClientMessage extends Service {
             @Override
             public void run() {
                 try {
-                    socket = new Socket(InetAddress.getByName("104.236.60.137"), 47687);
+                    socket = new Socket(InetAddress.getByName(new Main().getIP()), new Main().getPort());
                     inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     outputWriter = new PrintWriter(socket.getOutputStream(), true);
 
