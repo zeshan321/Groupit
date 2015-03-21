@@ -2,12 +2,30 @@
 #messages_table {
 	overflow-y: scroll;
 	overflow-x: hidden;
-	height: 55vh;
+	height: 65vh;
 	width:100%;
 }
+
+@media screen and (max-height:710px) and (min-height:620px){
+#messages_table{
+	height: 60vh;
+}
+}
+
+@media screen and (max-height:620px) and (min-height:520px){
+#messages_table{
+	height: 52vh;
+}
+}
+
+@media screen and (max-height:520px){
+#messages_table{
+	height: 45vh;
+}
+}
 #main {
-	width:70%;
-	left:15%;
+	width:90%;
+	left:5%;
 	position:relative;
 }
 /*
@@ -32,6 +50,7 @@ color:#00B85C;
 a:hover{
 color:#00743A;
 }
+
 hr{
 color:#eee;
 background-color:#eee;
@@ -68,26 +87,27 @@ Share
 
 </div>
 <hr style="clear:both;"/>
-<div class="row">
+
 
 <%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, multipart: true, id:'message_form', style:'display:none;') do %>
 <%= hidden_field_tag :text,'OK' %>
 <%= file_field_tag :image %>
 <% end %>
-<div class="input-group">
 
+<div class="row">
+<div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+<div class="input-group">
 <div class="input-group-btn">
 <button class="btn btn-default" id="open_image" onclick="$('#message_form #image').click(); return false" type="button"><span class="glyphicon glyphicon-plus"></span></button>
-          
 </div>
 
-<input type="text" id="message_text" class="form-control" placeholder="Enter message here..." autofocus/>
+<input type="text" id="message_text" class="form-control" placeholder="Enter message here..." val="<br>asdfasdf</br>" autofocus/>
 
 <span class="input-group-btn">
 <input type="button" style="display:inline_block;" class="btn btn-success" onclick="send_message(); $('#message_text').focus();" value="send"/>
 </span>
 </div><!-- /input-group -->
 
-
+</div>
 </div> <!-- /row -->
 </div> <!-- /main -->

@@ -25,8 +25,6 @@ var appendMessage = function(text,author_name,self_message,image){
 		message_img.alt = "image";
 		message_text_div.appendChild(message_img);
 	}
-　	document.getElementById("messages_table").appendChild(message_div);
-　	$('#messages_table').scrollTop($('#messages_table')[0].scrollHeight);
 }
 
 channel.bind("messages.new", function(message){
@@ -39,14 +37,18 @@ dispatcher.bind("log", function(message){
 });
 
 var send_message = function(){
-	var text = $('#message_text').val()
-	$('#message_form #text').val(text)
-	$('#message_text').val('')
-	$('#message_form').submit()
+	var text = $('#message_text').val();
+	$('#message_form #text').val(text);
+	$('#message_text').val('');
+
+	$('#message_form').submit();
+
+	$('#message_form #image').val('');
+	var open_image = document.getElementById("open_image");
+	open_image.innerHTML = '<span class="glyphicon glyphicon-plus"></span>';
 };
 
 $(document).ready(function(){
-	$('#messages_table').scrollTop($('#messages_table')[0].scrollHeight);
 
 	$('#message_text').keyup(function(event){
 			if(event.keyCode == 13){
@@ -54,16 +56,17 @@ $(document).ready(function(){
 				send_message();
 			}
 	});
-/*
+
 	$('#message_form #image').on('change',function(){
 		path = $('#message_form #image').val();
 		name = path.substr(path.lastIndexOf('\\') + 1);
 		if (name.length > 20) {
 			name = name.substr(0,17) + '...';
 		}
-		$('#open_image').html(name);
+		var open_image = document.getElementById("open_image");
+		open_image.firstChild.className = 'glyphicon glyphicon-remove';
+		open_image.innerHTML += name;
 	});
-*/
 });
 
 
