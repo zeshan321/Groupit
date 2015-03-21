@@ -19,6 +19,10 @@ padding:none;
 height:0px;
 }
 */
+.b-sender{
+margin-left:10px;
+margin-right:10px;
+}
 #message_text{
 width:100%;
 }
@@ -73,12 +77,8 @@ Share
 <div class="input-group">
 
 <div class="input-group-btn">
-<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" type="button"><span class="glyphicon glyphicon-plus"></span></button>
-<ul class="dropdown-menu" role="menu">
-          <li id="open_image" onclick="$('#message_form #image').click(); return false"><a href="#"><span>Image</span></a></li>
-          <li><a href="#">Document</a></li>
-          <li><a href="#">Something else</a></li>
-</ul>
+<button class="btn btn-default" id="open_image" onclick="$('#message_form #image').click(); return false" type="button"><span class="glyphicon glyphicon-plus"></span></button>
+          
 </div>
 
 <input type="text" id="message_text" class="form-control" placeholder="Enter message here..." autofocus/>

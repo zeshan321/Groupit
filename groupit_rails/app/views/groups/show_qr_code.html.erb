@@ -13,6 +13,7 @@ color:#00743A;
 <br/>
 <h2>or</h2>
 <br/>
-<h1><% join_url = @group.quick_join_url "#{request.host_with_port}" %><h1>
+<h1 style="word-wrap:break-word;"><% join_url = @group.quick_join_url "#{request.host_with_port}" %>
 <%= link_to join_url,join_url %>
+</h1>
 </div>
