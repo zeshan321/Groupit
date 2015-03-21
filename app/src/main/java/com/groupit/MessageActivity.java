@@ -34,22 +34,19 @@ import java.io.ByteArrayOutputStream;
 
 public class MessageActivity extends ActionBarActivity {
 
-    public ListView chatMsg;
-    public ArrayAdapter myAdapter;
-    public String display;
-    public Context con;
-    public String currentGroup = "0";
-    public boolean isLooking = false;
-    public String groupName = null;
+    public static ListView chatMsg;
+    public static ArrayAdapter myAdapter;
+    public static String display;
+    public static Context con;
+    public static String currentGroup = "0";
+    public static boolean isLooking = false;
+    public static String groupName = null;
 
     EditText editTextSay;
     ImageButton buttonSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final GroupActivity GA = new GroupActivity();
-        final ClientMessage CM = new ClientMessage();
-
         super.onCreate(savedInstanceState);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -60,7 +57,7 @@ public class MessageActivity extends ActionBarActivity {
 
         isLooking = true;
         con = this;
-        CM.con = this;
+        ClientMessage.con = this;
 
         myAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.list_item_message_left);
         chatMsg = (ListView) findViewById(R.id.list_view_messages);
@@ -80,9 +77,9 @@ public class MessageActivity extends ActionBarActivity {
                     return;
                 }
 
-                json = new JSONUtils().getJSONMessage(GA.ID, currentGroup, msg, display, false);
-                addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup);
-                CM.sendData(new JSONUtils().getJSONMessage(GA.ID, currentGroup, msg, display, false));
+                json = JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false);
+                MessageActivity.addMessage(true, JSONUtils.getMessage(json), JSONUtils.getName(json), currentGroup);
+                ClientMessage.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false));
                 editTextSay.setText("");
             }
         });
@@ -108,27 +105,23 @@ public class MessageActivity extends ActionBarActivity {
         toast.show();
     }
 
-    public void addMessage(boolean right, String text, String name, String group) {
-        final ClientMessage CM = new ClientMessage();
-
+    public static void addMessage(boolean right, String text, String name, String group) {
         try {
             myAdapter.add(new ChatMessage(right, text, name, false, null, false));
 
             chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
             chatMsg.setAdapter(myAdapter);
         } catch (NullPointerException e) {
-            MessageHandler mh = new MessageHandler(group, null, CM.con);
+            MessageHandler mh = new MessageHandler(group, null, ClientMessage.con);
             mh.saveMessage();
         }
     }
 
     public void showSettings() {
-        final GroupActivity GA = new GroupActivity();
-
         AlertDialog.Builder builder = new AlertDialog.Builder(con);
         LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View v = inflater.inflate(R.layout.dialog_locker, null);
-        final String[] settings = GA.settings.get(currentGroup).split(" , ");
+        final String[] settings = GroupActivity.settings.get(currentGroup).split(" , ");
 
         final Switch sw = (Switch) v.findViewById(R.id.switch1);
         final EditText et = (EditText) v.findViewById(R.id.passCode);
@@ -170,7 +163,7 @@ public class MessageActivity extends ActionBarActivity {
                                 values.put("pass", p2.replaceAll("\\s+$", ""));
                                 values.saveInBackground();
 
-                                GA.settings.put(currentGroup, settings[0] + " , " + p1 + " , " + p2.replaceAll("\\s+$", ""));
+                                GroupActivity.settings.put(currentGroup, settings[0] + " , " + p1 + " , " + p2.replaceAll("\\s+$", ""));
                             }
                         });
                     }
@@ -210,11 +203,9 @@ public class MessageActivity extends ActionBarActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        final GroupActivity GA = new GroupActivity();
-
         menu.clear();
 
-        if (GA.owns.contains(currentGroup)) {
+        if (GroupActivity.owns.contains(currentGroup)) {
             menu.add(0, 0, 0, "Settings");
         }
         menu.add(1, 1, 1, "Attach");
@@ -223,8 +214,6 @@ public class MessageActivity extends ActionBarActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        final GroupActivity GA = new GroupActivity();
-        final ClientMessage CM = new ClientMessage();
 
         if (resultCode == RESULT_OK) {
 
@@ -232,10 +221,10 @@ public class MessageActivity extends ActionBarActivity {
 
                 Uri currImageURI = data.getData();
 
-               myAdapter.add(new ChatMessage(true, "Image", display, true, currImageURI, false));
+                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", display, true, currImageURI, false));
 
-                chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                chatMsg.setAdapter(myAdapter);
+                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
 
                 Bitmap bitmap = BitmapFactory.decodeFile(getRealPathFromURI(currImageURI));
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -243,7 +232,7 @@ public class MessageActivity extends ActionBarActivity {
                 byte[] byte_img_data = baos.toByteArray();
                 String encodedImage = Base64.encodeToString(byte_img_data, Base64.DEFAULT);
 
-                CM.sendData(new JSONUtils().getJSONMessage(GA.ID, currentGroup, encodedImage, display, true));
+                ClientMessage.sendData(JSONUtils.getJSONMessage(GroupActivity.ID, currentGroup, encodedImage, display, true));
             }
         }
     }

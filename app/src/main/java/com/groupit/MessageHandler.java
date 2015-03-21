@@ -56,10 +56,9 @@ public class MessageHandler {
     }
 
     public void loadMessages() {
-       final MessageActivity MA = new MessageActivity();
         try {
-            MA.myAdapter.clear();
-            MA.chatMsg.setAdapter(MA.myAdapter);
+            MessageActivity.myAdapter.clear();
+            MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
 
             FileInputStream fis = null;
             try {
@@ -76,35 +75,35 @@ public class MessageHandler {
                             String line;
                             String name = null;
 
-                            if (MA.display == null) {
+                            if (MessageActivity.display == null) {
                                 NameHandler nh = new NameHandler(null, con);
-                                MA.display = nh.getName();
+                                MessageActivity.display = nh.getName();
                             }
 
                             while ((line = bufferedReader.readLine()) != null) {
                                 if (line != null || line.equals("null") == false) {
                                     line = new StringHandler(StringHandler.Type.DECOMPRESS, line).run();
-                                    if (new JSONUtils().canUseMessage(line)) {
-                                        String message = new JSONUtils().getMessage(line);
-                                        boolean isImage = new JSONUtils().isImage(line);
-                                        name = new JSONUtils().getName(line);
-                                        if (new JSONUtils().getID(line).equals(new GroupActivity().ID)) {
+                                    if (JSONUtils.canUseMessage(line)) {
+                                        String message = JSONUtils.getMessage(line);
+                                        boolean isImage = JSONUtils.isImage(line);
+                                        name = JSONUtils.getName(line);
+                                        if (JSONUtils.getID(line).equals(GroupActivity.ID)) {
                                             if (isImage) {
-                                                MA.myAdapter.add(new ChatMessage(true, message, name, true, null, true));
+                                                MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, null, true));
 
-                                                MA.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                                                MA.chatMsg.setAdapter(MA.myAdapter);
+                                                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                                             } else {
-                                                new MessageActivity().addMessage(true, message, name, MA.currentGroup);
+                                                MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup);
                                             }
                                         } else {
                                             if (isImage) {
-                                                MA.myAdapter.add(new ChatMessage(false, message, name, true, null, true));
+                                                MessageActivity.myAdapter.add(new ChatMessage(false, message, name, true, null, true));
 
-                                                MA.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                                                MA.chatMsg.setAdapter(MA.myAdapter);
+                                                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                                             } else {
-                                                new MessageActivity().addMessage(false, message, name, MA.currentGroup);
+                                                MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup);
                                             }
                                         }
                                     }

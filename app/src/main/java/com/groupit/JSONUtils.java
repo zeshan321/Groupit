@@ -3,14 +3,16 @@ package com.groupit;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class JSONUtils {
 
-    public List<String> groups = new ArrayList<String>();
-
-    public String getJSONMessage(String ID, String group, String message, String display, boolean isImage) {
+    public static String getJSONMessage(String ID, String group, String message, String display, boolean isImage) {
         String json = null;
 
         try {
@@ -29,7 +31,7 @@ public class JSONUtils {
         return json;
     }
 
-    public Boolean isImage(String json) {
+    public  static Boolean isImage(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
 
@@ -46,7 +48,7 @@ public class JSONUtils {
         return false;
     }
 
-    public Boolean canUseMessage(String json) {
+    public static Boolean canUseMessage(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
 
@@ -59,7 +61,7 @@ public class JSONUtils {
         return false;
     }
 
-    public String getMessage(String json) {
+    public static String getMessage(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("message");
@@ -70,7 +72,7 @@ public class JSONUtils {
         return null;
     }
 
-    public String getID(String json) {
+    public static String getID(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("ID");
@@ -81,7 +83,7 @@ public class JSONUtils {
         return null;
     }
 
-    public String getName(String json) {
+    public static String getName(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("display");
@@ -93,7 +95,7 @@ public class JSONUtils {
     }
 
     // Groups
-    public String getJSOnGroup(String display, String group) {
+    public static String getJSOnGroup(String display, String group) {
         String json = null;
 
         try {
@@ -109,7 +111,7 @@ public class JSONUtils {
         return json;
     }
 
-    public String getGroupDisplay(String json) {
+    public static String getGroupDisplay(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("display");
@@ -120,7 +122,7 @@ public class JSONUtils {
         return null;
     }
 
-    public String getGroupID(String json) {
+    public static String getGroupID(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("group");
@@ -131,12 +133,12 @@ public class JSONUtils {
         return null;
     }
 
-    public String getJSONList() {
+    public static String getJSONList() {
         String json = null;
 
         try {
             JSONObject jObj = new JSONObject();
-            jObj.put("listofgroups", groups.toString());
+            jObj.put("listofgroups", GroupActivity.groups.toString());
 
             json = jObj.toString();
         } catch (JSONException e) {

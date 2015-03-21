@@ -1,14 +1,28 @@
 package com.groupit;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.TelephonyManager;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.parse.Parse;
+import com.parse.ParseObject;
 
 public class MainActivity extends ActionBarActivity {
     Context con;
@@ -20,12 +34,12 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         con = this;
-        new GroupActivity().ID = new UserData(con).getID();
+        GroupActivity.ID = getID();
 
         NameHandler nh = new NameHandler(null, con);
 
         if (nh.getName() != null) {
-            new MessageActivity().display = nh.getName();
+            MessageActivity.display = nh.getName();
             startActivity(new Intent(MainActivity.this, GroupActivity.class));
             return;
         }
@@ -47,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
                     return;
                 }
 
-                new MessageActivity().display = text.getText().toString().replaceAll("\\s+$", "");
+                MessageActivity.display = text.getText().toString().replaceAll("\\s+$", "");
 
                 NameHandler nh = new NameHandler(text.getText().toString().replaceAll("\\s+$", ""), con);
                 nh.saveName();
@@ -56,6 +70,17 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
+    }
+
+    public String getID(){
+        String myAndroidDeviceId = "";
+        TelephonyManager mTelephony = (TelephonyManager) con.getSystemService(Context.TELEPHONY_SERVICE);
+        if (mTelephony.getDeviceId() != null){
+            myAndroidDeviceId = mTelephony.getDeviceId();
+        }else{
+            myAndroidDeviceId = Settings.Secure.getString(con.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        return myAndroidDeviceId;
     }
 
     @Override

@@ -33,14 +33,10 @@ public class ClientMessage extends Service {
     public static Context con = null;
     public static Context tempCon;
     public static BufferedReader inputReader;
-    public static boolean firstTime = false;
-
     private static PrintWriter outputWriter;
     private static final int NO_CONNECTION_TYPE = -1;
     private static int sLastType = NO_CONNECTION_TYPE;
-
-    GroupActivity GA = new GroupActivity();
-
+    public static boolean firstTime = false;
 
     public class LocalBinder extends Binder {
         ClientMessage getService() {
@@ -57,10 +53,6 @@ public class ClientMessage extends Service {
 
     @Override
     public void onCreate() {
-        if (GA.ID == null) {
-            GA.ID = new UserData(this).getID();
-        }
-
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         showNotification();
@@ -80,7 +72,7 @@ public class ClientMessage extends Service {
                     if (activeNetworkInfo != null) {
                         boolean isConnectedOrConnecting = activeNetworkInfo.isConnectedOrConnecting();
 
-                        if (!firstTime) {
+                        if (firstTime == false) {
                             firstTime = true;
                         } else {
                             stopService(new Intent(ClientMessage.this, ClientMessage.class));
@@ -107,7 +99,7 @@ public class ClientMessage extends Service {
                     inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     outputWriter = new PrintWriter(socket.getOutputStream(), true);
 
-                    sendData(new JSONUtils().getJSONList());
+                    sendData(JSONUtils.getJSONList());
                     openInput();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -137,16 +129,16 @@ public class ClientMessage extends Service {
                 inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 data = new StringHandler(StringHandler.Type.DECOMPRESS, data).run();
 
-                if (!(new JSONUtils().canUseMessage(data))) {
+                if (JSONUtils.canUseMessage(data) == false) {
                     return;
                 }
 
                 final String data1 = data;
-                final String message = new JSONUtils().getMessage(data);
-                final String name = new JSONUtils().getName(data);
-                final String id = new JSONUtils().getID(data);
-                final String group = new JSONUtils().getGroupID(data);
-                final Boolean isImage = new JSONUtils().isImage(data);
+                final String message = JSONUtils.getMessage(data);
+                final String name = JSONUtils.getName(data);
+                final String id = JSONUtils.getID(data);
+                final String group = JSONUtils.getGroupID(data);
+                final Boolean isImage = JSONUtils.isImage(data);
 
                 if (con != null) {
                     ((Activity) con).runOnUiThread(new Runnable() {
@@ -154,8 +146,8 @@ public class ClientMessage extends Service {
 
                             MessageHandler mh = new MessageHandler(group, data1, con);
                             mh.saveMessage();
-                            if (MessageActivity.currentGroup.equals(group) && !id.equals(GA.ID)) {
-                                if (new JSONUtils().getID(data1).equals(GA.ID)) {
+                            if (MessageActivity.currentGroup.equals(group) && id.equals(GroupActivity.ID) == false) {
+                                if (JSONUtils.getID(data1).equals(GroupActivity.ID)) {
                                     if (isImage) {
                                         MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, null, true));
 
@@ -183,7 +175,7 @@ public class ClientMessage extends Service {
                 }
 
                 if ((!MessageActivity.isLooking || !MessageActivity.currentGroup.equals(group))) {
-                    if (!(id.equals(GA.ID))) {
+                    if (!(id.equals(GroupActivity.ID))) {
                         if (isImage) {
                             Notification(name, "Image", group);
                         } else {
