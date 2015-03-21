@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -42,21 +41,22 @@ import java.util.Scanner;
 
 public class GroupActivity  extends ActionBarActivity {
 
-    public static ListView groupsList;
-    public static GroupArrayAdapter myAdapter;
-    public static List<String> groups = new ArrayList<String>();
-    private static final int TIME_INTERVAL = 2000;
-    public static List<String> owns = new ArrayList<String>();
-    public static String ID = null;
-    public static HashMap<String, String> settings = new HashMap<String, String>();
+    public ListView groupsList;
+    public GroupArrayAdapter myAdapter;
+    private final int TIME_INTERVAL = 2000;
+    public List<String> owns = new ArrayList<String>();
+    public String ID = null;
+    public HashMap<String, String> settings = new HashMap<String, String>();
+    public boolean finishedSetup = false;
 
     private long mBackPressed;
 
     Context con;
-    public static boolean finishedSetup = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final MessageActivity MA = new MessageActivity();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actvity_group);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -75,7 +75,7 @@ public class GroupActivity  extends ActionBarActivity {
             finishedSetup = true;
 
             // Open socket
-            ClientMessage.con = this;
+            new ClientMessage().con = this;
             startService(new Intent(this, ClientMessage.class));
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
@@ -97,8 +97,8 @@ public class GroupActivity  extends ActionBarActivity {
                             settings.put(post, post1 + " , " + post2 + " , " + pass);
                         }
                     }
-                    if (MessageActivity.con != null) {
-                        ActivityCompat.invalidateOptionsMenu((Activity) MessageActivity.con);
+                    if (MA.con != null) {
+                        ActivityCompat.invalidateOptionsMenu((Activity) new MessageActivity().con);
                     }
                 }
             });
@@ -117,10 +117,10 @@ public class GroupActivity  extends ActionBarActivity {
                 String group = textView.getText().toString().replace("Code: ", "");
                 String name = textView1.getText().toString();
 
-                MessageActivity.groupName = name;
+                MA.groupName = name;
                 Intent intent = new Intent(GroupActivity.this, MessageActivity.class);
                 startActivity(intent);
-                MessageActivity.currentGroup = group;
+                MA.currentGroup = group;
 
             }
         });
@@ -145,11 +145,11 @@ public class GroupActivity  extends ActionBarActivity {
                                 myAdapter.removeChat(position);
                                 groupsList.setAdapter(myAdapter);
 
-                                removeGroup(JSONUtils.getJSOnGroup(name, group));
+                                removeGroup(new JSONUtils().getJSOnGroup(name, group));
 
-                                groups.remove(group);
+                                new JSONUtils().groups.remove(group);
 
-                                ClientMessage.sendData(JSONUtils.getJSONList());
+                                new ClientMessage().sendData(new JSONUtils().getJSONList());
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -244,7 +244,7 @@ public class GroupActivity  extends ActionBarActivity {
 
                                 if (es1.length() > 0 && es2.length() > 0 && es1.startsWith(" ") == false && es2.startsWith(" ") == false) {
 
-                                    if (groupExists(JSONUtils.getJSOnGroup(es1, es2))) {
+                                    if (groupExists(new JSONUtils().getJSOnGroup(es1, es2))) {
                                         Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
                                         toast.show();
                                         return;
@@ -277,8 +277,8 @@ public class GroupActivity  extends ActionBarActivity {
                                                                     }
                                                                 }
                                                             }
-                                                            if (MessageActivity.con != null) {
-                                                                ActivityCompat.invalidateOptionsMenu((Activity) MessageActivity.con);
+                                                            if (new MessageActivity().con != null) {
+                                                                ActivityCompat.invalidateOptionsMenu((Activity) new MessageActivity().con);
                                                             }
                                                         }
                                                     });
@@ -328,16 +328,16 @@ public class GroupActivity  extends ActionBarActivity {
         BufferedWriter stream = null;
         try {
             stream = new BufferedWriter(new FileWriter(file, true));
-            stream.write(JSONUtils.getJSOnGroup(display, group) + "\n");
+            stream.write(new JSONUtils().getJSOnGroup(display, group) + "\n");
             stream.close();
-            groups.add(group);
+            new JSONUtils().groups.add(group);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (update) {
-            ClientMessage.sendData(JSONUtils.getJSONList());
+            new ClientMessage().sendData(new JSONUtils().getJSONList());
         }
     }
 
@@ -355,34 +355,11 @@ public class GroupActivity  extends ActionBarActivity {
         String line;
         try {
             while ((line = bufferedReader.readLine()) != null) {
-                String display = JSONUtils.getGroupDisplay(line);
-                String id = JSONUtils.getGroupID(line);
+                String display = new JSONUtils().getGroupDisplay(line);
+                String id = new JSONUtils().getGroupID(line);
 
-                groups.add(id);
+                new JSONUtils().groups.add(id);
                 addMessage(display, "Code: " + id);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void loadGroupMem(Context con) {
-        File file = new File(con.getFilesDir(), "groups");
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader bufferedReader = new BufferedReader(isr);
-
-        String line;
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                String id = JSONUtils.getGroupID(line);
-                groups.add(id);
             }
 
         } catch (IOException e) {
@@ -456,7 +433,7 @@ public class GroupActivity  extends ActionBarActivity {
         return false;
     }
 
-    public static boolean addMessage(String text, String name) {
+    public boolean addMessage(String text, String name) {
         myAdapter.add(new GroupMessage(text, name));
 
         groupsList.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
@@ -497,12 +474,14 @@ public class GroupActivity  extends ActionBarActivity {
     }
 
     public void changeName() {
+        final MessageActivity MA = new MessageActivity();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(con);
         LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View v = inflater.inflate(R.layout.dialog_changename, null);
 
         EditText et = (EditText) v.findViewById(R.id.ChangeName);
-        et.setText(MessageActivity.display);
+        et.setText(MA.display);
         builder.setView(v)
                 .setPositiveButton("Change", new DialogInterface.OnClickListener() {
                     @Override
@@ -515,7 +494,7 @@ public class GroupActivity  extends ActionBarActivity {
                             return;
                         }
 
-                        MessageActivity.display = text.getText().toString().replaceAll("\\s+$", "");
+                        MA.display = text.getText().toString().replaceAll("\\s+$", "");
 
                         NameHandler nh = new NameHandler(text.getText().toString().replaceAll("\\s+$", ""), con);
                         nh.saveName();
