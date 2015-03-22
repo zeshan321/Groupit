@@ -1,5 +1,6 @@
 package com.groupit;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -225,10 +226,24 @@ public class MessageActivity extends ActionBarActivity {
                 showSettings();
                 return true;
             case 1:
-                Intent inte = new Intent();
-                inte.setType("image/*");
-                inte.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(inte, "Select Picture"), 1);
+                CharSequence colors[] = new CharSequence[] {"Photo", "Video", "Audio"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Attach");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                Intent inte = new Intent();
+                                inte.setType("image/*");
+                                inte.setAction(Intent.ACTION_GET_CONTENT);
+                                ((Activity)con).startActivityForResult(Intent.createChooser(inte, "Select Picture"), 1);
+                                break;
+                        }
+                    }
+                });
+                builder.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -255,17 +270,14 @@ public class MessageActivity extends ActionBarActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (resultCode == RESULT_OK) {
-
             if (requestCode == 1) {
-
                 Uri currImageURI = data.getData();
 
-                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", display, true, currImageURI, false));
+                myAdapter.add(new ChatMessage(true, "Image", display, true, currImageURI, false));
 
-                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                chatMsg.setAdapter(myAdapter);
 
                 Bitmap bitmap = BitmapFactory.decodeFile(getRealPathFromURI(currImageURI));
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
