@@ -277,7 +277,7 @@ public class GroupActivity  extends ActionBarActivity {
                                                                         addGroup(es1, es2, true);
                                                                         addMessage(es1, "Code: " + es2);
                                                                     } else {
-                                                                        hasPasswrod(password, es1, es2);
+                                                                        hasPassword(password, es1, es2);
                                                                     }
                                                                 }
                                                             }
@@ -474,7 +474,7 @@ public class GroupActivity  extends ActionBarActivity {
         if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
         {
             super.onBackPressed();
-            finish();
+            moveTaskToBack(true);
             return;
         }
         else {
@@ -535,7 +535,7 @@ public class GroupActivity  extends ActionBarActivity {
         builder.show();
     }
 
-    public void hasPasswrod(final String password, final String es1, final String es2) {
+    public void hasPassword(final String password, final String es1, final String es2) {
         AlertDialog.Builder builder = new AlertDialog.Builder(con);
         LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View v = inflater.inflate(R.layout.dialog_password, null);
@@ -553,7 +553,7 @@ public class GroupActivity  extends ActionBarActivity {
                             addMessage(es1, "Code: " + es2);
                         } else {
                             Toast.makeText(con, "Incorrect password!", Toast.LENGTH_LONG).show();
-                            hasPasswrod(password, es1, es2);
+                            hasPassword(password, es1, es2);
                         }
                     }
                 })
