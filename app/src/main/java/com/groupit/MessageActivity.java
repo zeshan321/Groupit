@@ -50,7 +50,6 @@ public class MessageActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.activity_display);
@@ -220,6 +219,7 @@ public class MessageActivity extends ActionBarActivity {
                 Intent intent = new Intent(this, GroupActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intent);
+                overridePendingTransition(R.transition.activity_from_1, R.transition.activity_from_2);
                 return true;
             case 0:
                 showSettings();
@@ -233,6 +233,13 @@ public class MessageActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        overridePendingTransition(R.transition.activity_from_1, R.transition.activity_from_2);
     }
 
     @Override

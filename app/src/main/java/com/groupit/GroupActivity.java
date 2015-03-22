@@ -58,6 +58,7 @@ public class GroupActivity  extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.actvity_group);
 
         con = this;
@@ -68,10 +69,6 @@ public class GroupActivity  extends ActionBarActivity {
         myAdapter = new GroupArrayAdapter(getApplicationContext(), R.layout.groups_layout);
 
         loadGroups();
-
-        if (MessageActivity.myAdapter != null) {
-            MessageActivity.myAdapter.clear();
-        }
 
         if (finishedSetup == false) {
 
@@ -123,6 +120,8 @@ public class GroupActivity  extends ActionBarActivity {
                 MessageActivity.groupName = name;
                 Intent intent = new Intent(GroupActivity.this, MessageActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.transition.activity_to_1, R.transition.activity_to_2);
+
                 MessageActivity.currentGroup = group;
 
             }
