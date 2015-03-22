@@ -238,9 +238,9 @@ public class ClientMessage extends Service {
         try {
             outputWriter = new PrintWriter(socket.getOutputStream(), true);
 
-            System.out.println("Not compressed: " + messageToSend.length());
+            System.out.println(messageToSend);
+
             messageToSend = new StringHandler(StringHandler.Type.COMPRESS, messageToSend).run();
-            System.out.println("Compressed: " + messageToSend.length());
             outputWriter.println(messageToSend);
         } catch (Exception e) {
             e.printStackTrace();

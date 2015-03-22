@@ -165,7 +165,7 @@ public class MessageActivity extends ActionBarActivity {
         }
 
         if (settings.length >= 3) {
-        if (!(settings[2].equals("null"))) {
+            if (!(settings[2].equals("null"))) {
                 et.setText(settings[2]);
             }
         }
@@ -174,8 +174,8 @@ public class MessageActivity extends ActionBarActivity {
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                       boolean isPrivate = false;
-                       String password = "";
+                        boolean isPrivate = false;
+                        String password = "";
 
                         if (sw.isChecked()) {
                             isPrivate = true;
