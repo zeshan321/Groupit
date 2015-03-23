@@ -16,6 +16,10 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.widget.AbsListView;
 
+import com.parse.GetCallback;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,6 +27,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.text.ParseException;
 
 import groupitapi.groupit.com.Main;
 
@@ -145,39 +150,52 @@ public class ClientMessage extends Service {
                 final String id = new JSONUtils().getID(data);
                 final String group = new JSONUtils().getGroupID(data);
                 final Boolean isImage = new JSONUtils().isImage(data);
+                final boolean[] isOwner = {false};
 
                 if (con != null) {
                     ((Activity) con).runOnUiThread(new Runnable() {
                         public void run() {
+                            if (id.equals(GroupActivity.ID)) {
+                                isOwner[0] = true;
+                            }
 
                             MessageHandler mh = new MessageHandler(group, data1, con);
                             mh.saveMessage();
-                            if (MessageActivity.currentGroup.equals(group) && id.equals(GroupActivity.ID) == false) {
-                                if (new JSONUtils().getID(data1).equals(GroupActivity.ID)) {
-                                    if (isImage) {
-                                        MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, null, true));
 
-                                        MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                                        MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
-                                    } else {
-                                        MessageActivity.addMessage(true, message, name, group);
-                                    }
-                                } else {
-                                    if (isImage) {
-                                        MessageActivity.myAdapter.add(new ChatMessage(false, message, name, true, null, true));
+                            if (isImage) {
+                                ParseQuery<ParseObject> query = ParseQuery.getQuery("images");
+                                query.getInBackground(message, new GetCallback<ParseObject>() {
+                                    @Override
+                                    public void done(ParseObject parseObject, com.parse.ParseException e) {
+                                        if (e == null) {
+                                            MessageActivity.myAdapter.add(new ChatMessage(isOwner[0], parseObject.getString("base64"), name, true, null, true));
 
-                                        MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                                        MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
-                                    } else {
-                                        MessageActivity.addMessage(false, message, name, group);
+                                            MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                            MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                                        }
                                     }
-                                }
+                                });
+                            } else {
+                                MessageActivity.addMessage(isOwner[0], message, name, group);
                             }
                         }
                     });
                 } else {
-                    MessageHandler mh = new MessageHandler(group, data1, tempCon);
-                    mh.saveMessage();
+                    if (!(isImage)) {
+                        MessageHandler mh = new MessageHandler(group, data1, tempCon);
+                        mh.saveMessage();
+                    } else {
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("images");
+                        query.getInBackground(message, new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject parseObject, com.parse.ParseException e) {
+                                if (e == null) {
+                                    MessageHandler mh = new MessageHandler(group, parseObject.getString("base64"), tempCon);
+                                    mh.saveMessage();
+                                }
+                            }
+                        });
+                    }
                 }
 
                 if ((!MessageActivity.isLooking || !MessageActivity.currentGroup.equals(group))) {
