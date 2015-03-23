@@ -285,7 +285,11 @@ public class MessageActivity extends ActionBarActivity {
                 byte[] byte_img_data = baos.toByteArray();
                 String encodedImage = Base64.encodeToString(byte_img_data, Base64.DEFAULT);
 
-                ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, encodedImage, display, true));
+                ParseObject img = new ParseObject("images");
+                img.put("base64", encodedImage);
+                img.saveInBackground();
+
+                ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, img.getObjectId(), display, true));
             }
         }
     }
