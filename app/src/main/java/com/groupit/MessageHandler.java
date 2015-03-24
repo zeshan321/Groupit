@@ -2,6 +2,7 @@ package com.groupit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.widget.AbsListView;
 
 import java.io.BufferedReader;
@@ -14,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URI;
 
 public class MessageHandler {
 
@@ -91,7 +93,7 @@ public class MessageHandler {
                                         name = new JSONUtils().getName(line);
                                         if (new JSONUtils().getID(line).equals(GroupActivity.ID)) {
                                             if (isImage) {
-                                                MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, null, true));
+                                                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", name, true, Uri.parse(message), true));
 
                                                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
@@ -100,7 +102,7 @@ public class MessageHandler {
                                             }
                                         } else {
                                             if (isImage) {
-                                                MessageActivity.myAdapter.add(new ChatMessage(false, message, name, true, null, true));
+                                                MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, Uri.parse(message), true));
 
                                                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
