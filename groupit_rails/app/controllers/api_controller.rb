@@ -24,18 +24,44 @@ class ApiController < ApplicationController
     end
   end
   
-  def login_user
+  def create_user_session
   	user_id = params[:user_id]
   	remember_token = params[:remember_token]
+  	flag = false
   	if user = User.find_by(:id => user_id)
         if user.authenticated? remember_token
           session[:user_id] = user_id
           @current_user = login_user(user)
-          render plain: "OK"
+          flag = true
+        end
+    end
+    if flag
+    	render plain: "OK"
+    else
+    	render plain: "ERROR"
+    end
+    
+  end
+  
+  def create_group
+  	name = params[:name]
+  	password = params[:password]
+		@group = Group.new(:name => name)
+		if params[:public] == 'false'
+			@group.public_group = false
+			@group.password = password
+		end
+		
+		if @group.save
+			render plain:"OK"
+		else
+			render plain:"ERROR"
+		end
   end
 
   def init_session
     session[:api_key] = 1 
+    render plain:"OK"
   end
   
   private
