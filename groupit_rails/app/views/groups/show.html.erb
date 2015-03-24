@@ -1,4 +1,7 @@
 <style>
+body{
+padding-top:80px;
+}
 #messages_table {
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -94,9 +97,9 @@ Share
 <%= file_field_tag :image %>
 <% end %>
 
-<div class="row">
+<div>
 <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
-<div class="input-group">
+<div class="input-group navbar-fixed-bottom" style="padding:1%;">
 <div class="input-group-btn">
 <button class="btn btn-default" id="open_image" onclick="$('#message_form #image').click(); return false" type="button"><span class="glyphicon glyphicon-plus"></span></button>
 </div>
