@@ -5,7 +5,9 @@ Rails.application.routes.draw do
 
   resources :users, only:[:create, :new, :edit, :update]
 
-  get 'api/users/new' => 'users#create_api'
+  post 'api/users/new' => 'api#create_user'
+  post 'api/users/login' => 'api#login_user'
+  post 'api' => 'api#init_session'
 
   resources :groups, only:[:index, :show, :new, :create] do
     resources :messages, only:[:create]

@@ -1,5 +1,6 @@
 class ApiController < ApplicationController
   skip_before_action :verify_authenticity_token
+  before_action :authenticate_api, except: [:init_session]
 
   def create_user
     name = params[:name]
@@ -22,8 +23,25 @@ class ApiController < ApplicationController
 
     end
   end
+  
+  def login_user
+  	user_id = params[:user_id]
+  	remember_token = params[:remember_token]
+  	if user = User.find_by(:id => user_id)
+        if user.authenticated? remember_token
+          session[:user_id] = user_id
+          @current_user = login_user(user)
+          render plain: "OK"
+  end
 
   def init_session
-    
+    session[:api_key] = 1 
+  end
+  
+  private
+  def authenticate_api
+  	if session[:api_key].nil?
+  		render nothing: true
+  	end
   end
 end
