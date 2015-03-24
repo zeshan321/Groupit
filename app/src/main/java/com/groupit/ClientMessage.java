@@ -149,32 +149,36 @@ public class ClientMessage extends Service {
                 final String id = new JSONUtils().getID(data);
                 final String group = new JSONUtils().getGroupID(data);
                 final Boolean isImage = new JSONUtils().isImage(data);
-                final boolean[] isOwner = {false};
-
                 if (con != null) {
                     ((Activity) con).runOnUiThread(new Runnable() {
                         public void run() {
+                            boolean owner = false;
                             if (id.equals(GroupActivity.ID)) {
-                                isOwner[0] = true;
+                               owner = true;
                             }
 
-                            MessageHandler mh = new MessageHandler(group, data1, con);
-                            mh.saveMessage();
-
                             if (isImage) {
-                                if (!isOwner[0]) {
+                                if (!id.equals(new UserData(con).getID())) {
                                     FTPHandler ftp = new FTPHandler(message, FTPHandler.Type.Image, null, con, true);
-                                    ftp.downloadFile(name, id, group, isImage);
+                                    ftp.downloadFile(name, id, group, isImage, true);
                                 }
                             } else {
-                                if (!isOwner[0]) {
-                                    MessageActivity.addMessage(isOwner[0], message, name, group);
+                                MessageHandler mh = new MessageHandler(group, data1, con);
+                                mh.saveMessage();
+
+                                if (!owner) {
+                                    MessageActivity.addMessage(owner, message, name, group);
                                 }
                             }
                         }
                     });
                 } else {
-                    if (!(isImage)) {
+                    if (isImage) {
+                        if (!id.equals(new UserData(con).getID())) {
+                            FTPHandler ftp = new FTPHandler(message, FTPHandler.Type.Image, null, tempCon, true);
+                            ftp.downloadFile(name, id, group, isImage, false);
+                        }
+                    } else {
                         MessageHandler mh = new MessageHandler(group, data1, tempCon);
                         mh.saveMessage();
                     }
@@ -237,8 +241,6 @@ public class ClientMessage extends Service {
     public static void sendData(String messageToSend) {
         try {
             outputWriter = new PrintWriter(socket.getOutputStream(), true);
-
-            System.out.println(messageToSend);
 
             messageToSend = new StringHandler(StringHandler.Type.COMPRESS, messageToSend).run();
             outputWriter.println(messageToSend);

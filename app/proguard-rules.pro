@@ -19,3 +19,5 @@
 -dontwarn com.parse.*
 -keep class com.mysql.jdbc.** { *; }
 -dontwarn com.mysql.jdbc.*
+-keep class org.apache.commons.net.ftp.parser.** { *; }
+-dontwarn org.apache.commons.net.ftp.parser.*

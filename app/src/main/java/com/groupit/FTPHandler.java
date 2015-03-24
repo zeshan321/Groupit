@@ -1,6 +1,9 @@
 package com.groupit;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -21,7 +24,7 @@ import groupitapi.groupit.com.Main;
 public class FTPHandler {
 
     File file;
-    String ID;
+    String IMGID;
     Type type;
     Context con;
     Boolean send;
@@ -30,15 +33,29 @@ public class FTPHandler {
         Image, Video
     }
 
-    public FTPHandler(String ID, Type type, File file, Context con, Boolean send) {
+    public FTPHandler(String IMGID, Type type, File file, Context con, Boolean send) {
         this.file = file;
-        this.ID = ID;
+        this.IMGID = IMGID;
         this.type = type;
         this.con = con;
         this.send = send;
     }
 
     public void uploadFile() {
+
+        ((Activity) con).runOnUiThread(new Runnable() {
+            public void run() {
+                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", MessageActivity.display, true, bitmap, true));
+                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+
+                MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, new JSONUtils().getJSONMessage(new UserData(con).getID(), MessageActivity.currentGroup, file.getAbsolutePath(), MessageActivity.display, true), con);
+                mh.saveMessage();
+            }
+        });
+
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -54,7 +71,7 @@ public class FTPHandler {
                         switch (type) {
                             case Image:
                                 client.changeWorkingDirectory("/Images");
-                                client.storeFile(ID + ".jpg", fis);
+                                client.storeFile(IMGID + ".jpg", fis);
                                 break;
                             case Video:
                                 break;
@@ -65,7 +82,7 @@ public class FTPHandler {
                         client.logout();
 
                         if (send) {
-                            ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, MessageActivity.currentGroup, ID, MessageActivity.display, true));
+                            ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, MessageActivity.currentGroup, IMGID, MessageActivity.display, true));
                         }
                     }
                 } catch (IOException e) {
@@ -76,7 +93,7 @@ public class FTPHandler {
         thread.start();
     }
 
-    public void downloadFile(final String name, final String ID, final String group, final boolean isImage) {
+    public void downloadFile(final String name, final String ID, final String group, final boolean isImage, final boolean update) {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -98,7 +115,7 @@ public class FTPHandler {
                                     dir.mkdir();
                                 }
 
-                                img = new File(dir, ID + ".jpg");
+                                img = new File(dir, IMGID + ".jpg");
                                 img.createNewFile();
                                 break;
                             case Video:
@@ -106,20 +123,26 @@ public class FTPHandler {
                         }
 
                         FileOutputStream fos = new FileOutputStream(img);
-                        client.retrieveFile(ID + ".jpg", fos);
+                        client.retrieveFile(IMGID + ".jpg", fos);
                         fos.close();
 
                     } finally {
-                        System.out.println("Test: " + img.getPath());
-                        System.out.println("Test 1: " + Uri.fromFile(img));
                         client.logout();
                         if (send) {
-                            MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, Uri.fromFile(img), true));
+                            final File img1 = img;
+                            ((Activity) con).runOnUiThread(new Runnable() {
+                                public void run() {
 
-                            MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                            MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                                    if (update) {
+                                        Bitmap bitmap = BitmapFactory.decodeFile(img1.getAbsolutePath());
 
-                            MessageHandler mh = new MessageHandler(group, new JSONUtils().getJSONMessage(ID, group, Uri.fromFile(img).toString(), name, true), con);
+                                        MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true));
+                                        MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                                        MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                                    }
+                                }
+                            });
+                            MessageHandler mh = new MessageHandler(group, new JSONUtils().getJSONMessage(ID, group, img1.getAbsolutePath(), name, true), con);
                             mh.saveMessage();
                         }
                     }

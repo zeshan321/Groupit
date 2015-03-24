@@ -39,7 +39,7 @@ public class JSONUtils {
                 return false;
             }
 
-            if (jObj.get("image") == true) {
+            if (jObj.getBoolean("image")) {
                 return true;
             }
         } catch (JSONException e) {

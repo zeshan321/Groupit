@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -278,17 +279,9 @@ public class MessageActivity extends ActionBarActivity {
 
                 File file = new File(getRealPathFromURI(currImageURI));
                 String ID = UUID.randomUUID().toString();
-                System.out.println(getRealPathFromURI(currImageURI));
 
                 FTPHandler ftp = new FTPHandler(ID, FTPHandler.Type.Image, file, con, true);
                 ftp.uploadFile();
-
-                //myAdapter.add(new ChatMessage(true, "Image", display, true, currImageURI, false));
-
-               // chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                //chatMsg.setAdapter(myAdapter);
-
-                //ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, img.getObjectId(), display, true));
             }
         }
     }

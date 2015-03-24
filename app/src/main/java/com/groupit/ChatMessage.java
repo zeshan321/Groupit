@@ -1,5 +1,6 @@
 package com.groupit;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 public class ChatMessage {
@@ -7,10 +8,10 @@ public class ChatMessage {
     public String message;
     public String display;
     public boolean image;
-    public Uri imageU;
+    public Bitmap imageU;
     public boolean useByte;
 
-    public ChatMessage(boolean left, String message, String display, boolean image, Uri imageU, boolean useByte) {
+    public ChatMessage(boolean left, String message, String display, boolean image, Bitmap imageU, boolean useByte) {
         super();
         this.left = left;
         this.message = message;

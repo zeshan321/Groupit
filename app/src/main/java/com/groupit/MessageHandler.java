@@ -2,6 +2,8 @@ package com.groupit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.widget.AbsListView;
 
@@ -92,8 +94,9 @@ public class MessageHandler {
                                         boolean isImage = new JSONUtils().isImage(line);
                                         name = new JSONUtils().getName(line);
                                         if (new JSONUtils().getID(line).equals(GroupActivity.ID)) {
-                                            if (isImage) {
-                                                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", name, true, Uri.parse(message), true));
+                                            if (isImage && new File(message).exists()) {
+                                                Bitmap bitmap = BitmapFactory.decodeFile(message);
+                                                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", name, true, bitmap, true));
 
                                                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
@@ -101,8 +104,9 @@ public class MessageHandler {
                                                 MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup);
                                             }
                                         } else {
-                                            if (isImage) {
-                                                MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, Uri.parse(message), true));
+                                            if (isImage && new File(message).exists()) {
+                                                Bitmap bitmap = BitmapFactory.decodeFile(message);
+                                                MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true));
 
                                                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
@@ -149,9 +153,14 @@ public class MessageHandler {
             while ((line = br.readLine()) != null) {
                 i++;
                 if (i != lineToRemove) {
-
                     pw.println(line);
                     pw.flush();
+                } else {
+                    boolean isImage = new JSONUtils().isImage(line);
+                    if (isImage) {
+                        File file = new File(new JSONUtils().getMessage(line));
+                        file.delete();
+                    }
                 }
             }
             pw.close();
