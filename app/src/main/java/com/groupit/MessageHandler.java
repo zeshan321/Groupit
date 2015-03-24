@@ -155,12 +155,6 @@ public class MessageHandler {
                 if (i != lineToRemove) {
                     pw.println(line);
                     pw.flush();
-                } else {
-                    boolean isImage = new JSONUtils().isImage(line);
-                    if (isImage) {
-                        File file = new File(new JSONUtils().getMessage(line));
-                        file.delete();
-                    }
                 }
             }
             pw.close();

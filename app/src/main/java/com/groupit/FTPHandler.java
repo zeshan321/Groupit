@@ -111,9 +111,8 @@ public class FTPHandler {
                             case Image:
                                 client.changeWorkingDirectory("/Images");
                                 dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),"GroupIt");
-                                if (!dir.mkdir()) {
-                                    dir.mkdir();
-                                }
+                                dir.mkdir();
+                                dir.mkdirs();
 
                                 img = new File(dir, IMGID + ".jpg");
                                 img.createNewFile();
