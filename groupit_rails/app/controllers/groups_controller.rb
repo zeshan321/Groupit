@@ -66,6 +66,11 @@ class GroupsController < ApplicationController
   def wrong_token
 
   end
+  
+  def all_users
+  	@group = Group.find(params[:id])
+    authenticate_access @group
+  end
 
   def old_message
     @group = Group.find(params[:id])

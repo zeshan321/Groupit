@@ -5,12 +5,17 @@ Rails.application.routes.draw do
 
   resources :users, only:[:create, :new, :edit, :update]
 
-  get 'api/users/new' => 'users#create_api'
+  get 'api/users/new' => 'api#create_user'
+  get 'api/users/login' => 'api#create_user_session'
+  get 'api/groups/new' => 'api#create_group'
+  get 'api' => 'api#init_session'
 
   resources :groups, only:[:index, :show, :new, :create] do
     resources :messages, only:[:create]
   end
-
+  
+	get 'groups/:id/users' => 'groups#all_users'
+	
   get 'groups/:id/join' => 'groups#join', as: 'join_group'
   post 'groups/:id/join' => 'groups#authorize'
 
