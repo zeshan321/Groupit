@@ -15,7 +15,9 @@ public class BootReceiver extends BroadcastReceiver {
             Intent serviceIntent = new Intent(context, ClientMessage.class);
             context.startService(serviceIntent);
             ClientMessage.tempCon = context;
+
             GroupActivity.ID = new UserData(context).getID();
+            MessageActivity.display = new NameHandler(null, context).getName();
         }
     }
 }

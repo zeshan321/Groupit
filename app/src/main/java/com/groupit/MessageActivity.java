@@ -34,6 +34,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.UUID;
 
 public class MessageActivity extends ActionBarActivity {
 
@@ -274,22 +276,19 @@ public class MessageActivity extends ActionBarActivity {
             if (requestCode == 1) {
                 Uri currImageURI = data.getData();
 
-                myAdapter.add(new ChatMessage(true, "Image", display, true, currImageURI, false));
+                File file = new File(getRealPathFromURI(currImageURI));
+                String ID = UUID.randomUUID().toString();
+                System.out.println(getRealPathFromURI(currImageURI));
 
-                chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                chatMsg.setAdapter(myAdapter);
+                FTPHandler ftp = new FTPHandler(ID, FTPHandler.Type.Image, file, con, true);
+                ftp.uploadFile();
 
-                Bitmap bitmap = BitmapFactory.decodeFile(getRealPathFromURI(currImageURI));
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, baos);
-                byte[] byte_img_data = baos.toByteArray();
-                String encodedImage = Base64.encodeToString(byte_img_data, Base64.DEFAULT);
+                //myAdapter.add(new ChatMessage(true, "Image", display, true, currImageURI, false));
 
-                ParseObject img = new ParseObject("images");
-                img.put("base64", encodedImage);
-                img.saveInBackground();
+               // chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                //chatMsg.setAdapter(myAdapter);
 
-                ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, img.getObjectId(), display, true));
+                //ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, img.getObjectId(), display, true));
             }
         }
     }

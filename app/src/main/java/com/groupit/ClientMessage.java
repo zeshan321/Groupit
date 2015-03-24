@@ -60,9 +60,8 @@ public class ClientMessage extends Service {
 
     @Override
     public void onCreate() {
-        if (GroupActivity.ID == null) {
-            GroupActivity.ID = new UserData(this).getID();
-        }
+        GroupActivity.ID = new UserData(this).getID();
+        MessageActivity.display = new NameHandler(null, this).getName();
 
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
@@ -163,20 +162,14 @@ public class ClientMessage extends Service {
                             mh.saveMessage();
 
                             if (isImage) {
-                                ParseQuery<ParseObject> query = ParseQuery.getQuery("images");
-                                query.getInBackground(message, new GetCallback<ParseObject>() {
-                                    @Override
-                                    public void done(ParseObject parseObject, com.parse.ParseException e) {
-                                        if (e == null) {
-                                            MessageActivity.myAdapter.add(new ChatMessage(isOwner[0], parseObject.getString("base64"), name, true, null, true));
-
-                                            MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                                            MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
-                                        }
-                                    }
-                                });
+                                if (!isOwner[0]) {
+                                    FTPHandler ftp = new FTPHandler(message, FTPHandler.Type.Image, null, con, true);
+                                    ftp.downloadFile(name, id, group, isImage);
+                                }
                             } else {
-                                MessageActivity.addMessage(isOwner[0], message, name, group);
+                                if (!isOwner[0]) {
+                                    MessageActivity.addMessage(isOwner[0], message, name, group);
+                                }
                             }
                         }
                     });
@@ -184,17 +177,6 @@ public class ClientMessage extends Service {
                     if (!(isImage)) {
                         MessageHandler mh = new MessageHandler(group, data1, tempCon);
                         mh.saveMessage();
-                    } else {
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery("images");
-                        query.getInBackground(message, new GetCallback<ParseObject>() {
-                            @Override
-                            public void done(ParseObject parseObject, com.parse.ParseException e) {
-                                if (e == null) {
-                                    MessageHandler mh = new MessageHandler(group, parseObject.getString("base64"), tempCon);
-                                    mh.saveMessage();
-                                }
-                            }
-                        });
                     }
                 }
 
