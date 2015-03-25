@@ -101,6 +101,7 @@ public class ClientMessage extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -250,9 +251,6 @@ public class ClientMessage extends Service {
     }
 
     private void showNotification() {
-        Notification notification = new Notification(R.mipmap.logo, "Starting GroupIt",
-                System.currentTimeMillis());
-
         Intent myIntent = new Intent(this, GroupActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         myIntent.setAction(Long.toString(System.currentTimeMillis()));
@@ -260,10 +258,14 @@ public class ClientMessage extends Service {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        notification.setLatestEventInfo(this, "GroupIt",
-                "GroupIt is running", contentIntent);
-        notification.flags|=Notification.FLAG_NO_CLEAR;
+        Notification myNotification = new NotificationCompat.Builder(this)
+                .setContentTitle("GroupIt")
+                .setContentText("GroupIt is running.")
+                .setContentIntent(contentIntent)
+                .setSmallIcon(R.mipmap.logo)
+                .build();
+        myNotification.flags|=myNotification.FLAG_NO_CLEAR;
 
-        startForeground(4756, notification);
+        startForeground(4756, myNotification);
     }
 }

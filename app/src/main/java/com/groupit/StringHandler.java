@@ -44,6 +44,10 @@ public class StringHandler {
 
     private String compress(String stringToCompress) throws UnsupportedEncodingException
     {
+        if (stringToCompress == null) {
+            return null;
+        }
+
         byte[] compressedData = new byte[1024];
         byte[] stringAsBytes = stringToCompress.getBytes("UTF-8");
 
