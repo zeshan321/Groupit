@@ -10,6 +10,6 @@
         android:layout_gravity="center"
         android:textColor="#ffffff"
         android:id="@+id/groupTitle"
-        android:textSize="18sp" />
+        android:textSize="22sp" />
 
 </LinearLayout>
