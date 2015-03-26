@@ -67,12 +67,12 @@ public class GroupHandler {
         BufferedReader bufferedReader = new BufferedReader(isr);
 
         String line;
+        GroupActivity.groups.clear();
         try {
             while ((line = bufferedReader.readLine()) != null) {
                 String display = new JSONUtils().getGroupDisplay(line);
                 String id = new JSONUtils().getGroupID(line);
 
-                GroupActivity.groups.clear();
                 GroupActivity.groups.add(id);
                 GroupActivity.addMessage(display, "Code: " + id);
             }

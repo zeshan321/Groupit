@@ -188,7 +188,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
             String s = new String(message.getRecords()[0].getPayload());
 
             if (!new GroupHandler(con).groupExists(new JSONUtils().getJSOnGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s)))) {
-                new GroupHandler(con).addGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s), false);
+                new GroupHandler(con).addGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s), true);
             }
         }
     }
