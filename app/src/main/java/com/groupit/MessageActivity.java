@@ -2,9 +2,11 @@ package com.groupit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +16,7 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.nfc.Tag;
+import android.nfc.tech.NfcF;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
@@ -60,6 +63,9 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
     EditText editTextSay;
     ImageButton buttonSend;
     NfcAdapter mNfcAdapter;
+    PendingIntent mPendingIntent;
+    IntentFilter[] mIntentFilters;
+    String[][] mNFCTechLists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +84,19 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
             mNfcAdapter.setNdefPushMessageCallback(this, this);
+
+            mPendingIntent = PendingIntent.getActivity(this, 0,
+                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+            IntentFilter ndefIntent = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+            try {
+                ndefIntent.addDataType("*/*");
+                mIntentFilters = new IntentFilter[] { ndefIntent };
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            mNFCTechLists = new String[][] { new String[] { NfcF.class.getName() } };
         }
 
         isLooking = true;
@@ -144,58 +163,44 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
-        String text = (new JSONUtils().nfcGroup(groupName, currentGroup));
-        NdefMessage msg = new NdefMessage(
-                new NdefRecord[] {
-                        NdefRecord.createMime(
-                                "application/com.groupit",
-                                text.getBytes())
-                });
+        NdefMessage msg = null;
+
+        if (isLooking) {
+            String text = (new JSONUtils().nfcGroup(groupName, currentGroup));
+            msg = new NdefMessage(
+                    new NdefRecord[]{
+                            NdefRecord.createMime(
+                                    "application/com.groupit",
+                                    text.getBytes())
+                    });
+        }
+
         return msg;
     }
 
     @Override
     public void onNewIntent(Intent intent) {
-        String action = intent.getAction();
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            Parcelable[] rawMessages = intent.getParcelableArrayExtra(
+                    NfcAdapter.EXTRA_NDEF_MESSAGES);
 
-        String s = action + "\n\n" + tag.toString();
+            NdefMessage message = (NdefMessage) rawMessages[0];
+            String s = new String(message.getRecords()[0].getPayload());
 
-        Parcelable[] data = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-        if (data != null) {
-            try {
-                for (int i = 0; i < data.length; i++) {
-                    NdefRecord [] recs = ((NdefMessage)data[i]).getRecords();
-                    for (int j = 0; j < recs.length; j++) {
-                        if (recs[j].getTnf() == NdefRecord.TNF_WELL_KNOWN &&
-                                Arrays.equals(recs[j].getType(), NdefRecord.RTD_TEXT)) {
-                            byte[] payload = recs[j].getPayload();
-                            String textEncoding = ((payload[0] & 0200) == 0) ? "UTF-8" : "UTF-16";
-                            int langCodeLen = payload[0] & 0077;
-
-                            s += ("\n\nNdefMessage[" + i + "], NdefRecord[" + j + "]:\n\"" +
-                                    new String(payload, langCodeLen + 1, payload.length - langCodeLen - 1,
-                                            textEncoding) + "\"");
-                        }
-                    }
-                }
-            } catch (Exception e) {
-
+            if (!new GroupHandler(con).groupExists(new JSONUtils().getJSOnGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s)))) {
+                new GroupHandler(con).addGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s), false);
             }
         }
-
-        new GroupHandler(con).addGroup(new JSONUtils().getGroupDisplay(s), new JSONUtils().getGroupID(s), true);
     }
 
     @Override
     protected void onResume() {
+        super.onResume();
         isLooking = true;
 
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
-            processIntent(getIntent());
-        }
+        if (mNfcAdapter != null)
+            mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, mIntentFilters, mNFCTechLists);
 
-        super.onResume();
     }
 
     @Override

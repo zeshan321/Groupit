@@ -2,13 +2,18 @@ package com.groupit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
+import android.nfc.tech.NfcF;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -43,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-public class GroupActivity  extends ActionBarActivity {
+public class GroupActivity  extends ActionBarActivity implements NfcAdapter.CreateNdefMessageCallback {
 
     public static ListView groupsList;
     public static GroupArrayAdapter myAdapter;
@@ -52,11 +57,15 @@ public class GroupActivity  extends ActionBarActivity {
     public static List<String> owns = new ArrayList<String>();
     public static String ID = null;
     public static HashMap<String, String> settings = new HashMap<String, String>();
+    public static boolean finishedSetup = false;
 
     private long mBackPressed;
 
     Context con;
-    public static boolean finishedSetup = false;
+    NfcAdapter mNfcAdapter;
+    PendingIntent mPendingIntent;
+    IntentFilter[] mIntentFilters;
+    String[][] mNFCTechLists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +81,25 @@ public class GroupActivity  extends ActionBarActivity {
         myAdapter = new GroupArrayAdapter(getApplicationContext(), R.layout.groups_layout);
 
         new GroupHandler(con).loadGroups();
+
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (mNfcAdapter != null) {
+            mNfcAdapter.setNdefPushMessageCallback(this, this);
+
+            mPendingIntent = PendingIntent.getActivity(this, 0,
+                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+            IntentFilter ndefIntent = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+            try {
+                ndefIntent.addDataType("*/*");
+                mIntentFilters = new IntentFilter[] { ndefIntent };
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            mNFCTechLists = new String[][] { new String[] { NfcF.class.getName() } };
+        }
 
         if (finishedSetup == false) {
 
@@ -423,5 +451,35 @@ public class GroupActivity  extends ActionBarActivity {
                 });
         builder.create();
         builder.show();
+    }
+
+    @Override
+    public NdefMessage createNdefMessage(NfcEvent event) {
+        return null;
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            Parcelable[] rawMessages = intent.getParcelableArrayExtra(
+                    NfcAdapter.EXTRA_NDEF_MESSAGES);
+
+            NdefMessage message = (NdefMessage) rawMessages[0];
+            String s = new String(message.getRecords()[0].getPayload());
+
+            if (!new GroupHandler(con).groupExists(new JSONUtils().getJSOnGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s)))) {
+                new GroupHandler(con).addGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s), true);
+                addMessage(new JSONUtils().nfcGetDisplay(s), "Code: " + new JSONUtils().nfcGetID(s));
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mNfcAdapter != null)
+            mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, mIntentFilters, mNFCTechLists);
+
     }
 }

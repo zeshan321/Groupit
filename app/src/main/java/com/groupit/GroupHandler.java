@@ -72,6 +72,7 @@ public class GroupHandler {
                 String display = new JSONUtils().getGroupDisplay(line);
                 String id = new JSONUtils().getGroupID(line);
 
+                GroupActivity.groups.clear();
                 GroupActivity.groups.add(id);
                 GroupActivity.addMessage(display, "Code: " + id);
             }
