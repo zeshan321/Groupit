@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -63,12 +66,12 @@ public class GroupActivity  extends ActionBarActivity {
 
         con = this;
 
-        setup();
+        new GroupHandler(con).setup();
 
         groupsList = (ListView) findViewById(R.id.list_group);
         myAdapter = new GroupArrayAdapter(getApplicationContext(), R.layout.groups_layout);
 
-        loadGroups();
+        new GroupHandler(con).loadGroups();
 
         if (finishedSetup == false) {
 
@@ -86,6 +89,10 @@ public class GroupActivity  extends ActionBarActivity {
 
                 @Override
                 public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                    if (parseObjects == null) {
+                        return;
+                    }
+
                     for (ParseObject groups : parseObjects) {
                         if (groups != null) {
                             String post = groups.getString("groupID");
@@ -148,7 +155,7 @@ public class GroupActivity  extends ActionBarActivity {
                                 myAdapter.removeChat(position);
                                 groupsList.setAdapter(myAdapter);
 
-                                removeGroup(new JSONUtils().getJSOnGroup(name, group));
+                                new GroupHandler(con).removeGroup(new JSONUtils().getJSOnGroup(name, group));
 
                                 groups.remove(group);
 
@@ -195,7 +202,7 @@ public class GroupActivity  extends ActionBarActivity {
                                                     Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
                                                     toast.show();
                                                 } else {
-                                                    addGroup(es1, es2, true);
+                                                    new GroupHandler(con).addGroup(es1, es2, true);
                                                     addMessage(es1, "Code: " + es2);
 
                                                     ParseObject addGroup = new ParseObject("groups");
@@ -247,7 +254,7 @@ public class GroupActivity  extends ActionBarActivity {
 
                                 if (es1.length() > 0 && es2.length() > 0 && es1.startsWith(" ") == false && es2.startsWith(" ") == false) {
 
-                                    if (groupExists(new JSONUtils().getJSOnGroup(es1, es2))) {
+                                    if (new GroupHandler(con).groupExists(new JSONUtils().getJSOnGroup(es1, es2))) {
                                         Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
                                         toast.show();
                                         return;
@@ -273,7 +280,7 @@ public class GroupActivity  extends ActionBarActivity {
                                                                     String password = groups.getString("pass");
 
                                                                     if (post == false) {
-                                                                        addGroup(es1, es2, true);
+                                                                        new GroupHandler(con).addGroup(es1, es2, true);
                                                                         addMessage(es1, "Code: " + es2);
                                                                     } else {
                                                                         hasPassword(password, es1, es2);
@@ -309,154 +316,6 @@ public class GroupActivity  extends ActionBarActivity {
             }
         });
 
-    }
-
-    public void setup() {
-        File file = new File(this.getFilesDir(), "groups");
-
-        if (file.exists() == false) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            addGroup("GroupIt", "0", false);
-        }
-    }
-
-    public void addGroup(String display, String group, boolean update) {
-        File file = new File(this.getFilesDir(), "groups");
-
-        BufferedWriter stream = null;
-        try {
-            stream = new BufferedWriter(new FileWriter(file, true));
-            stream.write(new JSONUtils().getJSOnGroup(display, group) + "\n");
-            stream.close();
-            groups.add(group);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (update) {
-            ClientMessage.sendData(new JSONUtils().getJSONList());
-        }
-    }
-
-    public void loadGroups() {
-        File file = new File(this.getFilesDir(), "groups");
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader bufferedReader = new BufferedReader(isr);
-
-        String line;
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                String display = new JSONUtils().getGroupDisplay(line);
-                String id = new JSONUtils().getGroupID(line);
-
-                groups.add(id);
-                addMessage(display, "Code: " + id);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void loadGroupMem(Context con) {
-        File file = new File(con.getFilesDir(), "groups");
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        InputStreamReader isr = new InputStreamReader(fis);
-        BufferedReader bufferedReader = new BufferedReader(isr);
-
-        String line;
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                String id = new JSONUtils().getGroupID(line);
-                groups.add(id);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public void removeGroup(String lineToRemove) {
-
-        try {
-
-            File inFile = new File(this.getFilesDir(), "groups");
-
-            if (!inFile.isFile()) {
-                System.out.println("Parameter is not an existing file");
-                return;
-            }
-
-            File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
-
-            BufferedReader br = new BufferedReader(new FileReader(inFile));
-            PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
-
-            String line = null;
-
-            while ((line = br.readLine()) != null) {
-
-                if (!line.trim().equals(lineToRemove)) {
-
-                    pw.println(line);
-                    pw.flush();
-                }
-            }
-            pw.close();
-            br.close();
-
-            //Delete the original file
-            if (!inFile.delete()) {
-                System.out.println("Could not delete file");
-                return;
-            }
-
-            //Rename the new file to the filename the original file had.
-            if (!tempFile.renameTo(inFile))
-                System.out.println("Could not rename file");
-
-        }
-        catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public boolean groupExists(String json) {
-        File file = new File(this.getFilesDir(), "groups");
-        try {
-            Scanner scanner = new Scanner(file);
-
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                if(line.equals(json)) {
-                    return true;
-                }
-            }
-        } catch(FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public static boolean addMessage(String text, String name) {
@@ -548,7 +407,7 @@ public class GroupActivity  extends ActionBarActivity {
                         String text = et.getText().toString().replaceAll("\\s+$", "");
 
                         if (text.equals(password)) {
-                            addGroup(es1, es2, true);
+                            new GroupHandler(con).addGroup(es1, es2, true);
                             addMessage(es1, "Code: " + es2);
                         } else {
                             Toast.makeText(con, "Incorrect password!", Toast.LENGTH_LONG).show();

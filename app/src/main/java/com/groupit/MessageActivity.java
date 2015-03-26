@@ -9,6 +9,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.nfc.Tag;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -38,9 +44,10 @@ import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Arrays;
 import java.util.UUID;
 
-public class MessageActivity extends ActionBarActivity {
+public class MessageActivity extends ActionBarActivity implements NfcAdapter.CreateNdefMessageCallback {
 
     public static ListView chatMsg;
     public static ChatArrayAdapter myAdapter;
@@ -52,6 +59,7 @@ public class MessageActivity extends ActionBarActivity {
 
     EditText editTextSay;
     ImageButton buttonSend;
+    NfcAdapter mNfcAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +74,11 @@ public class MessageActivity extends ActionBarActivity {
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (mNfcAdapter != null) {
+            mNfcAdapter.setNdefPushMessageCallback(this, this);
+        }
 
         isLooking = true;
         con = this;
@@ -129,10 +142,58 @@ public class MessageActivity extends ActionBarActivity {
         });
     }
 
+    @Override
+    public NdefMessage createNdefMessage(NfcEvent event) {
+        String text = (new JSONUtils().nfcGroup(groupName, currentGroup));
+        NdefMessage msg = new NdefMessage(
+                new NdefRecord[] {
+                        NdefRecord.createMime(
+                                "application/com.groupit",
+                                text.getBytes())
+                });
+        return msg;
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        String action = intent.getAction();
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+        String s = action + "\n\n" + tag.toString();
+
+        Parcelable[] data = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+        if (data != null) {
+            try {
+                for (int i = 0; i < data.length; i++) {
+                    NdefRecord [] recs = ((NdefMessage)data[i]).getRecords();
+                    for (int j = 0; j < recs.length; j++) {
+                        if (recs[j].getTnf() == NdefRecord.TNF_WELL_KNOWN &&
+                                Arrays.equals(recs[j].getType(), NdefRecord.RTD_TEXT)) {
+                            byte[] payload = recs[j].getPayload();
+                            String textEncoding = ((payload[0] & 0200) == 0) ? "UTF-8" : "UTF-16";
+                            int langCodeLen = payload[0] & 0077;
+
+                            s += ("\n\nNdefMessage[" + i + "], NdefRecord[" + j + "]:\n\"" +
+                                    new String(payload, langCodeLen + 1, payload.length - langCodeLen - 1,
+                                            textEncoding) + "\"");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+        }
+
+        new GroupHandler(con).addGroup(new JSONUtils().getGroupDisplay(s), new JSONUtils().getGroupID(s), true);
+    }
 
     @Override
     protected void onResume() {
         isLooking = true;
+
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+            processIntent(getIntent());
+        }
 
         super.onResume();
     }

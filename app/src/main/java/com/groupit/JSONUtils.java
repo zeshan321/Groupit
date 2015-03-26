@@ -31,6 +31,44 @@ public class JSONUtils {
         return json;
     }
 
+    public String nfcGroup(String display, String ID) {
+        String json = null;
+
+        try {
+            JSONObject jObj = new JSONObject();
+            jObj.put("display", display);
+            jObj.put("ID", ID);
+
+            json = jObj.toString();
+
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+    public String nfcGetDisplay(String json) {
+        String display = null;
+        try {
+            JSONObject jObj = new JSONObject(json);
+            display = jObj.getString("display");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return display;
+    }
+
+    public String nfcGetID(String json) {
+        String display = null;
+        try {
+            JSONObject jObj = new JSONObject(json);
+            display = jObj.getString("ID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return display;
+    }
+
     public  Boolean isImage(String json) {
         try {
             JSONObject jObj = new JSONObject(json);
