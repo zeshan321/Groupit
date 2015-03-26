@@ -15,6 +15,7 @@ GroupIt is an group chatting app that requires no login or setup.
 * Nice design
 * Private groups with password protection
 * Multiple groups support 
+* Ability to add users to group VIA NFC
 
 
 <h1>Planned features</h1>
