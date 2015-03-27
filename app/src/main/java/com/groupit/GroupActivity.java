@@ -72,7 +72,6 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.actvity_group);
-
         con = this;
 
         new GroupHandler(con).setup();
@@ -99,6 +98,15 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
             }
 
             mNFCTechLists = new String[][] { new String[] { NfcF.class.getName() } };
+        }
+
+        if (getIntent().hasExtra("transferName") && getIntent().hasExtra("transferCode")) {
+            MessageActivity.groupName = getIntent().getExtras().getString("transferName");
+            Intent intent = new Intent(GroupActivity.this, MessageActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.transition.activity_to_1, R.transition.activity_to_2);
+
+            MessageActivity.currentGroup = getIntent().getExtras().getString("transferCode");
         }
 
         if (finishedSetup == false) {
@@ -343,7 +351,6 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                 builder.show();
             }
         });
-
     }
 
     public static boolean addMessage(String text, String name) {

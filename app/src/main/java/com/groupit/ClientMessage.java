@@ -110,12 +110,16 @@ public class ClientMessage extends Service {
             @Override
             public void run() {
                 try {
+                    if (socket != null) {
+                        socket.close();
+                    }
+
                     socket = new Socket(InetAddress.getByName(new Main().getIP()), new Main().getPort());
                     inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     outputWriter = new PrintWriter(socket.getOutputStream(), true);
 
                     if (GroupActivity.groups.toString().equals("[]")) {
-                        new GroupHandler(tc).loadGroupMem(tc);
+                        GroupHandler.loadGroupMem(tc);
                     }
 
                     if (tempCon == null) {
@@ -200,9 +204,9 @@ public class ClientMessage extends Service {
                 if ((!MessageActivity.isLooking || !MessageActivity.currentGroup.equals(group))) {
                     if (!(id.equals(GroupActivity.ID))) {
                         if (isImage) {
-                            Notification(name, "Image", new GroupHandler(tempCon).idtoDisplay(group));
+                            Notification(name, "Image", new GroupHandler(tempCon).idtoDisplay(group), group);
                         } else {
-                            Notification(name, message, new GroupHandler(tempCon).idtoDisplay(group));
+                            Notification(name, message, new GroupHandler(tempCon).idtoDisplay(group), group);
                         }
                     }
                 }
@@ -216,11 +220,13 @@ public class ClientMessage extends Service {
         }
     }
 
-    public void Notification(String notificationTitle, String notificationMessage, String group) {
+    public void Notification(String notificationTitle, String notificationMessage, String group, String ID) {
 
         Intent myIntent = new Intent(this, GroupActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         myIntent.setAction(Long.toString(System.currentTimeMillis()));
+        myIntent.putExtra("transferName", group);
+        myIntent.putExtra("transferCode", ID);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
