@@ -282,7 +282,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
                                 if (es1.length() > 0 && es2.length() > 0 && es1.startsWith(" ") == false && es2.startsWith(" ") == false) {
 
-                                    if (new GroupHandler(con).groupExists(new JSONUtils().getJSOnGroup(es1, es2))) {
+                                    if (new GroupHandler(con).groupCodeExists(es2)) {
                                         Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
                                         toast.show();
                                         return;
