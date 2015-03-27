@@ -12,9 +12,11 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.widget.AbsListView;
+import android.widget.Toast;
 
 import com.parse.GetCallback;
 import com.parse.ParseObject;
@@ -65,7 +67,7 @@ public class ClientMessage extends Service {
 
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
-        showNotification();
+        //showNotification();
 
        networkStateReceiver = new BroadcastReceiver() {
 
@@ -102,6 +104,8 @@ public class ClientMessage extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+        final Context tc = this;
+
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -109,6 +113,14 @@ public class ClientMessage extends Service {
                     socket = new Socket(InetAddress.getByName(new Main().getIP()), new Main().getPort());
                     inputReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     outputWriter = new PrintWriter(socket.getOutputStream(), true);
+
+                    if (GroupActivity.groups.toString().equals("[]")) {
+                        new GroupHandler(tc).loadGroupMem(tc);
+                    }
+
+                    if (tempCon == null) {
+                        tempCon = tc;
+                    }
 
                     sendData(new JSONUtils().getJSONList());
                     openInput();
@@ -188,9 +200,9 @@ public class ClientMessage extends Service {
                 if ((!MessageActivity.isLooking || !MessageActivity.currentGroup.equals(group))) {
                     if (!(id.equals(GroupActivity.ID))) {
                         if (isImage) {
-                            Notification(name, "Image", group);
+                            Notification(name, "Image", new GroupHandler(tempCon).idtoDisplay(group));
                         } else {
-                            Notification(name, message, group);
+                            Notification(name, message, new GroupHandler(tempCon).idtoDisplay(group));
                         }
                     }
                 }
@@ -227,7 +239,7 @@ public class ClientMessage extends Service {
                 .setSmallIcon(R.mipmap.logo)
                 .build();
 
-        mNM.notify(0, myNotification);
+        mNM.notify(4827, myNotification);
     }
 
     public void openInput() {
@@ -265,6 +277,10 @@ public class ClientMessage extends Service {
                 .setSmallIcon(R.mipmap.logo)
                 .build();
         myNotification.flags|=myNotification.FLAG_NO_CLEAR;
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            myNotification.priority = Notification.PRIORITY_MIN;
+        }
 
         startForeground(4756, myNotification);
     }

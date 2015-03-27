@@ -187,4 +187,21 @@ public class GroupHandler {
         }
         return false;
     }
+
+    public String idtoDisplay(String code) {
+        File file = new File(con.getFilesDir(), "groups");
+        try {
+            Scanner scanner = new Scanner(file);
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                if(new JSONUtils().getGroupID(line).equals(code)) {
+                    return new JSONUtils().getGroupDisplay(line);
+                }
+            }
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
