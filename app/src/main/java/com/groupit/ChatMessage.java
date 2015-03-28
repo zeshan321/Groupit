@@ -3,6 +3,8 @@ package com.groupit;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import java.sql.Timestamp;
+
 public class ChatMessage {
     public boolean left;
     public String message;
@@ -10,8 +12,9 @@ public class ChatMessage {
     public boolean image;
     public Bitmap imageU;
     public boolean useByte;
+    public Timestamp time;
 
-    public ChatMessage(boolean left, String message, String display, boolean image, Bitmap imageU, boolean useByte) {
+    public ChatMessage(boolean left, String message, String display, boolean image, Bitmap imageU, boolean useByte, Timestamp time) {
         super();
         this.left = left;
         this.message = message;
@@ -19,5 +22,6 @@ public class ChatMessage {
         this.image = image;
         this.imageU = imageU;
         this.useByte = useByte;
+        this.time = time;
     }
 }

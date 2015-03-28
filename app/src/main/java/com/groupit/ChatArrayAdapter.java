@@ -15,14 +15,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
     private TextView chatText;
     private TextView chatName;
     private ImageView chatImage;
+    private TextView timeStamp;
     private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
     private Context context;
 
@@ -79,6 +84,9 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         chatName = (TextView) row.findViewById(R.id.lblMsgFrom);
         chatName.setText(chatMessageObj.display);
 
+        timeStamp = (TextView) row.findViewById(R.id.lblMsgFromTime);
+        timeStamp.setText(convertTime(chatMessageObj.time.getTime()));
+
         if (chatMessageObj.image) {
             chatImage = (ImageView) row.findViewById(R.id.imageMsg);
             chatImage.setImageBitmap(chatMessageObj.imageU);
@@ -87,5 +95,20 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
             chatText.setText(chatMessageObj.message);
         }
         return row;
+    }
+
+    public String convertTime(long time){
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getDefault());
+        cal.setTimeInMillis(time);
+
+        String type = "AM";
+        if (cal.get(Calendar.AM_PM) == 1) {
+            type = "PM";
+        }
+
+        return (cal.get(Calendar.HOUR) + ":"
+                + cal.get(Calendar.MINUTE) + " " + type);
+
     }
 }

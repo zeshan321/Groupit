@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import groupitapi.groupit.com.Main;
 
@@ -47,11 +49,11 @@ public class FTPHandler {
             public void run() {
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
 
-                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", MessageActivity.display, true, bitmap, true));
+                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", MessageActivity.display, true, bitmap, true, new Timestamp(new Date().getTime())));
                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
 
-                MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, new JSONUtils().getJSONMessage(new UserData(con).getID(), MessageActivity.currentGroup, file.getAbsolutePath(), MessageActivity.display, true), con);
+                MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, new JSONUtils().getJSONMessage(new Timestamp(new Date().getTime()), new UserData(con).getID(), MessageActivity.currentGroup, file.getAbsolutePath(), MessageActivity.display, true), con);
                 mh.saveMessage();
             }
         });
@@ -82,7 +84,7 @@ public class FTPHandler {
                         client.logout();
 
                         if (send) {
-                            ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, MessageActivity.currentGroup, IMGID, MessageActivity.display, true));
+                            ClientMessage.sendData(new JSONUtils().getJSONMessage(new Timestamp(new Date().getTime()), GroupActivity.ID, MessageActivity.currentGroup, IMGID, MessageActivity.display, true));
                         }
                     }
                 } catch (IOException e) {
@@ -129,19 +131,20 @@ public class FTPHandler {
                         client.logout();
                         if (send) {
                             final File img1 = img;
+                            final Timestamp ts = new Timestamp(new Date().getTime());
                             ((Activity) con).runOnUiThread(new Runnable() {
                                 public void run() {
 
                                     if (update) {
                                         Bitmap bitmap = BitmapFactory.decodeFile(img1.getAbsolutePath());
 
-                                        MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true));
+                                        MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true, ts));
                                         MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                         MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                                     }
                                 }
                             });
-                            MessageHandler mh = new MessageHandler(group, new JSONUtils().getJSONMessage(ID, group, img1.getAbsolutePath(), name, true), con);
+                            MessageHandler mh = new MessageHandler(group, new JSONUtils().getJSONMessage(ts, ID, group, img1.getAbsolutePath(), name, true), con);
                             mh.saveMessage();
                         }
                     }

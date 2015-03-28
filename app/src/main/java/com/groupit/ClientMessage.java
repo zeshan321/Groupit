@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 
 import groupitapi.groupit.com.Main;
@@ -166,6 +167,7 @@ public class ClientMessage extends Service {
                 final String id = new JSONUtils().getID(data);
                 final String group = new JSONUtils().getGroupID(data);
                 final Boolean isImage = new JSONUtils().isImage(data);
+                final Timestamp ts = Timestamp.valueOf(new JSONUtils().getTimeStamp(data));
                 if (con != null) {
                     ((Activity) con).runOnUiThread(new Runnable() {
                         public void run() {
@@ -184,7 +186,7 @@ public class ClientMessage extends Service {
                                 mh.saveMessage();
 
                                 if (!owner) {
-                                    MessageActivity.addMessage(owner, message, name, group);
+                                    MessageActivity.addMessage(owner, message, name, group, ts);
                                 }
                             }
                         }

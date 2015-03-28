@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.sql.Timestamp;
 
 public class MessageHandler {
 
@@ -93,25 +94,27 @@ public class MessageHandler {
                                         String message = new JSONUtils().getMessage(line);
                                         boolean isImage = new JSONUtils().isImage(line);
                                         name = new JSONUtils().getName(line);
+                                        Timestamp ts = Timestamp.valueOf(new JSONUtils().getTimeStamp(line));
+
                                         if (new JSONUtils().getID(line).equals(GroupActivity.ID)) {
                                             if (isImage && new File(message).exists()) {
                                                 Bitmap bitmap = BitmapFactory.decodeFile(message);
-                                                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", name, true, bitmap, true));
+                                                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", name, true, bitmap, true, ts));
 
                                                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                                             } else {
-                                                MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup);
+                                                MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup, ts);
                                             }
                                         } else {
                                             if (isImage && new File(message).exists()) {
                                                 Bitmap bitmap = BitmapFactory.decodeFile(message);
-                                                MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true));
+                                                MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true, ts));
 
                                                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                                             } else {
-                                                MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup);
+                                                MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup, ts);
                                             }
                                         }
                                     }

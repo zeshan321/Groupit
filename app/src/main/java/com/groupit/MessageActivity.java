@@ -47,7 +47,9 @@ import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.UUID;
 
 public class MessageActivity extends ActionBarActivity implements NfcAdapter.CreateNdefMessageCallback {
@@ -61,7 +63,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
     public static String groupName = null;
 
     EditText editTextSay;
-    ImageButton buttonSend;
+    Button buttonSend;
     NfcAdapter mNfcAdapter;
     PendingIntent mPendingIntent;
     IntentFilter[] mIntentFilters;
@@ -110,9 +112,9 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         mh.loadMessages();
 
         editTextSay = (EditText) findViewById(R.id.say);
-        buttonSend = (ImageButton) findViewById(R.id.send);
+        buttonSend = (Button) findViewById(R.id.send);
 
-        ImageButton b = (ImageButton) findViewById(R.id.send);
+        Button b = (Button) findViewById(R.id.send);
         b.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 final String msg = editTextSay.getText().toString();
@@ -120,10 +122,11 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 if (msg.equals("")) {
                     return;
                 }
+                Timestamp ts = new Timestamp(new Date().getTime());
 
-                json = new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false);
-                MessageActivity.addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup);
-                ClientMessage.sendData(new JSONUtils().getJSONMessage(GroupActivity.ID, currentGroup, msg, display, false));
+                json = new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false);
+                MessageActivity.addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup, ts);
+                ClientMessage.sendData(new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false));
                 editTextSay.setText("");
             }
         });
@@ -215,9 +218,9 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         toast.show();
     }
 
-    public static void addMessage(boolean right, String text, String name, String group) {
+    public static void addMessage(boolean right, String text, String name, String group, Timestamp ts) {
         try {
-            myAdapter.add(new ChatMessage(right, text, name, false, null, false));
+            myAdapter.add(new ChatMessage(right, text, name, false, null, false, ts));
 
             chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
             chatMsg.setAdapter(myAdapter);

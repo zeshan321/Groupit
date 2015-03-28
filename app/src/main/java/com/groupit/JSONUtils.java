@@ -3,20 +3,16 @@ package com.groupit;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.sql.Timestamp;
 
 public class JSONUtils {
 
-    public String getJSONMessage(String ID, String group, String message, String display, boolean isImage) {
+    public String getJSONMessage(Timestamp time, String ID, String group, String message, String display, boolean isImage) {
         String json = null;
 
         try {
             JSONObject jObj = new JSONObject();
+            jObj.put("timestamp", time);
             jObj.put("ID", ID);
             jObj.put("group", String.valueOf(group));
             jObj.put("message", message);
@@ -125,6 +121,17 @@ public class JSONUtils {
         try {
             JSONObject jObj = new JSONObject(json);
             String msg = jObj.getString("display");
+            return msg;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getTimeStamp(String json) {
+        try {
+            JSONObject jObj = new JSONObject(json);
+            String msg = jObj.getString("timestamp");
             return msg;
         } catch (JSONException e) {
             e.printStackTrace();
