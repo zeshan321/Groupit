@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.opengl.Visibility;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -68,7 +69,7 @@ public class ClientMessage extends Service {
 
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
-        //showNotification();
+        showNotification();
 
        networkStateReceiver = new BroadcastReceiver() {
 
@@ -271,19 +272,9 @@ public class ClientMessage extends Service {
     }
 
     private void showNotification() {
-        Intent myIntent = new Intent(this, GroupActivity.class);
-        myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        myIntent.setAction(Long.toString(System.currentTimeMillis()));
-
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         Notification myNotification = new NotificationCompat.Builder(this)
-                .setContentTitle("GroupIt")
-                .setContentText("GroupIt is running.")
-                .setContentIntent(contentIntent)
-                .setSmallIcon(R.mipmap.logo)
                 .build();
+
         myNotification.flags|=myNotification.FLAG_NO_CLEAR;
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {

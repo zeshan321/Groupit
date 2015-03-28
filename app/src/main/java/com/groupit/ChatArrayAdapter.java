@@ -107,8 +107,13 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
             type = "PM";
         }
 
+        String min = String.valueOf(cal.get(Calendar.MINUTE));
+        if (min.length() == 1) {
+            min = min + "0";
+        }
+
         return (cal.get(Calendar.HOUR) + ":"
-                + cal.get(Calendar.MINUTE) + " " + type);
+                + min + " " + type);
 
     }
 }
