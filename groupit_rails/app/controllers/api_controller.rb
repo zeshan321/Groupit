@@ -1,4 +1,5 @@
 class ApiController < ApplicationController
+  include ApiHelper
   skip_before_action :verify_authenticity_token
   before_action :authenticate_api, except: [:init_session]
 
@@ -23,7 +24,7 @@ class ApiController < ApplicationController
 
     end
   end
-  
+
   def create_user_session
   	user_id = params[:user_id]
   	remember_token = params[:remember_token]
@@ -40,9 +41,9 @@ class ApiController < ApplicationController
     else
     	render plain: "ERROR"
     end
-    
+
   end
-  
+
   def create_group
   	name = params[:name]
   	password = params[:password]
@@ -51,23 +52,49 @@ class ApiController < ApplicationController
 			@group.public_group = false
 			@group.password = password
 		end
-		
+
 		if @group.save
-			render plain:"OK"
+			render json:["OK", @group.id, @group.join_token]
 		else
-			render plain:"ERROR"
+			render json:["ERROR"]
 		end
   end
 
   def init_session
-    session[:api_key] = 1 
+    session[:api_key] = 1
     render plain:"OK"
   end
-  
-  private
-  def authenticate_api
-  	if session[:api_key].nil?
-  		render nothing: true
-  	end
+
+  def list_groups
+    list = Group.limit(30).pluck(:id,:name,:public_group)
+=begin
+    list.map do |group|
+      if group[2]
+        group[2] = 'public'
+      else
+        group[2] = 'private'
+      end
+    end
+=end
+    render json: list
+  end
+
+  def join_group
+  	@group = Group.find(params[:id])
+    password = params[:password]
+
+    if user_allow_access? @group
+    	render plain:"ALLOWED"
+    elsif @group.public_group
+      user_join @group
+    	render plain:"AUTHORIZED"
+    elsif password.nil?
+    	render plain:"REQUIRE PASSWORD"
+    elsif  @group.authenticated?(password)
+      user_join @group
+    	render plain:"AUTHORIZED"
+    else
+    	render plain:"WRONG PASSWORD"
+    end
   end
 end

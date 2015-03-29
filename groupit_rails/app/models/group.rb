@@ -11,6 +11,8 @@ class Group < ActiveRecord::Base
 
   validates :password, presence: true, unless: :public_group
 
+  after_create :generate_join_token
+
   def password= (new_password)
     if new_password.nil? or new_password.empty?
       self.password_digest = nil

@@ -28,7 +28,6 @@ class GroupsController < ApplicationController
 			@group.password = group_params[:password]
 		end
 		if @group.save
-      @group.generate_join_token
 			redirect_to group_path(@group)
 		else
 			render 'new'
@@ -66,7 +65,7 @@ class GroupsController < ApplicationController
   def wrong_token
 
   end
-  
+
   def all_users
   	@group = Group.find(params[:id])
     authenticate_access @group

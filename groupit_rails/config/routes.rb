@@ -1,21 +1,24 @@
 Rails.application.routes.draw do
   root 'groups#index'
 
-  get '/search' => 'searches#show'
+  get 'search' => 'searches#show'
 
   resources :users, only:[:create, :new, :edit, :update]
 
-  get 'api/users/new' => 'api#create_user'
-  get 'api/users/login' => 'api#create_user_session'
-  get 'api/groups/new' => 'api#create_group'
-  get 'api' => 'api#init_session'
+  post 'api' => 'api#init_session'
+  post 'api/users/new' => 'api#create_user'
+  post 'api/users/login' => 'api#create_user_session'
+  post 'api/groups/new' => 'api#create_group'
+  post 'api/groups' => 'api#list_groups'
+  post 'api/groups/:id/join' => 'api#join_group'
+  post 'api/groups/:group_id/messages' => 'messages#api_create'
 
   resources :groups, only:[:index, :show, :new, :create] do
     resources :messages, only:[:create]
   end
-  
+
 	get 'groups/:id/users' => 'groups#all_users'
-	
+
   get 'groups/:id/join' => 'groups#join', as: 'join_group'
   post 'groups/:id/join' => 'groups#authorize'
 
