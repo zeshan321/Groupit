@@ -16,12 +16,9 @@ class ApiController < ApplicationController
       end
       login_user user
       flag = true
-      render json:['OK',user.id,user.remember_token], status:202
-
+      render json:['OK', user.id,user.remember_token]
     else
-
-      render json:['Error'], status:422
-
+      render json:['Error', user.errors.as_json(full_messages: true)]
     end
   end
 
@@ -37,9 +34,9 @@ class ApiController < ApplicationController
         end
     end
     if flag
-    	render plain: "OK"
+    	render json: ["OK"]
     else
-    	render plain: "ERROR"
+    	render json: ["ERROR"]
     end
 
   end
@@ -54,9 +51,9 @@ class ApiController < ApplicationController
 		end
 
 		if @group.save
-			render json:["OK", @group.id, @group.join_token]
+			render json: ["OK", @group.id, @group.join_token]
 		else
-			render json:["ERROR"]
+			render json: ["ERROR", @group.errors.as_json(full_messages: true)]
 		end
   end
 
@@ -67,15 +64,6 @@ class ApiController < ApplicationController
 
   def list_groups
     list = Group.limit(30).pluck(:id,:name,:public_group)
-=begin
-    list.map do |group|
-      if group[2]
-        group[2] = 'public'
-      else
-        group[2] = 'private'
-      end
-    end
-=end
     render json: list
   end
 
