@@ -18,7 +18,7 @@
     <LinearLayout
         android:id="@+id/listFooter"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
@@ -29,7 +29,7 @@
             android:textColor="#ffffff"
             android:background="@color/actionbar"
             android:layout_width="fill_parent"
-            android:layout_height="90px"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
             android:layout_weight="1"
 
             android:id="@+id/Create"
@@ -42,7 +42,7 @@
             android:textSize="15sp"
             android:textColor="#ffffff"
             android:layout_width="fill_parent"
-            android:layout_height="90px"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
             android:layout_weight="1"
 
             android:id="@+id/Join"

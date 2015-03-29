@@ -8,33 +8,29 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
-import android.nfc.Tag;
 import android.nfc.tech.NfcF;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -45,10 +41,8 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -63,7 +57,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
     public static String groupName = null;
 
     EditText editTextSay;
-    Button buttonSend;
+    ImageButton buttonSend;
     NfcAdapter mNfcAdapter;
     PendingIntent mPendingIntent;
     IntentFilter[] mIntentFilters;
@@ -81,7 +75,6 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         tv.setText(groupName);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
@@ -112,10 +105,9 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         mh.loadMessages();
 
         editTextSay = (EditText) findViewById(R.id.say);
-        buttonSend = (Button) findViewById(R.id.send);
+        buttonSend = (ImageButton) findViewById(R.id.send);
 
-        Button b = (Button) findViewById(R.id.send);
-        b.setOnClickListener(new Button.OnClickListener() {
+        buttonSend.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 final String msg = editTextSay.getText().toString();
                 String json = null;
