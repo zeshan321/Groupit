@@ -28,4 +28,5 @@ dependencies {
     compile files('libs/bolts-android-1.1.4.jar')
     compile files('libs/GroupItAPI.jar')
     compile files('libs/commons-net-1.4.1.jar')
+    compile 'com.github.markushi:circlebutton:1.1'
 }

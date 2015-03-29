@@ -6,49 +6,49 @@
 
     <ListView
         android:id="@+id/list_group"
-        android:layout_above="@+id/listFooter"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:longClickable="true"
         android:divider="@null"
-        android:background="@null">
+        android:background="@null"
+        android:layout_above="@+id/listFooter">
     </ListView>
 
     <LinearLayout
         android:id="@+id/listFooter"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
         <Button
+            android:textAlignment="center"
             android:text="Create"
             android:height="14dp"
             android:textSize="15sp"
             android:textColor="#ffffff"
             android:background="@color/actionbar"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"
             android:layout_weight="1"
-
+            android:layout_height="fill_parent"
             android:id="@+id/Create"
             android:layout_gravity="bottom">
         </Button>
+
         <Button
+            android:textAlignment="center"
             android:text="Join"
             android:background="@color/actionbar"
             android:height="14dp"
             android:textSize="15sp"
             android:textColor="#ffffff"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:layout_height="fill_parent"
             android:layout_weight="1"
 
             android:id="@+id/Join"
             android:layout_gravity="bottom">
         </Button>
-
-
     </LinearLayout>
 </RelativeLayout>
