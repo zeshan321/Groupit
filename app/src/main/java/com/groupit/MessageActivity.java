@@ -71,6 +71,9 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.abs_title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        ClientMessage.count.remove(groupName);
+
         TextView tv = (TextView) findViewById(R.id.groupTitle);
         tv.setText(groupName);
 

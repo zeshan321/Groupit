@@ -32,6 +32,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.HashMap;
 
 import groupitapi.groupit.com.Main;
 
@@ -48,6 +49,7 @@ public class ClientMessage extends Service {
     private static final int NO_CONNECTION_TYPE = -1;
     private static int sLastType = NO_CONNECTION_TYPE;
     public static boolean firstTime = false;
+    public static HashMap<String, Integer> count = new HashMap<String, Integer>();
 
     public class LocalBinder extends Binder {
         ClientMessage getService() {
@@ -187,7 +189,9 @@ public class ClientMessage extends Service {
                                 mh.saveMessage();
 
                                 if (!owner) {
-                                    MessageActivity.addMessage(owner, message, name, group, ts);
+                                    if (group.equals(MessageActivity.currentGroup)) {
+                                        MessageActivity.addMessage(owner, message, name, group, ts);
+                                    }
                                 }
                             }
                         }
@@ -207,9 +211,23 @@ public class ClientMessage extends Service {
                 if ((!MessageActivity.isLooking || !MessageActivity.currentGroup.equals(group))) {
                     if (!(id.equals(GroupActivity.ID))) {
                         if (isImage) {
-                            Notification(name, "Image", new GroupHandler(tempCon).idtoDisplay(group), group);
+                            String groupDisplay = new GroupHandler(tempCon).idtoDisplay(group);
+                            Notification(name, "Image", groupDisplay, group);
+
+                            if (ClientMessage.count.containsKey(groupDisplay)) {
+                                ClientMessage.count.put(groupDisplay, ClientMessage.count.get(groupDisplay) + 1);
+                            } else {
+                                ClientMessage.count.put(groupDisplay, 0);
+                            }
                         } else {
-                            Notification(name, message, new GroupHandler(tempCon).idtoDisplay(group), group);
+                            String groupDisplay = new GroupHandler(tempCon).idtoDisplay(group);
+                            Notification(name, message, groupDisplay, group);
+
+                            if (ClientMessage.count.containsKey(groupDisplay)) {
+                                ClientMessage.count.put(groupDisplay, ClientMessage.count.get(groupDisplay) + 1);
+                            } else {
+                                ClientMessage.count.put(groupDisplay, 0);
+                            }
                         }
                     }
                 }

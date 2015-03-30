@@ -15,6 +15,7 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
@@ -75,6 +76,19 @@ class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
                 .buildRound(s, color2);
 
         image.setImageDrawable(drawable);
+
+        // Display count
+        if (ClientMessage.count.containsKey(chatMessageObj.message)) {
+            TextView count = (TextView) row.findViewById(R.id.icNewCount);
+            count.setVisibility(View.VISIBLE);
+            count.setText(String.valueOf(ClientMessage.count.get(chatMessageObj.message)));
+        } else {
+            TextView count = (TextView) row.findViewById(R.id.icNewCount);
+            count.setVisibility(View.GONE);
+        }
+
+        TextView count = (TextView) row.findViewById(R.id.chatListItemDate);
+        count.setVisibility(View.GONE);
         return row;
     }
 }

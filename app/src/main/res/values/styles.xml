@@ -40,7 +40,6 @@
     </style>
 
     <style name="chatListItemName">
-        <item name="android:textStyle">bold</item>
         <item name="android:textColor">#ff5a5a5c</item>
     </style>
     <style name="chatListItemDate">
