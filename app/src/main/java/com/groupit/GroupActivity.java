@@ -154,8 +154,8 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-                TextView textView = (TextView) arg1.findViewById(R.id.secondLine);
-                TextView textView1 = (TextView) arg1.findViewById(R.id.firstLine);
+                TextView textView = (TextView) arg1.findViewById(R.id.chatListItemHints);
+                TextView textView1 = (TextView) arg1.findViewById(R.id.chatListItemName);
 
                 String group = textView.getText().toString().replace("Code: ", "");
                 String name = textView1.getText().toString();
@@ -174,8 +174,8 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                TextView textView = (TextView) view.findViewById(R.id.secondLine);
-                TextView textView1 = (TextView) view.findViewById(R.id.firstLine);
+                TextView textView = (TextView) view.findViewById(R.id.chatListItemHints);
+                TextView textView1 = (TextView) view.findViewById(R.id.chatListItemName);
 
                 final String group = textView.getText().toString().replace("Code: ", "");
                 final String name = textView1.getText().toString();

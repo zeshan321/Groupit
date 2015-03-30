@@ -55,13 +55,13 @@ class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
 
         row = inflater.inflate(R.layout.groups_layout, parent, false);
 
-        chatText = (TextView) row.findViewById(R.id.firstLine);
+        chatText = (TextView) row.findViewById(R.id.chatListItemName);
         chatText.setText(chatMessageObj.message);
 
-        chatName = (TextView) row.findViewById(R.id.secondLine);
+        chatName = (TextView) row.findViewById(R.id.chatListItemHints);
         chatName.setText(chatMessageObj.id);
 
-        image = (ImageView) row.findViewById(R.id.icon);
+        image = (ImageView) row.findViewById(R.id.chatListItemImage);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
         String s = String.valueOf(chatMessageObj.message.charAt(0)).toUpperCase();
@@ -69,8 +69,8 @@ class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
 
         TextDrawable drawable = TextDrawable.builder()
                 .beginConfig()
-                .width(60)  // width in px
-                .height(60) // height in px
+                .width(97)  // width in px
+                .height(97) // height in px
                 .endConfig()
                 .buildRound(s, color2);
 

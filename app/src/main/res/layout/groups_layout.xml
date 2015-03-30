@@ -1,40 +1,17 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dip" >
-
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="6dip"
-        android:src="@android:drawable/ic_dialog_email" />
-
-    <TextView
-        android:id="@+id/secondLine"
-        android:layout_width="fill_parent"
-        android:layout_height="26dip"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/icon"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="Description"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/firstLine"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/secondLine"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/icon"
-        android:gravity="center_vertical"
-        android:text="Example application"
-        android:textSize="20sp" />
-
-</RelativeLayout> 
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@drawable/bg_home_chat_list_item" android:layout_width="fill_parent" android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <ImageView android:id="@+id/chatListItemImage" android:layout_width="60.0dip" android:layout_height="60.0dip" android:layout_margin="5.0dip" android:src="@drawable/ic_action_send" android:scaleType="centerCrop" />
+        <LinearLayout android:layout_gravity="center" android:orientation="vertical" android:id="@+id/chatListItemInfoContainer" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_margin="5.0dip" android:layout_weight="1.0">
+            <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+                <TextView android:textAppearance="?android:textAppearanceMedium" android:id="@+id/chatListItemName" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="Line 1" android:layout_weight="1.0" style="@style/chatListItemName" />
+                <TextView android:textAppearance="?android:textAppearanceSmall" android:layout_gravity="center" android:id="@+id/chatListItemDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="14:13" style="@style/chatListItemDate" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+                <TextView android:textAppearance="?android:textAppearanceMedium" android:ellipsize="end" android:layout_gravity="center_vertical" android:id="@+id/chatListItemHints" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="Line 2 is awesome!" android:maxLines="1" android:layout_weight="1.0" style="@style/chatListItemHints" />
+                <TextView android:layout_gravity="center_vertical" android:id="@+id/icNewCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1" style="@style/chatListItemNewCount" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -33,4 +33,23 @@
         <item name="android:minHeight">1.0dip</item>
     </style>
 
+    <style name="chatListItemNewCount">
+        <item name="android:textSize">12.0sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/bg_chat_item_new_count</item>
+    </style>
+
+    <style name="chatListItemName">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ff5a5a5c</item>
+    </style>
+    <style name="chatListItemDate">
+        <item name="android:textSize">11.0sp</item>
+        <item name="android:textColor">#ff5a5a5c</item>
+    </style>
+
+    <style name="chatListItemHints">
+        <item name="android:textSize">13.0sp</item>
+        <item name="android:textColor">#ff5a5a5c</item>
+    </style>
 </resources>
