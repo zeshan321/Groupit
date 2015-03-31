@@ -24,9 +24,9 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.cocosw.accessory:connectivity:0.4.1'
-    compile files('libs/Parse-1.8.3.jar')
     compile files('libs/bolts-android-1.1.4.jar')
     compile files('libs/GroupItAPI.jar')
     compile files('libs/commons-net-1.4.1.jar')
     compile 'com.github.markushi:circlebutton:1.1'
+    compile files('libs/Parse-1.9.0.jar')
 }

@@ -122,6 +122,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 json = new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false);
                 MessageActivity.addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup, ts);
                 ClientMessage.sendData(new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false));
+
                 editTextSay.setText("");
             }
         });

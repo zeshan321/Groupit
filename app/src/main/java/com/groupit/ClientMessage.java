@@ -11,17 +11,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.opengl.Visibility;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.widget.AbsListView;
-import android.widget.Toast;
-
-import com.parse.GetCallback;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,7 +24,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.HashMap;
 
 import groupitapi.groupit.com.Main;

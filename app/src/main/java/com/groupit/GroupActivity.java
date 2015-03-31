@@ -74,8 +74,6 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
         setContentView(R.layout.actvity_group);
         con = this;
 
-        new GroupHandler(con).setup();
-
         groupsList = (ListView) findViewById(R.id.list_group);
         myAdapter = new GroupArrayAdapter(getApplicationContext(), R.layout.groups_layout);
 
@@ -196,6 +194,8 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                                 groups.remove(group);
 
                                 ClientMessage.sendData(new JSONUtils().getJSONList());
+
+                                new UserData(con).updateGroups();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -239,6 +239,8 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                                                     toast.show();
                                                 } else {
                                                     new GroupHandler(con).addGroup(es1, es2, true);
+                                                    new UserData(con).updateGroups();
+
                                                     addMessage(es1, "Code: " + es2);
 
                                                     ParseObject addGroup = new ParseObject("groups");
@@ -317,6 +319,8 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
                                                                     if (post == false) {
                                                                         new GroupHandler(con).addGroup(es1, es2, true);
+                                                                        new UserData(con).updateGroups();
+
                                                                         addMessage(es1, "Code: " + es2);
                                                                     } else {
                                                                         hasPassword(password, es1, es2);

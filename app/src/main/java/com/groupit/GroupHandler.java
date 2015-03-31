@@ -12,6 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class GroupHandler {
@@ -32,7 +34,7 @@ public class GroupHandler {
                 e.printStackTrace();
             }
 
-            addGroup("GroupIt", "0", false);
+            addGroup("GroupIt", "GroupIt", false);
         }
     }
 
@@ -103,6 +105,31 @@ public class GroupHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<String> getGroupsList() {
+        List<String> list = new ArrayList<>();
+        File file = new File(con.getFilesDir(), "groups");
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader bufferedReader = new BufferedReader(isr);
+
+        String line;
+        try {
+            while ((line = bufferedReader.readLine()) != null) {
+                String id = new JSONUtils().getGroupID(line);
+                list.add(id);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
 
