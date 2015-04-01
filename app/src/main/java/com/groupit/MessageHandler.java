@@ -46,20 +46,27 @@ public class MessageHandler {
     }
 
     public void saveMessage() {
-        String message = new StringHandler(StringHandler.Type.COMPRESS, this.message).run();
+        final String msg = this.message;
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String message = new StringHandler(StringHandler.Type.COMPRESS, msg).run();
 
-        if (message == null == false && message.equals("null") == false) {
-            try {
-                BufferedWriter stream = new BufferedWriter(new FileWriter(file, true));
-                stream.write(message + "\n");
-                stream.close();
+                if (message == null == false && message.equals("null") == false) {
+                    try {
+                        BufferedWriter stream = new BufferedWriter(new FileWriter(file, true));
+                        stream.write(message + "\n");
+                        stream.close();
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }
+        });
+        thread.start();
     }
 
     public void loadMessages() {
@@ -76,7 +83,8 @@ public class MessageHandler {
             InputStreamReader isr = new InputStreamReader(fis);
             final BufferedReader bufferedReader = new BufferedReader(isr);
             try {
-                ((Activity) con).runOnUiThread(new Runnable() {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
                     public void run() {
                         try {
                             String line;
@@ -90,34 +98,7 @@ public class MessageHandler {
                             while ((line = bufferedReader.readLine()) != null) {
                                 if (line != null || line.equals("null") == false) {
                                     line = new StringHandler(StringHandler.Type.DECOMPRESS, line).run();
-                                    if (new JSONUtils().canUseMessage(line)) {
-                                        String message = new JSONUtils().getMessage(line);
-                                        boolean isImage = new JSONUtils().isImage(line);
-                                        name = new JSONUtils().getName(line);
-                                        Timestamp ts = Timestamp.valueOf(new JSONUtils().getTimeStamp(line));
-
-                                        if (new JSONUtils().getID(line).equals(GroupActivity.ID)) {
-                                            if (isImage && new File(message).exists()) {
-                                                Bitmap bitmap = BitmapFactory.decodeFile(message);
-                                                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", name, true, bitmap, true, ts));
-
-                                                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                                                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
-                                            } else {
-                                                MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup, ts);
-                                            }
-                                        } else {
-                                            if (isImage && new File(message).exists()) {
-                                                Bitmap bitmap = BitmapFactory.decodeFile(message);
-                                                MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true, ts));
-
-                                                MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                                                MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
-                                            } else {
-                                                MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup, ts);
-                                            }
-                                        }
-                                    }
+                                    addMSG(line);
                                 }
                             }
 
@@ -126,6 +107,7 @@ public class MessageHandler {
                         }
                     }
                 });
+                thread.start();
             } finally {
                 System.out.println("Loaded.");
             }
@@ -134,49 +116,101 @@ public class MessageHandler {
         }
     }
 
-    public void removeGroup(int lineToRemove) {
+    public void addMSG(final String line) {
+        ((Activity) con).runOnUiThread(new Runnable() {
+            public void run() {
+                if (new JSONUtils().canUseMessage(line)) {
+                    String message = new JSONUtils().getMessage(line);
+                    boolean isImage = new JSONUtils().isImage(line);
+                    String name = new JSONUtils().getName(line);
+                    Timestamp ts = Timestamp.valueOf(new JSONUtils().getTimeStamp(line));
 
-        try {
+                    if (new JSONUtils().getID(line).equals(GroupActivity.ID)) {
+                        if (isImage && new File(message).exists()) {
+                            BitmapFactory.Options opts=new BitmapFactory.Options();
+                            opts.inDither=false;
+                            opts.inPurgeable=true;
+                            opts.inInputShareable=true;
+                            opts.inTempStorage=new byte[32 * 1024];
+                            Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 
-            File inFile = file;
+                            MessageActivity.myAdapter.add(new ChatMessage(true, "Image", name, true, bitmap, true, ts));
 
-            if (!inFile.isFile()) {
-                System.out.println("Parameter is not an existing file");
-                return;
-            }
+                            MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                            MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                        } else {
+                            MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup, ts);
+                        }
+                    } else {
+                        if (isImage && new File(message).exists()) {
+                            BitmapFactory.Options opts=new BitmapFactory.Options();
+                            opts.inDither=false;
+                            opts.inPurgeable=true;
+                            opts.inInputShareable=true;
+                            opts.inTempStorage=new byte[32 * 1024];
+                            Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 
-            File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
+                            MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true, ts));
 
-            BufferedReader br = new BufferedReader(new FileReader(inFile));
-            PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
-
-            String line = null;
-
-            int i = -1;
-            while ((line = br.readLine()) != null) {
-                i++;
-                if (i != lineToRemove) {
-                    pw.println(line);
-                    pw.flush();
+                            MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                            MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+                        } else {
+                            MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup, ts);
+                        }
+                    }
                 }
             }
-            pw.close();
-            br.close();
+        });
+    }
 
-            //Delete the original file
-            if (!inFile.delete()) {
-                System.out.println("Could not delete file");
-                return;
+    public void removeGroup(final int lineToRemove) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    File inFile = file;
+
+                    if (!inFile.isFile()) {
+                        System.out.println("Parameter is not an existing file");
+                        return;
+                    }
+
+                    File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
+
+                    BufferedReader br = new BufferedReader(new FileReader(inFile));
+                    PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+
+                    String line = null;
+
+                    int i = -1;
+                    while ((line = br.readLine()) != null) {
+                        i++;
+                        if (i != lineToRemove) {
+                            pw.println(line);
+                            pw.flush();
+                        }
+                    }
+                    pw.close();
+                    br.close();
+
+                    //Delete the original file
+                    if (!inFile.delete()) {
+                        System.out.println("Could not delete file");
+                        return;
+                    }
+
+                    //Rename the new file to the filename the original file had.
+                    if (!tempFile.renameTo(inFile))
+                        System.out.println("Could not rename file");
+
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
-
-            //Rename the new file to the filename the original file had.
-            if (!tempFile.renameTo(inFile))
-                System.out.println("Could not rename file");
-
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        });
+        thread.start();
     }
 }

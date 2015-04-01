@@ -10,8 +10,11 @@ import com.parse.ParsePush;
 import com.parse.SaveCallback;
 import com.parse.SendCallback;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import groupitapi.groupit.com.RestAPI;
 
 public class UserData {
 
@@ -40,5 +43,19 @@ public class UserData {
 
         ParseInstallation.getCurrentInstallation().put("channels", list);
         ParseInstallation.getCurrentInstallation().saveInBackground();
+    }
+
+    public void sendMessage(final String group, final String message, final String title) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new RestAPI(group, message, title).sendMessage();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 }

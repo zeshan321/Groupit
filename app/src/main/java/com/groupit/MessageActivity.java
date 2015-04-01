@@ -42,9 +42,12 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
+
+import groupitapi.groupit.com.RestAPI;
 
 public class MessageActivity extends ActionBarActivity implements NfcAdapter.CreateNdefMessageCallback {
 
@@ -122,6 +125,8 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 json = new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false);
                 MessageActivity.addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup, ts);
                 ClientMessage.sendData(new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false));
+
+                new UserData(null).sendMessage(currentGroup, json, currentGroup);
 
                 editTextSay.setText("");
             }

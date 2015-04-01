@@ -54,6 +54,17 @@ public class JSONUtils {
         return display;
     }
 
+    public String getAlert(String json) {
+        String alert = null;
+        try {
+            JSONObject jObj = new JSONObject(json);
+            alert = jObj.getString("alert");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return alert;
+    }
+
     public String nfcGetID(String json) {
         String display = null;
         try {
