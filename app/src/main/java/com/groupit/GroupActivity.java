@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.nfc.tech.NfcF;
@@ -29,24 +28,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 
 public class GroupActivity  extends ActionBarActivity implements NfcAdapter.CreateNdefMessageCallback {
 
@@ -112,8 +99,8 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
             finishedSetup = true;
 
             // Open socket
-            ClientMessage.con = this;
-            startService(new Intent(this, ClientMessage.class));
+            MessageService.con = this;
+            startService(new Intent(this, MessageService.class));
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
 
@@ -193,7 +180,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
                                 groups.remove(group);
 
-                                ClientMessage.sendData(new JSONUtils().getJSONList());
+                                MessageService.sendData(new JSONUtils().getJSONList());
 
                                 new UserData(con).updateGroups();
                             }

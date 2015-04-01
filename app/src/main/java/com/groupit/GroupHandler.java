@@ -53,7 +53,7 @@ public class GroupHandler {
             e.printStackTrace();
         }
         if (update) {
-            ClientMessage.sendData(new JSONUtils().getJSONList());
+            MessageService.sendData(new JSONUtils().getJSONList());
         }
     }
 

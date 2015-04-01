@@ -58,7 +58,7 @@ public class JSONUtils {
         String alert = null;
         try {
             JSONObject jObj = new JSONObject(json);
-            alert = jObj.getString("alert");
+            alert = jObj.getString("msg");
         } catch (JSONException e) {
             e.printStackTrace();
         }

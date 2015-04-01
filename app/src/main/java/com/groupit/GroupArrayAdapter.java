@@ -1,21 +1,17 @@
 package com.groupit;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
@@ -78,10 +74,10 @@ class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
         image.setImageDrawable(drawable);
 
         // Display count
-        if (ClientMessage.count.containsKey(chatMessageObj.message)) {
+        if (MessageService.count.containsKey(chatMessageObj.message)) {
             TextView count = (TextView) row.findViewById(R.id.icNewCount);
             count.setVisibility(View.VISIBLE);
-            count.setText(String.valueOf(ClientMessage.count.get(chatMessageObj.message)));
+            count.setText(String.valueOf(MessageService.count.get(chatMessageObj.message)));
         } else {
             TextView count = (TextView) row.findViewById(R.id.icNewCount);
             count.setVisibility(View.GONE);
