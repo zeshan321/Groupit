@@ -50,6 +50,10 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
         final Context con = MessageService.con;
         final Context tempCon = MessageService.tempCon;
 
+        if (!GroupActivity.groups.contains(group)) {
+            return;
+        }
+
         if (con != null) {
             ((Activity) con).runOnUiThread(new Runnable() {
                 public void run() {
