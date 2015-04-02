@@ -77,8 +77,8 @@ public class MessageService extends Service{
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification myNotification = new NotificationCompat.Builder(con)
-                .setContentTitle(notificationTitle)
-                .setContentText(notificationMessage)
+                .setContentTitle(group)
+                .setContentText(notificationTitle + ": " + notificationMessage)
                 .setTicker(notificationTitle + " @ " + group)
                 .setWhen(System.currentTimeMillis())
                 .setContentIntent(pendingIntent)

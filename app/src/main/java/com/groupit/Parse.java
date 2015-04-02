@@ -2,9 +2,7 @@ package com.groupit;
 
 import android.app.Application;
 
-
 import com.parse.ParseCrashReporting;
-import com.parse.ParsePushBroadcastReceiver;
 
 import groupitapi.groupit.com.Main;
 

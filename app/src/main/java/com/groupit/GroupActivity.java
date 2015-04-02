@@ -468,6 +468,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
             if (!new GroupHandler(con).groupCodeExists(new JSONUtils().nfcGetID(s))) {
                 new GroupHandler(con).addGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s), true);
                 addMessage(new JSONUtils().nfcGetDisplay(s), "Code: " + new JSONUtils().nfcGetID(s));
+                new UserData(con).updateGroups();
             }
         }
     }
