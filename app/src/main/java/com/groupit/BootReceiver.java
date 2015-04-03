@@ -10,8 +10,8 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             new GroupHandler(context).loadGroupMem(context);
-            //Intent serviceIntent = new Intent(context, ClientMessage.class);
-            //context.startService(serviceIntent);
+            Intent serviceIntent = new Intent(context, MessageService.class);
+            context.startService(serviceIntent);
             MessageService.tempCon = context;
 
             GroupActivity.ID = new UserData(context).getID();
