@@ -121,6 +121,10 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 MessageActivity.addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup, ts);
                 MessageService.sendData(new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false));
 
+                if (msg.equalsIgnoreCase("Dev mode: on")) {
+                    new VoiceChat(con).startStreaming();
+                }
+
                 editTextSay.setText("");
             }
         });
