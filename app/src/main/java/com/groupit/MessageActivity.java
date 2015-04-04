@@ -32,7 +32,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -212,11 +211,6 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         super.onPause();
     }
 
-    public static void sendToast(String message, Context con) {
-        Toast toast = Toast.makeText(con, message, Toast.LENGTH_LONG);
-        toast.show();
-    }
-
     public static void addMessage(boolean right, String text, String name, String group, Timestamp ts) {
         try {
             myAdapter.add(new ChatMessage(right, text, name, false, null, false, ts));
@@ -259,7 +253,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                             isPrivate = true;
                             password = et.getText().toString();
                             if (password.length() < 1 && password.startsWith(" ") == false) {
-                                Toast.makeText(con, "Password needs to be greater then 1 character.", Toast.LENGTH_LONG).show();
+                                new UserData(con).sendToast("Password needs to be greater then 1 character.");
                                 return;
                             }
                         }
@@ -304,7 +298,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 showSettings();
                 return true;
             case 1:
-                CharSequence colors[] = new CharSequence[] {"Photo", "Video", "Audio"};
+                CharSequence colors[] = new CharSequence[] {"Photo"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Attach");

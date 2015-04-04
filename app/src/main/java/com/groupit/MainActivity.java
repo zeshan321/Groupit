@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
     Context con;
@@ -42,8 +41,8 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 EditText text = (EditText) findViewById(R.id.editText);
 
-                if (text.getText().toString().length() < 5 && text.getText().toString().startsWith(" ") == false) {
-                    Toast.makeText(MainActivity.this, "Display name needs to be greater then 5 characters.", Toast.LENGTH_LONG).show();
+                if (text.getText().toString().length() < 2 && text.getText().toString().startsWith(" ") == false) {
+                    new UserData(con).sendToast("Display names need to be greater than 2 characters and cannot start with a space.");
                     return;
                 }
 

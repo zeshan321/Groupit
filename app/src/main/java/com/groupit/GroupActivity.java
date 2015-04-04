@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseObject;
@@ -220,8 +219,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                                         public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
                                             if (e == null) {
                                                 if (parseObjects.size() > 0) {
-                                                    Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
-                                                    toast.show();
+                                                    new UserData(con).sendToast("Group already exists!");
                                                 } else {
                                                     new GroupHandler(con).addGroup(es1, es2);
                                                     new UserData(con).updateGroups();
@@ -239,8 +237,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                                                     settings.put(es2, addGroup.getObjectId() + " , " + "false" + " , " + "null");
                                                 }
                                             } else {
-                                                Toast toast = Toast.makeText(con, "Oops! Something went wrong.", Toast.LENGTH_LONG);
-                                                toast.show();
+                                                new UserData(con).sendToast("Oops! Something went wrong.");
                                             }
                                         }
                                     });
@@ -278,8 +275,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                                 if (es1.length() > 0 && es2.length() > 0 && es1.startsWith(" ") == false && es2.startsWith(" ") == false) {
 
                                     if (new GroupHandler(con).groupCodeExists(es2)) {
-                                        Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
-                                        toast.show();
+                                        new UserData(con).sendToast("Group already exists!");
                                         return;
                                     }
 
@@ -318,12 +314,10 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                                                         }
                                                     });
                                                 } else {
-                                                    Toast toast = Toast.makeText(con, "Group not found!", Toast.LENGTH_LONG);
-                                                    toast.show();
+                                                    new UserData(con).sendToast("Group not found!");
                                                 }
                                             } else {
-                                                Toast toast = Toast.makeText(con, "Oops! Something went wrong.", Toast.LENGTH_LONG);
-                                                toast.show();
+                                                new UserData(con).sendToast("Oops! Something went wrong.");
                                             }
                                         }
                                     });
@@ -360,7 +354,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
             return;
         }
         else {
-            Toast.makeText(getBaseContext(), "Press again to quit", Toast.LENGTH_SHORT).show();
+            new UserData(con).sendToast("Press again to quit.");
         }
 
         mBackPressed = System.currentTimeMillis();
@@ -395,8 +389,8 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                     public void onClick(DialogInterface dialog, int id) {
                         EditText text = (EditText) v.findViewById(R.id.ChangeName);
 
-                        if (text.getText().toString().length() < 5 && text.getText().toString().startsWith(" ") == false) {
-                            Toast.makeText(con, "Display names need to be longer than 5 characters.", Toast.LENGTH_LONG).show();
+                        if (text.getText().toString().length() < 2 && text.getText().toString().startsWith(" ") == false) {
+                            new UserData(con).sendToast("Display names need to be greater than 2 characters and cannot start with a space.");
                             changeName();
                             return;
                         }
@@ -434,7 +428,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                             new GroupHandler(con).addGroup(es1, es2);
                             addMessage(es1, "Code: " + es2);
                         } else {
-                            Toast.makeText(con, "Incorrect password!", Toast.LENGTH_LONG).show();
+                            new UserData(con).sendToast("Incorrect password!");
                             hasPassword(password, es1, es2);
                         }
                     }
