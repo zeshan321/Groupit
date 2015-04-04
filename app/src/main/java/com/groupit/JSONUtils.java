@@ -14,7 +14,7 @@ public class JSONUtils {
             JSONObject jObj = new JSONObject();
             jObj.put("timestamp", time);
             jObj.put("ID", ID);
-            jObj.put("group", String.valueOf(group));
+            jObj.put("group", group);
             jObj.put("message", message);
             jObj.put("display", display);
             jObj.put("image", isImage);

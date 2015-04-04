@@ -91,11 +91,11 @@ public class MessageService extends Service{
     }
 
 
-    public static void sendData(String messageToSend) {
+    public static void sendData(String group, String messageToSend) {
         try {
             messageToSend = new StringHandler(StringHandler.Type.COMPRESS, messageToSend).run();
 
-            new UserData(null).sendMessage(MessageActivity.currentGroup, messageToSend, "GroupIt");
+            new UserData(null).sendMessage(group, messageToSend, group);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -180,8 +180,6 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
                                 groups.remove(group);
 
-                                MessageService.sendData(new JSONUtils().getJSONList());
-
                                 new UserData(con).updateGroups();
                             }
                         })
@@ -225,7 +223,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                                                     Toast toast = Toast.makeText(con, "Group already exists!", Toast.LENGTH_LONG);
                                                     toast.show();
                                                 } else {
-                                                    new GroupHandler(con).addGroup(es1, es2, true);
+                                                    new GroupHandler(con).addGroup(es1, es2);
                                                     new UserData(con).updateGroups();
 
                                                     addMessage(es1, "Code: " + es2);
@@ -305,7 +303,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                                                                     String password = groups.getString("pass");
 
                                                                     if (post == false) {
-                                                                        new GroupHandler(con).addGroup(es1, es2, true);
+                                                                        new GroupHandler(con).addGroup(es1, es2);
                                                                         new UserData(con).updateGroups();
 
                                                                         addMessage(es1, "Code: " + es2);
@@ -433,7 +431,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                         String text = et.getText().toString().replaceAll("\\s+$", "");
 
                         if (text.equals(password)) {
-                            new GroupHandler(con).addGroup(es1, es2, true);
+                            new GroupHandler(con).addGroup(es1, es2);
                             addMessage(es1, "Code: " + es2);
                         } else {
                             Toast.makeText(con, "Incorrect password!", Toast.LENGTH_LONG).show();
@@ -466,7 +464,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
             String s = new String(message.getRecords()[0].getPayload());
 
             if (!new GroupHandler(con).groupCodeExists(new JSONUtils().nfcGetID(s))) {
-                new GroupHandler(con).addGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s), true);
+                new GroupHandler(con).addGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s));
                 addMessage(new JSONUtils().nfcGetDisplay(s), "Code: " + new JSONUtils().nfcGetID(s));
                 new UserData(con).updateGroups();
             }

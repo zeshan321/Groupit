@@ -19,8 +19,6 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
 
     @Override
     protected void onPushReceive(Context context, Intent intent) {
-        System.out.println("Received push!");
-
         String action = intent.getAction();
         String channel = intent.getExtras().getString("com.parse.Channel");
         JSONObject alertJson = null;
@@ -35,7 +33,7 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
         String data = new JSONUtils().getAlert(alertJson.toString());
         data = new StringHandler(StringHandler.Type.DECOMPRESS, data).run();
 
-        if (new JSONUtils().canUseMessage(data) == false) {
+        if (!new JSONUtils().canUseMessage(data)) {
             return;
         }
 
@@ -48,7 +46,11 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
         final Timestamp ts = Timestamp.valueOf(new JSONUtils().getTimeStamp(data));
 
         final Context con = MessageService.con;
-        final Context tempCon = MessageService.tempCon;
+        Context tempCon = MessageService.tempCon;
+
+        if (tempCon == null) {
+            tempCon = context;
+        }
 
         if (!GroupActivity.groups.contains(group)) {
             return;
@@ -65,7 +67,7 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
                     if (isImage) {
                         if (!id.equals(new UserData(con).getID())) {
                             FTPHandler ftp = new FTPHandler(message, FTPHandler.Type.Image, null, con, true);
-                            ftp.downloadFile(name, id, group, isImage, true);
+                            ftp.downloadFile(name, id, group, true, true);
                         }
                     } else {
                         MessageHandler mh = new MessageHandler(group, data1, con);
@@ -73,7 +75,7 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
 
                         if (!owner) {
                             if (group.equals(MessageActivity.currentGroup)) {
-                                MessageActivity.addMessage(owner, message, name, group, ts);
+                                MessageActivity.addMessage(false, message, name, group, ts);
                             }
                         }
                     }
@@ -81,9 +83,9 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
             });
         } else {
             if (isImage) {
-                if (!id.equals(new UserData(con).getID())) {
+                if (!id.equals(new UserData(tempCon).getID())) {
                     FTPHandler ftp = new FTPHandler(message, FTPHandler.Type.Image, null, tempCon, true);
-                    ftp.downloadFile(name, id, group, isImage, false);
+                    ftp.downloadFile(name, id, group, true, false);
                 }
             } else {
                 MessageHandler mh = new MessageHandler(group, data1, tempCon);

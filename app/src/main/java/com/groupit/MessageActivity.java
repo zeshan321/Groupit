@@ -119,7 +119,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
 
                 json = new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false);
                 MessageActivity.addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup, ts);
-                MessageService.sendData(new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false));
+                MessageService.sendData(currentGroup, new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false));
 
                 if (msg.equalsIgnoreCase("Dev mode: on")) {
                     new VoiceChat(con).startStreaming();
@@ -189,7 +189,8 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
             String s = new String(message.getRecords()[0].getPayload());
 
             if (!new GroupHandler(con).groupCodeExists(new JSONUtils().nfcGetID(s))) {
-                new GroupHandler(con).addGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s), true);
+                new GroupHandler(con).addGroup(new JSONUtils().nfcGetDisplay(s), new JSONUtils().nfcGetID(s));
+                new UserData(con).updateGroups();
             }
         }
     }

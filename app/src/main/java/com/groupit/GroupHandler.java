@@ -34,11 +34,11 @@ public class GroupHandler {
                 e.printStackTrace();
             }
 
-            addGroup("GroupIt", "GroupIt", false);
+            addGroup("GroupIt", "GroupIt");
         }
     }
 
-    public void addGroup(String display, String group, boolean update) {
+    public void addGroup(String display, String group) {
         File file = new File(con.getFilesDir(), "groups");
 
         BufferedWriter stream = null;
@@ -51,9 +51,6 @@ public class GroupHandler {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        if (update) {
-            MessageService.sendData(new JSONUtils().getJSONList());
         }
     }
 

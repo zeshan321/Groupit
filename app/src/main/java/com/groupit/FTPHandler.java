@@ -80,7 +80,7 @@ public class FTPHandler {
                         client.logout();
 
                         if (send) {
-                            MessageService.sendData(new JSONUtils().getJSONMessage(new Timestamp(new Date().getTime()), GroupActivity.ID, MessageActivity.currentGroup, IMGID, MessageActivity.display, true));
+                            MessageService.sendData(MessageActivity.currentGroup, new JSONUtils().getJSONMessage(new Timestamp(new Date().getTime()), GroupActivity.ID, MessageActivity.currentGroup, IMGID, MessageActivity.display, true));
                         }
                     }
                 } catch (IOException e) {
@@ -96,9 +96,9 @@ public class FTPHandler {
             @Override
             public void run() {
                 FTPClient client = new FTPClient();
-                File dir = null;
+                File dir;
                 File img = null;
-
+                FileOutputStream fos = null;
                 try {
                     try {
                         client.connect(new Main().getIP(), 21);
@@ -119,11 +119,11 @@ public class FTPHandler {
                                 break;
                         }
 
-                        FileOutputStream fos = new FileOutputStream(img);
+                        fos = new FileOutputStream(img);
                         client.retrieveFile(IMGID + ".jpg", fos);
-                        fos.close();
 
                     } finally {
+                        fos.close();
                         client.logout();
                         if (send) {
                             final File img1 = img;
