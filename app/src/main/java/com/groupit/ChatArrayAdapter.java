@@ -89,7 +89,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
         if (chatMessageObj.image) {
             chatImage = (ImageView) row.findViewById(R.id.imageMsg);
-            chatImage.setImageBitmap(chatMessageObj.imageU);
+            chatImage.setImageURI(chatMessageObj.imageU);
         } else {
             chatText = (TextView) row.findViewById(R.id.txtMsg);
             chatText.setText(chatMessageObj.message);
