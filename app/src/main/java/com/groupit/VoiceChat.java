@@ -96,11 +96,11 @@ public class VoiceChat {
                     File tempMp3 = File.createTempFile(ID, "mp3", con.getCacheDir());
                     tempMp3.deleteOnExit();
                     FileOutputStream fos = new FileOutputStream(tempMp3);
-                    fos.write(mp3SoundByteArray);
+                    fos.write(mp3SoundByteArray, 0, mp3SoundByteArray.length);
                     fos.close();
 
                     MediaPlayer mp = new MediaPlayer();
-                    mp.setDataSource(tempMp3.getPath());
+                    mp.setDataSource(tempMp3.getAbsolutePath());
                     mp.prepare();
 
                     mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

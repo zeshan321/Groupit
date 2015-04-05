@@ -3,7 +3,9 @@ package com.groupit;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.Image;
+import android.text.util.Linkify;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -98,6 +100,8 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         } else {
             chatText = (TextView) row.findViewById(R.id.txtMsg);
             chatText.setText(chatMessageObj.message);
+            chatText.setLinkTextColor(Color.BLUE);
+            Linkify.addLinks(chatText, Linkify.WEB_URLS);
         }
         return row;
     }

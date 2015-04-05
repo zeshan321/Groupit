@@ -100,7 +100,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         con = this;
         MessageService.con = this;
 
-        myAdapter = new ChatArrayAdapter(getApplicationContext(), R.layout.list_item_message_left);
+        myAdapter = new ChatArrayAdapter(this, R.layout.list_item_message_left);
         chatMsg = (ListView) findViewById(R.id.list_view_messages);
 
         MessageHandler mh = new MessageHandler(currentGroup, null, con);
@@ -167,20 +167,22 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-                TextView image = (TextView) arg1.findViewById(R.id.filePath);
+                if (arg1.findViewById(R.id.filePath) != null) {
+                    TextView image = (TextView) arg1.findViewById(R.id.filePath);
 
-                File file = new File(image.getText().toString());
+                    File file = new File(image.getText().toString());
 
-                Uri uri =  Uri.fromFile(file);
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-                String mime = "*/*";
-                MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-                if (mimeTypeMap.hasExtension(
-                        mimeTypeMap.getFileExtensionFromUrl(uri.toString())))
-                    mime = mimeTypeMap.getMimeTypeFromExtension(
-                            mimeTypeMap.getFileExtensionFromUrl(uri.toString()));
-                intent.setDataAndType(uri,mime);
-                startActivity(intent);
+                    Uri uri = Uri.fromFile(file);
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+                    String mime = "*/*";
+                    MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+                    if (mimeTypeMap.hasExtension(
+                            mimeTypeMap.getFileExtensionFromUrl(uri.toString())))
+                        mime = mimeTypeMap.getMimeTypeFromExtension(
+                                mimeTypeMap.getFileExtensionFromUrl(uri.toString()));
+                    intent.setDataAndType(uri, mime);
+                    startActivity(intent);
+                }
 
             }
         });
