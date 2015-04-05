@@ -101,7 +101,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
             chatText = (TextView) row.findViewById(R.id.txtMsg);
             chatText.setText(chatMessageObj.message);
             chatText.setLinkTextColor(Color.BLUE);
-            Linkify.addLinks(chatText, Linkify.WEB_URLS);
+            Linkify.addLinks(chatText, Linkify.ALL);
         }
         return row;
     }
