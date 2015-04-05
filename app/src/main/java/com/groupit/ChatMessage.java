@@ -10,11 +10,11 @@ public class ChatMessage {
     public String message;
     public String display;
     public boolean image;
-    public Uri imageU;
+    public Bitmap imageU;
     public boolean useByte;
     public Timestamp time;
 
-    public ChatMessage(boolean left, String message, String display, boolean image, Uri imageU, boolean useByte, Timestamp time) {
+    public ChatMessage(boolean left, String message, String display, boolean image, Bitmap imageU, boolean useByte, Timestamp time) {
         super();
         this.left = left;
         this.message = message;

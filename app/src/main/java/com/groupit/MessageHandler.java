@@ -2,6 +2,8 @@ package com.groupit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.widget.AbsListView;
 
@@ -15,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.sql.Timestamp;
 
 public class MessageHandler {
@@ -124,9 +127,14 @@ public class MessageHandler {
 
                     if (new JSONUtils().getID(line).equals(GroupActivity.ID)) {
                         if (isImage && new File(message).exists()) {
-                            File imgFile = new File(message);
+                            BitmapFactory.Options opts=new BitmapFactory.Options();
+                            opts.inDither=false;
+                            opts.inPurgeable=true;
+                            opts.inInputShareable=true;
+                            opts.inTempStorage=new byte[32 * 1024];
+                            Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 
-                            MessageActivity.myAdapter.add(new ChatMessage(true, "Image", name, true, Uri.fromFile(imgFile), true, ts));
+                            MessageActivity.myAdapter.add(new ChatMessage(true, "Image", name, true, bitmap, true, ts));
 
                             MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                             MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
@@ -135,9 +143,14 @@ public class MessageHandler {
                         }
                     } else {
                         if (isImage && new File(message).exists()) {
-                            File imgFile = new File(message);
+                            BitmapFactory.Options opts=new BitmapFactory.Options();
+                            opts.inDither=false;
+                            opts.inPurgeable=true;
+                            opts.inInputShareable=true;
+                            opts.inTempStorage=new byte[32 * 1024];
+                            Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 
-                            MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, Uri.fromFile(imgFile), true, ts));
+                            MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true, ts));
 
                             MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                             MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);

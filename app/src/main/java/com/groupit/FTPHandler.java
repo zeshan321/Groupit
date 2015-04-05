@@ -2,7 +2,8 @@ package com.groupit;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.widget.AbsListView;
 
@@ -42,7 +43,9 @@ public class FTPHandler {
 
         ((Activity) con).runOnUiThread(new Runnable() {
             public void run() {
-                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", MessageActivity.display, true, Uri.fromFile(file), true, new Timestamp(new Date().getTime())));
+                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", MessageActivity.display, true, bitmap, true, new Timestamp(new Date().getTime())));
                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
 
@@ -95,6 +98,7 @@ public class FTPHandler {
                 FTPClient client = new FTPClient();
                 File dir;
                 File img = null;
+                FileOutputStream fos = null;
                 try {
                     try {
                         client.connect(new Main().getIP(), 21);
@@ -115,10 +119,11 @@ public class FTPHandler {
                                 break;
                         }
 
-                        FileOutputStream fos = new FileOutputStream(img);
+                        fos = new FileOutputStream(img);
                         client.retrieveFile(IMGID + ".jpg", fos);
-                        fos.close();
+
                     } finally {
+                        fos.close();
                         client.logout();
                         if (send) {
                             final File img1 = img;
@@ -127,7 +132,9 @@ public class FTPHandler {
                                 public void run() {
 
                                     if (update) {
-                                        MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, Uri.fromFile(img1), true, ts));
+                                        Bitmap bitmap = BitmapFactory.decodeFile(img1.getAbsolutePath());
+
+                                        MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true, ts));
                                         MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                         MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                                     }
