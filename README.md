@@ -16,10 +16,10 @@ GroupIt is an group chatting app that requires no login or setup.
 * Private groups with password protection
 * Multiple groups support 
 * Ability to add users to group VIA NFC
+* Encrypted messages (HTTPS)
 
 
 <h1>Planned features</h1>
 * Voice chatting
 * File transfer
 * Screensharing
-* Encrypt messages
