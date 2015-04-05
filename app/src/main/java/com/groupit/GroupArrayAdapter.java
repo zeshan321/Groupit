@@ -75,9 +75,11 @@ class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
 
         // Display count
         if (MessageService.count.containsKey(chatMessageObj.message)) {
-            TextView count = (TextView) row.findViewById(R.id.icNewCount);
-            count.setVisibility(View.VISIBLE);
-            count.setText(String.valueOf(MessageService.count.get(chatMessageObj.message)));
+            if (MessageService.count.get(chatMessageObj.message) != 0) {
+                TextView count = (TextView) row.findViewById(R.id.icNewCount);
+                count.setVisibility(View.VISIBLE);
+                count.setText(String.valueOf(MessageService.count.get(chatMessageObj.message)));
+            }
         } else {
             TextView count = (TextView) row.findViewById(R.id.icNewCount);
             count.setVisibility(View.GONE);
