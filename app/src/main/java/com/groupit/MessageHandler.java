@@ -131,6 +131,7 @@ public class MessageHandler {
                             opts.inDither=false;
                             opts.inPurgeable=true;
                             opts.inInputShareable=true;
+                            opts.inScaled = false;
                             opts.inTempStorage=new byte[32 * 1024];
                             Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 
@@ -147,6 +148,7 @@ public class MessageHandler {
                             opts.inDither=false;
                             opts.inPurgeable=true;
                             opts.inInputShareable=true;
+                            opts.inScaled = false;
                             opts.inTempStorage=new byte[32 * 1024];
                             Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 

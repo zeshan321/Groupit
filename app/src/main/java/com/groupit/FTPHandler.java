@@ -48,6 +48,7 @@ public class FTPHandler {
                 opts.inDither=false;
                 opts.inPurgeable=true;
                 opts.inInputShareable=true;
+                opts.inScaled = false;
                 opts.inTempStorage=new byte[32 * 1024];
 
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
@@ -143,6 +144,7 @@ public class FTPHandler {
                                         opts.inDither=false;
                                         opts.inPurgeable=true;
                                         opts.inInputShareable=true;
+                                        opts.inScaled = false;
                                         opts.inTempStorage=new byte[32 * 1024];
 
                                         Bitmap bitmap = BitmapFactory.decodeFile(img1.getAbsolutePath(), opts);
@@ -174,14 +176,14 @@ public class FTPHandler {
         int width = bm.getWidth();
         int height = bm.getHeight();
 
-        float scaleWidth = ((float) 450) / width;
-        float scaleHeight = ((float) 450) / height;
+        float scaleWidth = ((float) 500) / width;
+        float scaleHeight = ((float) 500) / height;
 
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
 
-        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
+        bm = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
 
-        return resizedBitmap;
+        return bm;
     }
 }
