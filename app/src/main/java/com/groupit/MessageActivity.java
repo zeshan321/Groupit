@@ -24,11 +24,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -157,6 +159,29 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 builder.create();
                 builder.show();
                 return true;
+            }
+        });
+
+        chatMsg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+
+                TextView image = (TextView) arg1.findViewById(R.id.filePath);
+
+                File file = new File(image.getText().toString());
+
+                Uri uri =  Uri.fromFile(file);
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+                String mime = "*/*";
+                MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+                if (mimeTypeMap.hasExtension(
+                        mimeTypeMap.getFileExtensionFromUrl(uri.toString())))
+                    mime = mimeTypeMap.getMimeTypeFromExtension(
+                            mimeTypeMap.getFileExtensionFromUrl(uri.toString()));
+                intent.setDataAndType(uri,mime);
+                startActivity(intent);
+
             }
         });
     }

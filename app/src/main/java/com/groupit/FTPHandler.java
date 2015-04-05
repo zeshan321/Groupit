@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Environment;
 import android.widget.AbsListView;
 
@@ -43,9 +44,15 @@ public class FTPHandler {
 
         ((Activity) con).runOnUiThread(new Runnable() {
             public void run() {
-                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                BitmapFactory.Options opts=new BitmapFactory.Options();
+                opts.inDither=false;
+                opts.inPurgeable=true;
+                opts.inInputShareable=true;
+                opts.inTempStorage=new byte[32 * 1024];
 
-                MessageActivity.myAdapter.add(new ChatMessage(true, "Image", MessageActivity.display, true, bitmap, true, new Timestamp(new Date().getTime())));
+                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
+
+                MessageActivity.myAdapter.add(new ChatMessage(true, file.getAbsolutePath(), MessageActivity.display, true, getResizedBitmap(bitmap), true, new Timestamp(new Date().getTime())));
                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
 
@@ -132,9 +139,15 @@ public class FTPHandler {
                                 public void run() {
 
                                     if (update) {
-                                        Bitmap bitmap = BitmapFactory.decodeFile(img1.getAbsolutePath());
+                                        BitmapFactory.Options opts=new BitmapFactory.Options();
+                                        opts.inDither=false;
+                                        opts.inPurgeable=true;
+                                        opts.inInputShareable=true;
+                                        opts.inTempStorage=new byte[32 * 1024];
 
-                                        MessageActivity.myAdapter.add(new ChatMessage(false, "Image", name, true, bitmap, true, ts));
+                                        Bitmap bitmap = BitmapFactory.decodeFile(img1.getAbsolutePath(), opts);
+
+                                        MessageActivity.myAdapter.add(new ChatMessage(false, img1.getAbsolutePath(), name, true, getResizedBitmap(bitmap), true, ts));
                                         MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                         MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                                     }
@@ -151,5 +164,24 @@ public class FTPHandler {
             }
         });
         thread.start();
+    }
+
+    public static Bitmap getResizedBitmap(Bitmap bm) {
+        if (bm == null) {
+            return bm;
+        }
+
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+
+        float scaleWidth = ((float) 450) / width;
+        float scaleHeight = ((float) 450) / height;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
+
+        return resizedBitmap;
     }
 }

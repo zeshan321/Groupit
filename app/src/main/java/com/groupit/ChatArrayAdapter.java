@@ -30,6 +30,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
     private TextView timeStamp;
     private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
     private Context context;
+    private TextView location;
 
     @Override
     public void add(ChatMessage object) {
@@ -90,6 +91,10 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         if (chatMessageObj.image) {
             chatImage = (ImageView) row.findViewById(R.id.imageMsg);
             chatImage.setImageBitmap(chatMessageObj.imageU);
+
+            location = (TextView) row.findViewById(R.id.filePath);
+            location.setText(chatMessageObj.message);
+            location.setVisibility(View.GONE);
         } else {
             chatText = (TextView) row.findViewById(R.id.txtMsg);
             chatText.setText(chatMessageObj.message);
