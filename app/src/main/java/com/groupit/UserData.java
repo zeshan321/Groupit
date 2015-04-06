@@ -76,7 +76,7 @@ public class UserData {
 
         Toast toast = new Toast(con);
         toast.setGravity(Gravity.BOTTOM, 0, 160);
-        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(layout);
         toast.show();
     }
