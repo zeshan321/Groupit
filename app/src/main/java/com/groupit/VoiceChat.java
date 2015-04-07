@@ -50,12 +50,10 @@ public class VoiceChat {
                     byte[] receiveData = new byte[4096];
 
                     DatagramPacket packet;
-
                     final InetAddress destination = InetAddress.getByName(new Main().getIP());
 
                     recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,minBufSize*10);
                     recorder.startRecording();
-
 
                     while(status == true) {
                         minBufSize = recorder.read(buffer, 0, buffer.length);
@@ -69,10 +67,7 @@ public class VoiceChat {
                         socket.receive(receivePacket);
 
                         playMp3(receivePacket.getData());
-
                     }
-
-
                 } catch(SocketException e) {
                     e.printStackTrace();
                 } catch (UnknownHostException e) {

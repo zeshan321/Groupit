@@ -420,6 +420,8 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
         LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View v = inflater.inflate(R.layout.dialog_settings, null);
 
+
+
         builder.setView(v)
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override

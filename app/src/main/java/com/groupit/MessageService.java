@@ -65,6 +65,9 @@ public class MessageService extends Service{
     }
 
     public static void Notification(Context con, String notificationTitle, String notificationMessage, String group, String ID) {
+        if (!new SettingsHandler(con).sendNotification()) {
+            return;
+        }
 
         Intent myIntent = new Intent(con, GroupActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/editText2"
+        android:id="@+id/timeLimit"
         android:hint="Time"
         android:layout_gravity="center_horizontal" />
 
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/editText3"
+        android:id="@+id/notiLimit"
         android:hint="Amount"
         android:layout_gravity="center_horizontal" />
 
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Disable Notifications"
-        android:id="@+id/switch2"
+        android:id="@+id/notiON"
         android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

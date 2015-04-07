@@ -20,5 +20,6 @@ public class Parse extends Application {
         com.parse.Parse.initialize(this, new Main().getParse1(), new Main().getParse2());
 
         new UserData(this).updateGroups();
+        new SettingsHandler(this).loadSettings();
     }
 }

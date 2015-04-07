@@ -11,11 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.parse.ParsePush;
-import com.parse.SaveCallback;
-import com.parse.SendCallback;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +28,7 @@ public class UserData {
     }
 
     public String getID(){
-        String myAndroidDeviceId = "";
+        String myAndroidDeviceId;
         TelephonyManager mTelephony = (TelephonyManager) con.getSystemService(Context.TELEPHONY_SERVICE);
         if (mTelephony.getDeviceId() != null){
             myAndroidDeviceId = mTelephony.getDeviceId();

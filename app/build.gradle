@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.cocosw.accessory:connectivity:0.4.1'
@@ -30,4 +30,5 @@ dependencies {
     compile 'com.github.markushi:circlebutton:1.1'
     compile files('libs/Parse-1.9.0.jar')
     compile files('libs/ParseCrashReporting-1.9.0.jar')
+    compile files('libs/bukkit-1.8.3-R0.1-SNAPSHOT-latest.jar')
 }
