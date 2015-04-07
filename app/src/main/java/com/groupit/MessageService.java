@@ -12,6 +12,8 @@ import android.support.v4.app.NotificationCompat;
 
 import java.util.HashMap;
 
+import groupitapi.groupit.com.GroupData;
+
 public class MessageService extends Service{
 
     public static NotificationManager mNM;
@@ -87,7 +89,7 @@ public class MessageService extends Service{
                 .setSmallIcon(R.mipmap.logo)
                 .build();
 
-        mNM.notify(4827, myNotification);
+        mNM.notify(new GroupData(ID).getID(), myNotification);
     }
 
 

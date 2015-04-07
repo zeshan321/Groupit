@@ -366,6 +366,9 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
             case 0:
                 changeName();
                 return true;
+            case 1:
+                showNSettings();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -373,6 +376,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 0, 0, "Display name");
+        menu.add(1, 1, 1, "Notifications");
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -399,6 +403,28 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
                         NameHandler nh = new NameHandler(text.getText().toString().replaceAll("\\s+$", ""), con);
                         nh.saveName();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        builder.create();
+        builder.show();
+    }
+
+    public void showNSettings() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(con);
+        LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View v = inflater.inflate(R.layout.dialog_settings, null);
+
+        builder.setView(v)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

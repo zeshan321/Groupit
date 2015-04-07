@@ -28,8 +28,6 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
             e.printStackTrace();
         }
 
-        System.out.println(alertJson);
-
         String data = new JSONUtils().getAlert(alertJson.toString());
         data = new StringHandler(StringHandler.Type.DECOMPRESS, data).run();
 
