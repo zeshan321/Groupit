@@ -19,7 +19,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         con = this;
-        GroupActivity.ID = new UserData(con).getID();
 
         NameHandler nh = new NameHandler(null, con);
 

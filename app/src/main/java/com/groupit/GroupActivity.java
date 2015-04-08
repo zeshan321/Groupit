@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
@@ -423,8 +424,9 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
         LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View v = inflater.inflate(R.layout.dialog_settings, null);
 
-        NumberPicker s1 = (NumberPicker) v.findViewById(R.id.notiTime);
-        NumberPicker s2 = (NumberPicker) v.findViewById(R.id.notiLimit);
+        final NumberPicker s1 = (NumberPicker) v.findViewById(R.id.notiTime);
+        final NumberPicker s2 = (NumberPicker) v.findViewById(R.id.notiLimit);
+        final Switch s3 = (Switch) v.findViewById(R.id.notiON);
 
         s1.setMinValue(0);
         s1.setMaxValue(100);
@@ -434,11 +436,13 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
         s2.setMaxValue(100);
         s2.setValue(new SettingsHandler(con).getInt("limit"));
 
+        s3.setChecked(new SettingsHandler(con).sendNotification());
+
         builder.setView(v)
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
+                        new SettingsHandler(con).setSettings(s1.getValue(), s2.getValue(), s3.isChecked());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

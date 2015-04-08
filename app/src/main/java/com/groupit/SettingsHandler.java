@@ -40,7 +40,12 @@ public class SettingsHandler {
     }
 
     public boolean sendNotification() {
-        return true;
+        if (getInt("time") != 0 && getInt("limit") != 0) {
+            if (limit == getInt("limit")) {
+                return false;
+            }
+        }
+        return settings.getBoolean("notifications", true);
     }
 
     public int getInt(String s) {
