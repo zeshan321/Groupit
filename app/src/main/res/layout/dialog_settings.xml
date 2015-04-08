@@ -15,42 +15,26 @@
         android:contentDescription="@string/app_name"
         android:textColor="#FFFF"
         android:textStyle="bold"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:textIsSelectable="true"
         android:textAlignment="center" />
 
-    <TextView
+    <LinearLayout android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout2"
+        android:layout_gravity="bottom"
+        android:layout_height="fill_parent">
+    <NumberPicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Only allow certain amount of notifications at a time: "
-        android:id="@+id/textView" />
-
-    <EditText
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/timeLimit"
-        android:hint="Time"
-        android:layout_gravity="center_horizontal" />
-
-    <EditText
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
         android:id="@+id/notiLimit"
-        android:hint="Amount"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="end" />
 
-    <TextView
+    <NumberPicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/textView2" />
+        android:id="@+id/notiTime" />
+        </LinearLayout>
 
     <Switch
         android:layout_margin="10dp"

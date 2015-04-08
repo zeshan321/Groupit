@@ -69,6 +69,8 @@ public class MessageService extends Service{
             return;
         }
 
+        new SettingsHandler(con).incrementLimit();
+
         Intent myIntent = new Intent(con, GroupActivity.class);
         myIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         myIntent.setAction(Long.toString(System.currentTimeMillis()));
@@ -92,7 +94,8 @@ public class MessageService extends Service{
                 .setSmallIcon(R.mipmap.logo)
                 .build();
 
-        mNM.notify(new GroupData(ID).getID(), myNotification);
+        //mNM.notify(new GroupData(ID).getID(), myNotification);
+        mNM.notify(404, myNotification);
     }
 
 

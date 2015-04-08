@@ -21,9 +21,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.NumberPicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
@@ -420,7 +423,16 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
         LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View v = inflater.inflate(R.layout.dialog_settings, null);
 
+        NumberPicker s1 = (NumberPicker) v.findViewById(R.id.notiTime);
+        NumberPicker s2 = (NumberPicker) v.findViewById(R.id.notiLimit);
 
+        s1.setMinValue(0);
+        s1.setMaxValue(100);
+        s1.setValue(new SettingsHandler(con).getInt("time"));
+
+        s2.setMinValue(0);
+        s2.setMaxValue(100);
+        s2.setValue(new SettingsHandler(con).getInt("limit"));
 
         builder.setView(v)
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
