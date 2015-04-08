@@ -94,8 +94,7 @@ public class MessageService extends Service{
                 .setSmallIcon(R.mipmap.logo)
                 .build();
 
-        //mNM.notify(new GroupData(ID).getID(), myNotification);
-        mNM.notify(404, myNotification);
+        mNM.notify(GroupActivity.groups.indexOf(group), myNotification);
     }
 
 
