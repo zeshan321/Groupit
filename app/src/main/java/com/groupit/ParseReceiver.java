@@ -18,7 +18,7 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
     private final String TAG = "Parse Notification";
 
     @Override
-    protected void onPushReceive(Context context, Intent intent) {
+    protected void onPushReceive(final Context context, Intent intent) {
         String action = intent.getAction();
         String channel = intent.getExtras().getString("com.parse.Channel");
         JSONObject alertJson = null;
@@ -68,8 +68,8 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
                             ftp.downloadFile(name, id, group, true, true);
                         }
                     } else {
-                        DatabaseHandler db = new DatabaseHandler(con);
-                        db.addMessage(MessageActivity.currentGroup, data1);
+                        DatabaseHandler db = new DatabaseHandler(context);
+                        db.addMessage(group, data1);
                         if (!owner) {
                             if (group.equals(MessageActivity.currentGroup)) {
                                 MessageActivity.addMessage(false, message, name, group, ts, data1);
@@ -85,7 +85,7 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
                     ftp.downloadFile(name, id, group, true, false);
                 }
             } else {
-                DatabaseHandler db = new DatabaseHandler(con);
+                DatabaseHandler db = new DatabaseHandler(context);
                 db.addMessage(group, data1);
             }
         }
