@@ -1,7 +1,7 @@
 <style>
 body{
 padding-top:80px;
-padding-bottom:1%;
+padding-bottom:3%;
 }
 #messages_table {
 	padding-top:1%;
@@ -63,16 +63,23 @@ height:1px;
 <%= render partial:"bubble_style" %>
 <%= render partial:"messages_script" %>
 
-<div id="main">
-<div id="title" style="clear:both;"><a href="/"><span class="glyphicon glyphicon-arrow-left" style="font-size:20px;"></span></a>
-<span style="font-size:35px;font-weight:bold;color:#00743A;">&nbsp;&nbsp;<%= @group.name %></span>
-<a href="<%= @group.id %>/qr" style="float:right;font-size:150%;">
+<% content_for :group_name do %>
+<%= @group.name %>
+<% end %>
+
+<% content_for :share do %>
+<li>
+<a class="user_button" href="<%= @group.id %>/qr" style="font-size:125%;">
 <span class="glyphicon glyphicon-qrcode">
 </span>
 Share
 </a>
-</div>
-<hr style="clear:both;"/>
+</li>
+<% end %>
+
+
+<div id="main">
+
 <div id="messages_table">
 
   <% @messages.each do |message| %>
@@ -88,7 +95,6 @@ Share
   <% end %>
 
 </div>
-<hr style="clear:both;"/>
 
 
 <%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, multipart: true, id:'message_form', style:'display:none;') do %>

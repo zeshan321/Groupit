@@ -31,7 +31,13 @@ background-color:#4DDB94;
 <nav class="navbar navbar-default navbar-fixed-top" style="clear:right" width="100%">
   <div class="container-fluid" style="width:100%">
     <div class="navbar-header" style="color:white">
-      <a class="navbar-brand" href="/" style="font-size:200%;color:white;"><b>Groupit</b></a>
+      <a class="navbar-brand" href="/" style="font-size:200%;color:white;"><b>
+<% if content_for?(:group_name) %>
+<%= yield :group_name %>
+<% else %>
+Groupit
+<% end %>
+</b></a>
 	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 
 <span class="icon-bar"></span>
@@ -43,6 +49,7 @@ background-color:#4DDB94;
     <% if user_signed_in? %>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right" style="color:white">
+	<%= yield :share %>
 	<li><a href="#" class="user_button" data-toggle="dropdown" style="font-size:135%;color:white;" id="buttonOne">Groups</a>  
 	
 <ul class="dropdown-menu list-groups" role="menu" aria-labelledby="groups-menu">
