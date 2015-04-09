@@ -6,9 +6,9 @@ android {
 
     defaultConfig {
         applicationId "com.groupit"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 21
-        versionCode 2
+        versionCode 3
         versionName "1.0"
     }
     buildTypes {

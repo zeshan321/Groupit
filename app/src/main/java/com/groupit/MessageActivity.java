@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
@@ -54,6 +55,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
     public static String currentGroup = "0";
     public static boolean isLooking = false;
     public static String groupName = null;
+    public static int CURRENT = 0;
 
     EditText editTextSay;
     ImageButton buttonSend;
@@ -61,6 +63,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
     PendingIntent mPendingIntent;
     IntentFilter[] mIntentFilters;
     String[][] mNFCTechLists;
+    Boolean userTouched = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +75,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         MessageService.count.remove(groupName);
+        CURRENT = 0;
 
         TextView tv = (TextView) findViewById(R.id.groupTitle);
         tv.setText(groupName);
@@ -103,9 +107,6 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         myAdapter = new ChatArrayAdapter(this, R.layout.list_item_message_left);
         chatMsg = (ListView) findViewById(R.id.list_view_messages);
 
-        MessageHandler mh = new MessageHandler(currentGroup, null, con);
-        mh.loadMessages();
-
         editTextSay = (EditText) findViewById(R.id.say);
         buttonSend = (ImageButton) findViewById(R.id.send);
 
@@ -119,7 +120,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 Timestamp ts = new Timestamp(new Date().getTime());
 
                 json = new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false);
-                MessageActivity.addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup, ts);
+                MessageActivity.addMessage(true, new JSONUtils().getMessage(json), new JSONUtils().getName(json), currentGroup, ts, json);
                 MessageService.sendData(currentGroup, new JSONUtils().getJSONMessage(ts, GroupActivity.ID, currentGroup, msg, display, false));
 
                 if (msg.equalsIgnoreCase("Dev mode: on")) {
@@ -133,7 +134,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         chatMsg.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, final View view, final int position, long id) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(con);
                 LayoutInflater inflater = (LayoutInflater) con.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final View v = inflater.inflate(R.layout.dialog_delete, null);
@@ -147,7 +148,10 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                                 myAdapter.removeChat(position);
                                 chatMsg.setAdapter(myAdapter);
 
-                                new MessageHandler(currentGroup, null, con).removeGroup(position);
+                                TextView json = (TextView) view.findViewById(R.id.jsonMsg);
+
+                                DatabaseHandler db = new DatabaseHandler(con);
+                                db.deleteMessage(json.getText().toString());
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -184,6 +188,42 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                     startActivity(intent);
                 }
 
+            }
+        });
+
+        chatMsg.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    userTouched = true;
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                if (firstVisibleItem == 0) {
+                    View v = chatMsg.getChildAt(0);
+                    int offset = (v == null) ? 0 : v.getTop();
+                    if (offset == 0) {
+                        DatabaseHandler db = new DatabaseHandler(con);
+                        if (db.getCount() == chatMsg.getCount() || chatMsg.getCount() > db.getCount()) {
+                            if (myAdapter.getCount() != 0)
+                            new UserData(con).sendToast("No more messages!");
+                            return;
+                        }
+
+                        MessageActivity.myAdapter.clear();
+                        MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
+
+                        CURRENT = CURRENT + 20;
+                        for (String s : db.getMessages(CURRENT)) {
+                            if (s != null)
+                            new MessageHandler(con).addMSG(s);
+                        }
+
+                    }
+                }
             }
         });
     }
@@ -238,15 +278,14 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         super.onPause();
     }
 
-    public static void addMessage(boolean right, String text, String name, String group, Timestamp ts) {
+    public static void addMessage(boolean right, String text, String name, String group, Timestamp ts, String json) {
         try {
-            myAdapter.add(new ChatMessage(right, text, name, false, null, false, ts));
+            myAdapter.add(new ChatMessage(right, text, name, false, null, false, ts, json));
 
             chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
             chatMsg.setAdapter(myAdapter);
         } catch (NullPointerException e) {
-            MessageHandler mh = new MessageHandler(group, null, MessageService.con);
-            mh.saveMessage();
+            e.printStackTrace();
         }
     }
 

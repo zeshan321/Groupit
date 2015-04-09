@@ -38,4 +38,13 @@
         android:textSize="10dp"
         android:textStyle="italic" />
 
+    <TextView
+        android:id="@+id/jsonMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textColor="@color/lblFromName"
+        android:textSize="10dp"
+        android:textStyle="italic" />
+
 </LinearLayout>

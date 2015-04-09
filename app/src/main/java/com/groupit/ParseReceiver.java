@@ -68,12 +68,11 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
                             ftp.downloadFile(name, id, group, true, true);
                         }
                     } else {
-                        MessageHandler mh = new MessageHandler(group, data1, con);
-                        mh.saveMessage();
-
+                        DatabaseHandler db = new DatabaseHandler(con);
+                        db.addMessage(MessageActivity.currentGroup, data1);
                         if (!owner) {
                             if (group.equals(MessageActivity.currentGroup)) {
-                                MessageActivity.addMessage(false, message, name, group, ts);
+                                MessageActivity.addMessage(false, message, name, group, ts, data1);
                             }
                         }
                     }
@@ -86,8 +85,8 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
                     ftp.downloadFile(name, id, group, true, false);
                 }
             } else {
-                MessageHandler mh = new MessageHandler(group, data1, tempCon);
-                mh.saveMessage();
+                DatabaseHandler db = new DatabaseHandler(con);
+                db.addMessage(group, data1);
             }
         }
 

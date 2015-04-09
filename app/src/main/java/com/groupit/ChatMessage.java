@@ -13,8 +13,9 @@ public class ChatMessage {
     public Bitmap imageU;
     public boolean useByte;
     public Timestamp time;
+    public String json;
 
-    public ChatMessage(boolean left, String message, String display, boolean image, Bitmap imageU, boolean useByte, Timestamp time) {
+    public ChatMessage(boolean left, String message, String display, boolean image, Bitmap imageU, boolean useByte, Timestamp time, String json) {
         super();
         this.left = left;
         this.message = message;
@@ -23,5 +24,6 @@ public class ChatMessage {
         this.imageU = imageU;
         this.useByte = useByte;
         this.time = time;
+        this.json = json;
     }
 }

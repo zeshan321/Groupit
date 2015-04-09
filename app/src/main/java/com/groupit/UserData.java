@@ -26,7 +26,13 @@ public class UserData {
     }
 
     public String getID(){
-        return ParseInstallation.getCurrentInstallation().get("deviceToken").toString();
+        String ID = null;
+        try {
+            ID = ParseInstallation.getCurrentInstallation().get("deviceToken").toString();
+        } catch (NullPointerException e) {
+            new UserData(con).sendToast("Oops! Something went wrong.");
+        }
+        return ID;
     }
 
     public void updateGroups() {

@@ -33,11 +33,16 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
     private List<ChatMessage> chatMessageList = new ArrayList<ChatMessage>();
     private Context context;
     private TextView location;
+    private TextView json;
 
     @Override
     public void add(ChatMessage object) {
         chatMessageList.add(object);
         super.add(object);
+    }
+
+    public void add(int i, ChatMessage object) {
+        chatMessageList.add(i, object);
     }
 
     public ChatArrayAdapter(Context context, int textViewResourceId) {
@@ -89,6 +94,10 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
 
         timeStamp = (TextView) row.findViewById(R.id.lblMsgFromTime);
         timeStamp.setText(convertTime(chatMessageObj.time.getTime()));
+
+        json = (TextView) row.findViewById(R.id.jsonMsg);
+        json.setText(chatMessageObj.json);
+        json.setVisibility(View.GONE);
 
         if (chatMessageObj.image) {
             chatImage = (ImageView) row.findViewById(R.id.imageMsg);

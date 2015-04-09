@@ -4,116 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.widget.AbsListView;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.URI;
 import java.sql.Timestamp;
 
 public class MessageHandler {
 
-    String message;
-    String group;
-    File file = null;
     Context con = null;
 
-
-    public MessageHandler(String group, String message, Context con) {
+    public MessageHandler(Context con) {
         this.con = con;
-        this.message = message;
-        this.group = group;
-
-        if (new File(con.getFilesDir(), group).exists()) {
-            this.file = new File(con.getFilesDir(), group);
-        } else {
-            try {
-                new File(con.getFilesDir(), group).createNewFile();
-                this.file = new File(con.getFilesDir(), group);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void saveMessage() {
-        final String msg = this.message;
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String message = new StringHandler(StringHandler.Type.COMPRESS, msg).run();
-
-                if (message == null == false && message.equals("null") == false) {
-                    try {
-                        BufferedWriter stream = new BufferedWriter(new FileWriter(file, true));
-                        stream.write(message + "\n");
-                        stream.close();
-
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        thread.start();
-    }
-
-    public void loadMessages() {
-        try {
-            MessageActivity.myAdapter.clear();
-            MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
-
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            InputStreamReader isr = new InputStreamReader(fis);
-            final BufferedReader bufferedReader = new BufferedReader(isr);
-            try {
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String line;
-                            String name = null;
-
-                            if (MessageActivity.display == null) {
-                                NameHandler nh = new NameHandler(null, con);
-                                MessageActivity.display = nh.getName();
-                            }
-
-                            while ((line = bufferedReader.readLine()) != null) {
-                                if (line != null || line.equals("null") == false) {
-                                    line = new StringHandler(StringHandler.Type.DECOMPRESS, line).run();
-                                    addMSG(line);
-                                }
-                            }
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                thread.start();
-            } finally {
-                System.out.println("Loaded.");
-            }
-        } catch (NullPointerException e) {
-            return;
-        }
     }
 
     public void addMSG(final String line) {
@@ -135,12 +36,12 @@ public class MessageHandler {
                             opts.inTempStorage=new byte[32 * 1024];
                             Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 
-                            MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, FTPHandler.getResizedBitmap(bitmap), true, ts));
+                            MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, FTPHandler.getResizedBitmap(bitmap), true, ts, line));
 
                             MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                             MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                         } else {
-                            MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup, ts);
+                            MessageActivity.addMessage(true, message, name, MessageActivity.currentGroup, ts, line);
                         }
                     } else {
                         if (isImage && new File(message).exists()) {
@@ -152,67 +53,16 @@ public class MessageHandler {
                             opts.inTempStorage=new byte[32 * 1024];
                             Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 
-                            MessageActivity.myAdapter.add(new ChatMessage(false, message, name, true, FTPHandler.getResizedBitmap(bitmap), true, ts));
+                            MessageActivity.myAdapter.add(new ChatMessage(false, message, name, true, FTPHandler.getResizedBitmap(bitmap), true, ts, line));
 
                             MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                             MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                         } else {
-                            MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup, ts);
+                            MessageActivity.addMessage(false, message, name, MessageActivity.currentGroup, ts, line);
                         }
                     }
                 }
             }
         });
-    }
-
-    public void removeGroup(final int lineToRemove) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-
-                    File inFile = file;
-
-                    if (!inFile.isFile()) {
-                        System.out.println("Parameter is not an existing file");
-                        return;
-                    }
-
-                    File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
-
-                    BufferedReader br = new BufferedReader(new FileReader(inFile));
-                    PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
-
-                    String line = null;
-
-                    int i = -1;
-                    while ((line = br.readLine()) != null) {
-                        i++;
-                        if (i != lineToRemove) {
-                            pw.println(line);
-                            pw.flush();
-                        }
-                    }
-                    pw.close();
-                    br.close();
-
-                    //Delete the original file
-                    if (!inFile.delete()) {
-                        System.out.println("Could not delete file");
-                        return;
-                    }
-
-                    //Rename the new file to the filename the original file had.
-                    if (!tempFile.renameTo(inFile))
-                        System.out.println("Could not rename file");
-
-                } catch (FileNotFoundException ex) {
-                    ex.printStackTrace();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        thread.start();
     }
 }

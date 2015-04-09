@@ -53,12 +53,14 @@ public class FTPHandler {
 
                 Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
 
-                MessageActivity.myAdapter.add(new ChatMessage(true, file.getAbsolutePath(), MessageActivity.display, true, getResizedBitmap(bitmap), true, new Timestamp(new Date().getTime())));
+                String json = new JSONUtils().getJSONMessage(new Timestamp(new Date().getTime()), new UserData(con).getID(), MessageActivity.currentGroup, file.getAbsolutePath(), MessageActivity.display, true);
+
+                MessageActivity.myAdapter.add(new ChatMessage(true, file.getAbsolutePath(), MessageActivity.display, true, getResizedBitmap(bitmap), true, new Timestamp(new Date().getTime()), json));
                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
 
-                MessageHandler mh = new MessageHandler(MessageActivity.currentGroup, new JSONUtils().getJSONMessage(new Timestamp(new Date().getTime()), new UserData(con).getID(), MessageActivity.currentGroup, file.getAbsolutePath(), MessageActivity.display, true), con);
-                mh.saveMessage();
+                DatabaseHandler db = new DatabaseHandler(con);
+                db.addMessage(MessageActivity.currentGroup, json);
             }
         });
 
@@ -149,14 +151,16 @@ public class FTPHandler {
 
                                         Bitmap bitmap = BitmapFactory.decodeFile(img1.getAbsolutePath(), opts);
 
-                                        MessageActivity.myAdapter.add(new ChatMessage(false, img1.getAbsolutePath(), name, true, getResizedBitmap(bitmap), true, ts));
+                                        String json = new JSONUtils().getJSONMessage(ts, ID, group, img1.getAbsolutePath(), name, true);
+
+                                        MessageActivity.myAdapter.add(new ChatMessage(false, img1.getAbsolutePath(), name, true, getResizedBitmap(bitmap), true, ts, json));
                                         MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                         MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                                     }
                                 }
                             });
-                            MessageHandler mh = new MessageHandler(group, new JSONUtils().getJSONMessage(ts, ID, group, img1.getAbsolutePath(), name, true), con);
-                            mh.saveMessage();
+                            DatabaseHandler db = new DatabaseHandler(con);
+                            db.addMessage(group, new JSONUtils().getJSONMessage(ts, ID, group, img1.getAbsolutePath(), name, true));
                         }
                     }
 

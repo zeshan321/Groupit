@@ -13,10 +13,13 @@ public class Parse extends Application {
     public void onCreate() {
         super.onCreate();
 
-        com.parse.Parse.enableLocalDatastore(this);
-        ParseCrashReporting.enable(this);
-        com.parse.Parse.initialize(this, new Main().getParse1(), new Main().getParse2());
-        GroupActivity.ID = ParseInstallation.getCurrentInstallation().get("deviceToken").toString();
+        try {
+            com.parse.Parse.enableLocalDatastore(this);
+            ParseCrashReporting.enable(this);
+            com.parse.Parse.initialize(this, new Main().getParse1(), new Main().getParse2());
+        } finally {
+            GroupActivity.ID = new UserData(this).getID();
+        }
 
         new UserData(this).updateGroups();
         new SettingsHandler(this).sendNotification();
