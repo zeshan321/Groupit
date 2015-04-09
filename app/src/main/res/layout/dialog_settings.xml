@@ -40,7 +40,7 @@
         android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Disable Notifications"
+        android:text="Notifications"
         android:id="@+id/notiON"
         android:layout_gravity="center_horizontal" />
 
