@@ -133,7 +133,9 @@ public class FTPHandler {
                         client.retrieveFile(IMGID + ".jpg", fos);
 
                     } finally {
-                        fos.close();
+                        if (fos != null) {
+                            fos.close();
+                        }
                         client.logout();
                         if (send) {
                             final File img1 = img;

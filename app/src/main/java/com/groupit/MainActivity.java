@@ -28,6 +28,8 @@ public class MainActivity extends ActionBarActivity {
             return;
         }
 
+        new UserData(this).updateGroups();
+        GroupActivity.groups = new GroupHandler(this).getGroupsList();
         firstButton(findViewById(R.id.button));
 
     }

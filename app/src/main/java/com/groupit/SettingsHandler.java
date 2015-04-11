@@ -51,4 +51,18 @@ public class SettingsHandler {
     public int getInt(String s) {
         return settings.getInt(s, 0);
     }
+
+    public void setID(String ID) {
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("ID", ID);
+        editor.apply();
+    }
+
+    public String getID() {
+        return settings.getString("ID", "ID not foind");
+    }
+
+    public boolean hasID() {
+        return settings.contains("ID");
+    }
 }

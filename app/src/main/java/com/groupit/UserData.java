@@ -2,6 +2,8 @@ package com.groupit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,13 +28,7 @@ public class UserData {
     }
 
     public String getID(){
-        String ID = null;
-        try {
-            ID = ParseInstallation.getCurrentInstallation().get("deviceToken").toString();
-        } catch (NullPointerException e) {
-            new UserData(con).sendToast("Oops! Something went wrong.");
-        }
-        return ID;
+        return new SettingsHandler(con).getID();
     }
 
     public void updateGroups() {
@@ -43,6 +39,8 @@ public class UserData {
 
         ParseInstallation.getCurrentInstallation().put("channels", list);
         ParseInstallation.getCurrentInstallation().saveInBackground();
+
+        new SettingsHandler(con).setID(ParseInstallation.getCurrentInstallation().getInstallationId());
     }
 
     public void sendMessage(final String group, final String message, final String title) {
