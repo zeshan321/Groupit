@@ -4,7 +4,7 @@ GroupIt is an group chatting app that requires no login or setup.
 
 <h1>Download</h1>
 
-[Click here to request aplha access.]https://groups.google.com/forum/#!forum/groupitiohttps://groups.google.com/forum/#!forum/groupitio) 
+[Click here to request aplha access.](https://groups.google.com/forum/#!forum/groupitiohttps://groups.google.com/forum/#!forum/groupitio) 
 
 <h1>Current features</h1>
 * Creating groups
