@@ -364,7 +364,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 showSettings();
                 return true;
             case 1:
-                CharSequence colors[] = new CharSequence[] {"Photo"};
+                CharSequence colors[] = new CharSequence[] {"Photo", "Other"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Attach");
@@ -377,6 +377,14 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                                 inte.setType("image/*");
                                 inte.setAction(Intent.ACTION_GET_CONTENT);
                                 ((Activity)con).startActivityForResult(Intent.createChooser(inte, "Select Picture"), 1);
+                                break;
+                            case 1:
+                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                                intent.setType("*/*");
+                                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                                ((Activity)con).startActivityForResult(
+                                        Intent.createChooser(intent, "Select a File to Upload"),
+                                        2);
                                 break;
                         }
                     }
@@ -409,14 +417,24 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == 1) {
-                Uri currImageURI = data.getData();
+            Uri currImageURI;
+            File file;
+            switch (requestCode) {
+                case 1:
+                    currImageURI = data.getData();
 
-                File file = new File(getRealPathFromURI(currImageURI));
-                String ID = UUID.randomUUID().toString();
+                    file = new File(getRealPathFromURI(currImageURI));
+                    String ID = UUID.randomUUID().toString();
 
-                FTPHandler ftp = new FTPHandler(ID, FTPHandler.Type.Image, file, con, true);
-                ftp.uploadFile();
+                    FTPHandler ftp = new FTPHandler(ID, FTPHandler.Type.Image, file, con, true);
+                    ftp.uploadFile();
+                    break;
+                case 2:
+                    currImageURI = data.getData();
+
+                    file = new File(getRealPathFromURI(currImageURI));
+                    System.out.println("File Uri: " + file.getPath());
+                    break;
             }
         }
     }
