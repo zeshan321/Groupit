@@ -58,6 +58,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
     public static String groupName = null;
     public static int CURRENT = 0;
     public static View lastView;
+    public static int temp = 0;
 
     EditText editTextSay;
     ImageButton buttonSend;
@@ -78,6 +79,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
 
         MessageService.count.remove(groupName);
         CURRENT = 0;
+        temp = 0;
 
         TextView tv = (TextView) findViewById(R.id.groupTitle);
         tv.setText(groupName);
@@ -200,7 +202,8 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                     int offset = (v == null) ? 0 : v.getTop();
                     if (offset == 0) {
                         DatabaseHandler db = new DatabaseHandler(con);
-                        if (db.getCount() == chatMsg.getCount() || chatMsg.getCount() > db.getCount()) {
+                        int count = db.getCount() - temp;
+                        if (count == chatMsg.getCount() || chatMsg.getCount() > count) {
                             if (myAdapter.getCount() != 0)
                             new UserData(con).sendToast("No more messages!");
                             return;
@@ -277,13 +280,14 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 String ID1 = new JSONUtils().getID(json);
                 String ID2 = new JSONUtils().getID(myAdapter.getItem(myAdapter.getCount() - 1).json);
 
-                if (ID1.equals(ID2)) {
+                if (ID1.equals(ID2) && !myAdapter.getItem(myAdapter.getCount() - 1).image) {
                     String pre = myAdapter.getItem(myAdapter.getCount() - 1).message;
                     String time = ChatArrayAdapter.convertTime(myAdapter.getItem(myAdapter.getCount() - 1).time.getTime());
 
                     pre = pre + "<br><font size=\"2\" color=\"#d7d7d7\"> &#9472;&#9472;&#9472; </font><br>" + text;
                     myAdapter.set(myAdapter.getCount() - 1, new ChatMessage(right, pre, name, false, null, false, ts, json));
                     chatMsg.setAdapter(myAdapter);
+                    temp++;
                     return;
                 }
             }

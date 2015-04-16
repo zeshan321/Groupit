@@ -1,5 +1,6 @@
 package com.groupit;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -16,6 +17,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import groupitapi.groupit.com.Main;
@@ -42,79 +44,36 @@ public class VoiceChat {
 
             @Override
             public void run() {
-                try {
 
-                    socket = new DatagramSocket();
-
-                    byte[] buffer = new byte[minBufSize];
-                    byte[] receiveData = new byte[4096];
-
-                    DatagramPacket packet;
-                    final InetAddress destination = InetAddress.getByName(new Main().getIP());
-
-                    recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,minBufSize*10);
+                    recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelConfig, audioFormat, minBufSize * 10);
                     recorder.startRecording();
 
-                    while(status == true) {
-                        minBufSize = recorder.read(buffer, 0, buffer.length);
-                        packet = new DatagramPacket (buffer, buffer.length, destination, new Main().getPort());
+                    short sData[] = new short[1024];
+                    recorder.read(sData, 0, 1024);
 
-                        socket.send(packet);
-
-                        DatagramPacket receivePacket = new DatagramPacket(receiveData,
-                                receiveData.length);
-
-                        socket.receive(receivePacket);
-
-                        playMp3(receivePacket.getData());
-                    }
-                } catch(SocketException e) {
-                    e.printStackTrace();
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    playMp3(toByte(sData));
             }
-
         });
         streamThread.start();
+    }
+
+    private byte[] toByte(short[] sData) {
+        int shortArrsize = sData.length;
+        byte[] bytes = new byte[shortArrsize * 2];
+
+        for (int i = 0; i < shortArrsize; i++) {
+            bytes[i * 2] = (byte) (sData[i] & 0x00FF);
+            bytes[(i * 2) + 1] = (byte) (sData[i] >> 8);
+            sData[i] = 0;
+        }
+        return bytes;
     }
 
     private void playMp3(final byte[] mp3SoundByteArray) {
         new Thread() {
             @Override
             public void run() {
-                try {
-                    String ID = UUID.randomUUID().toString();
-
-                    File tempMp3 = File.createTempFile(ID, "mp3", con.getCacheDir());
-                    tempMp3.deleteOnExit();
-                    FileOutputStream fos = new FileOutputStream(tempMp3);
-                    fos.write(mp3SoundByteArray, 0, mp3SoundByteArray.length);
-                    fos.close();
-
-                    MediaPlayer mp = new MediaPlayer();
-                    mp.setDataSource(tempMp3.getAbsolutePath());
-                    mp.prepare();
-
-                    mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mp.start();
-                        }
-                    });
-
-                    mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            mp.reset();
-                        }
-                    });
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                new AudioPlayer(((Activity)con)).play(mp3SoundByteArray);
             }
         }.start();
 }
