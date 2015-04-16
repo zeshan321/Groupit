@@ -8,7 +8,7 @@ android {
         applicationId "com.groupit"
         minSdkVersion 17
         targetSdkVersion 21
-        versionCode 5
+        versionCode 6
         versionName "1.0"
     }
     buildTypes {
@@ -30,4 +30,5 @@ dependencies {
     compile 'com.github.markushi:circlebutton:1.1'
     compile files('libs/Parse-1.9.0.jar')
     compile files('libs/ParseCrashReporting-1.9.0.jar')
+    compile 'com.github.chrisbanes.photoview:library:1.2.3'
 }

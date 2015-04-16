@@ -52,6 +52,12 @@
             android:icon="@mipmap/ic_launcher"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name="com.groupit.ImageActivity"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher"
+            android:screenOrientation="portrait">
+        </activity>
         <service android:name=".MessageService" />
 
         <receiver android:name=".BootReceiver" android:enabled="true" android:exported="false">

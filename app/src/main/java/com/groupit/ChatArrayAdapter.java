@@ -1,24 +1,16 @@
 package com.groupit;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.Image;
+import android.text.Html;
 import android.text.util.Linkify;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.io.ByteArrayOutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -45,6 +37,10 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         chatMessageList.add(i, object);
     }
 
+    public void set(int i, ChatMessage object) {
+        chatMessageList.set(i, object);
+    }
+
     public ChatArrayAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
         this.context = context;
@@ -69,9 +65,8 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         super.clear();
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View row, ViewGroup parent) {
         ChatMessage chatMessageObj = getItem(position);
-        View row = convertView;
         LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (chatMessageObj.left) {
@@ -108,14 +103,15 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
             location.setVisibility(View.GONE);
         } else {
             chatText = (TextView) row.findViewById(R.id.txtMsg);
-            chatText.setText(chatMessageObj.message);
+            chatText.setText(Html.fromHtml(chatMessageObj.message));
             chatText.setLinkTextColor(Color.BLUE);
             Linkify.addLinks(chatText, Linkify.ALL);
         }
+
         return row;
     }
 
-    public String convertTime(long time){
+    public static String convertTime(long time){
         Calendar cal = Calendar.getInstance();
         cal.setTimeZone(TimeZone.getDefault());
         cal.setTimeInMillis(time);

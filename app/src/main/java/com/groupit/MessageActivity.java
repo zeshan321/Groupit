@@ -19,6 +19,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,6 +57,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
     public static boolean isLooking = false;
     public static String groupName = null;
     public static int CURRENT = 0;
+    public static View lastView;
 
     EditText editTextSay;
     ImageButton buttonSend;
@@ -174,17 +176,8 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 if (arg1.findViewById(R.id.filePath) != null) {
                     TextView image = (TextView) arg1.findViewById(R.id.filePath);
 
-                    File file = new File(image.getText().toString());
-
-                    Uri uri = Uri.fromFile(file);
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-                    String mime = "*/*";
-                    MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-                    if (mimeTypeMap.hasExtension(
-                            mimeTypeMap.getFileExtensionFromUrl(uri.toString())))
-                        mime = mimeTypeMap.getMimeTypeFromExtension(
-                                mimeTypeMap.getFileExtensionFromUrl(uri.toString()));
-                    intent.setDataAndType(uri, mime);
+                    Intent intent = new Intent(con, ImageActivity.class);
+                    intent.putExtra("image", image.getText().toString());
                     startActivity(intent);
                 }
 
@@ -280,6 +273,21 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
 
     public static void addMessage(boolean right, String text, String name, String group, Timestamp ts, String json) {
         try {
+            if (myAdapter.getCount() > 0) {
+                String ID1 = new JSONUtils().getID(json);
+                String ID2 = new JSONUtils().getID(myAdapter.getItem(myAdapter.getCount() - 1).json);
+
+                if (ID1.equals(ID2)) {
+                    String pre = myAdapter.getItem(myAdapter.getCount() - 1).message;
+                    String time = ChatArrayAdapter.convertTime(myAdapter.getItem(myAdapter.getCount() - 1).time.getTime());
+
+                    pre = pre + "<br><font size=\"2\" color=\"#d7d7d7\"> &#9472;&#9472;&#9472; </font><br>" + text;
+                    myAdapter.set(myAdapter.getCount() - 1, new ChatMessage(right, pre, name, false, null, false, ts, json));
+                    chatMsg.setAdapter(myAdapter);
+                    return;
+                }
+            }
+
             myAdapter.add(new ChatMessage(right, text, name, false, null, false, ts, json));
 
             chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
