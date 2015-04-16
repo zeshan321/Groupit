@@ -54,7 +54,7 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
             return;
         }
 
-        if (con != null) {
+        if (con instanceof Activity && con != null) {
             ((Activity) con).runOnUiThread(new Runnable() {
                 public void run() {
                     boolean owner = false;
