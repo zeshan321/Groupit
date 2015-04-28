@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -70,10 +71,8 @@ public class ImageActivity extends ActionBarActivity {
         float scaleHeight = ((float) 2048) / height;
 
         Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
+        matrix.setRectToRect(new RectF(0, 0, width, height), new RectF(0, 0, scaleWidth, scaleHeight), Matrix.ScaleToFit.CENTER);
 
-        bm = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
-
-        return bm;
+        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
     }
 }

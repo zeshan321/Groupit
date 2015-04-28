@@ -376,7 +376,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 showSettings();
                 return true;
             case 1:
-                CharSequence colors[] = new CharSequence[] {"Photo", "Other"};
+                CharSequence colors[] = new CharSequence[] {"Photo"};
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Attach");
