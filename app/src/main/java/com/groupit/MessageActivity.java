@@ -289,7 +289,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
 
                 if (ID1.equals(ID2) && !myAdapter.getItem(myAdapter.getCount() - 1).image) {
                     String pre = myAdapter.getItem(myAdapter.getCount() - 1).message;
-                    String time = ChatArrayAdapter.convertTime(myAdapter.getItem(myAdapter.getCount() - 1).time.getTime());
+                    String time = new Time(myAdapter.getItem(myAdapter.getCount() - 1).time.getTime()).getString();
 
                     pre = pre + "<br><font size=\"2\" color=\"#d7d7d7\"> &#9472;&#9472;&#9472; </font><br>" + text;
                     myAdapter.set(myAdapter.getCount() - 1, new ChatMessage(right, pre, name, false, null, false, ts, json));

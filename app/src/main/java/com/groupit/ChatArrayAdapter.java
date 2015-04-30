@@ -88,7 +88,7 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         chatName.setText(chatMessageObj.display);
 
         timeStamp = (TextView) row.findViewById(R.id.lblMsgFromTime);
-        timeStamp.setText(convertTime(chatMessageObj.time.getTime()));
+        timeStamp.setText(new Time(chatMessageObj.time.getTime()).getString());
 
         json = (TextView) row.findViewById(R.id.jsonMsg);
         json.setText(chatMessageObj.json);
@@ -109,25 +109,5 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
         }
 
         return row;
-    }
-
-    public static String convertTime(long time){
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(TimeZone.getDefault());
-        cal.setTimeInMillis(time);
-
-        String type = "AM";
-        if (cal.get(Calendar.AM_PM) == 1) {
-            type = "PM";
-        }
-
-        String min = String.valueOf(cal.get(Calendar.MINUTE));
-        if (min.length() == 1) {
-            min = min + "0";
-        }
-
-        return (cal.get(Calendar.HOUR) + ":"
-                + min + " " + type);
-
     }
 }
