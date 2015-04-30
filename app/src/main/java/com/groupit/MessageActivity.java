@@ -2,6 +2,7 @@ package com.groupit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -80,6 +81,12 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
         MessageService.count.remove(groupName);
         CURRENT = 0;
         temp = 0;
+
+        // Remove open notifications
+        if (groupName != null) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.cancel(GroupActivity.groups.indexOf(groupName));
+        }
 
         TextView tv = (TextView) findViewById(R.id.groupTitle);
         tv.setText(groupName);

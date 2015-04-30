@@ -5,7 +5,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,24 +57,35 @@ public class ImageActivity extends ActionBarActivity {
         }
     }
 
-    private Bitmap getResizedBitmap(Bitmap bm) {
-        if (bm == null) {
-            return bm;
+    private Bitmap getResizedBitmap(Bitmap bitmap) {
+        if (bitmap == null) {
+            return bitmap;
         }
 
-        int width = bm.getWidth();
-        int height = bm.getHeight();
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        int newWidth = 2048;
+        int newHeight = 2048;
 
-        if (width <= 2048 && height <= 2048) {
-            return bm;
+        if (w <= 2048 && h <= 2048) {
+            return bitmap;
         }
 
-        float scaleWidth = ((float) 2048) / width;
-        float scaleHeight = ((float) 2048) / height;
+        Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
 
-        Matrix matrix = new Matrix();
-        matrix.setRectToRect(new RectF(0, 0, width, height), new RectF(0, 0, scaleWidth, scaleHeight), Matrix.ScaleToFit.CENTER);
+        float scaleX = newWidth / (float) bitmap.getWidth();
+        float scaleY = newHeight / (float) bitmap.getHeight();
+        float pivotX = 0;
+        float pivotY = 0;
 
-        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(scaleX, scaleY, pivotX, pivotY);
+
+        Canvas canvas = new Canvas(scaledBitmap);
+        canvas.setMatrix(scaleMatrix);
+        canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
+
+
+        return scaledBitmap;
     }
 }

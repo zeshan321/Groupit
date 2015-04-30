@@ -2,6 +2,7 @@ package com.groupit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,6 +31,8 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -66,8 +69,6 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
         groupsList = (ListView) findViewById(R.id.list_group);
         myAdapter = new GroupArrayAdapter(getApplicationContext(), R.layout.groups_layout);
-
-        new GroupHandler(con).loadGroups();
 
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -198,9 +199,13 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
             }
         });
 
-        Button b = (Button) findViewById(R.id.Create);
-        b.setOnClickListener(new Button.OnClickListener() {
+        final FloatingActionButton actionA = (FloatingActionButton) findViewById(R.id.action_a);
+        actionA.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
+                FloatingActionsMenu actionM = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+                actionM.collapse();
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(con);
                 LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
                 final View v = inflater.inflate(R.layout.dialog_creategroup, null);
@@ -259,9 +264,13 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
             }
         });
 
-        Button b1 = (Button) findViewById(R.id.Join);
-        b1.setOnClickListener(new Button.OnClickListener() {
+        final FloatingActionButton actionB = (FloatingActionButton) findViewById(R.id.action_b);
+        actionB.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
+                FloatingActionsMenu actionM = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+                actionM.collapse();
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(con);
                 LayoutInflater inflater = (LayoutInflater) con.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
                 final View v = inflater.inflate(R.layout.dialog_joingroup, null);
@@ -513,8 +522,10 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
     protected void onResume() {
         super.onResume();
 
-        if (mNfcAdapter != null)
+        if (mNfcAdapter != null) {
             mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, mIntentFilters, mNFCTechLists);
+        }
 
+        new GroupHandler(con).loadGroups();
     }
 }

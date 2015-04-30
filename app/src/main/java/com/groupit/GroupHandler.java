@@ -67,6 +67,9 @@ public class GroupHandler {
 
         String line;
         GroupActivity.groups.clear();
+
+
+        GroupActivity.myAdapter.clearList();
         try {
             while ((line = bufferedReader.readLine()) != null) {
                 String display = new JSONUtils().getGroupDisplay(line);
@@ -75,7 +78,6 @@ public class GroupHandler {
                 GroupActivity.groups.add(id);
                 GroupActivity.addMessage(display, "Code: " + id);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -51,4 +51,9 @@
         <item name="android:textSize">13.0sp</item>
         <item name="android:textColor">#ff5a5a5c</item>
     </style>
+
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>

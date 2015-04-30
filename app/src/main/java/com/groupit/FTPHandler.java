@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Environment;
 import android.widget.AbsListView;
@@ -175,20 +177,28 @@ public class FTPHandler {
         thread.start();
     }
 
-    public static Bitmap getResizedBitmap(Bitmap bm) {
-        if (bm == null) {
-            return bm;
+    public static Bitmap getResizedBitmap(Bitmap bitmap) {
+        if (bitmap == null) {
+            return bitmap;
         }
 
-        int width = bm.getWidth();
-        int height = bm.getHeight();
+        int newWidth = 500;
+        int newHeight = 500;
 
-        float scaleWidth = ((float) 500) / width;
-        float scaleHeight = ((float) 500) / height;
+        Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
 
-        Matrix matrix = new Matrix();
-        matrix.setRectToRect(new RectF(0, 0, width, height), new RectF(0, 0, scaleWidth, scaleHeight), Matrix.ScaleToFit.CENTER);
+        float scaleX = newWidth / (float) bitmap.getWidth();
+        float scaleY = newHeight / (float) bitmap.getHeight();
+        float pivotX = 0;
+        float pivotY = 0;
 
-        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(scaleX, scaleY, pivotX, pivotY);
+
+        Canvas canvas = new Canvas(scaledBitmap);
+        canvas.setMatrix(scaleMatrix);
+        canvas.drawBitmap(bitmap, 0, 0, new Paint(Paint.FILTER_BITMAP_FLAG));
+
+        return scaledBitmap;
     }
 }

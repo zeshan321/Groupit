@@ -43,6 +43,12 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
         final Boolean isImage = new JSONUtils().isImage(data);
         final Timestamp ts = Timestamp.valueOf(new JSONUtils().getTimeStamp(data));
 
+        if (MessageService.con != null) {
+            if (!(MessageService.con instanceof Activity)) {
+                MessageService.con = null;
+            }
+        }
+
         final Context con = MessageService.con;
         Context tempCon = MessageService.tempCon;
 
@@ -54,7 +60,7 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
             return;
         }
 
-        if (con instanceof Activity && con != null) {
+        if (con != null) {
             ((Activity) con).runOnUiThread(new Runnable() {
                 public void run() {
                     boolean owner = false;
@@ -80,8 +86,8 @@ public class ParseReceiver extends ParsePushBroadcastReceiver {
             });
         } else {
             if (isImage) {
-                if (!id.equals(new UserData(tempCon).getID())) {
-                    FTPHandler ftp = new FTPHandler(message, FTPHandler.Type.Image, null, tempCon, true);
+                if (!id.equals(new UserData(context).getID())) {
+                    FTPHandler ftp = new FTPHandler(message, FTPHandler.Type.Image, null, context, true);
                     ftp.downloadFile(name, id, group, true, false);
                 }
             } else {

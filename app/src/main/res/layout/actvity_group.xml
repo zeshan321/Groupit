@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFF">
@@ -15,40 +16,39 @@
         android:layout_above="@+id/listFooter">
     </ListView>
 
-    <LinearLayout
-        android:id="@+id/listFooter"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        fab:fab_addButtonColorNormal="@color/actionbar"
+        fab:fab_addButtonColorPressed="#9EDCBD"
+        fab:fab_addButtonPlusIconColor="@color/white"
+        fab:fab_labelStyle="@style/menu_labels_style"
+        fab:fab_addButtonSize="normal"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp">
 
-        <Button
-            android:textAlignment="center"
-            android:text="Create"
-            android:height="14dp"
-            android:textSize="15sp"
-            android:textColor="#ffffff"
-            android:background="@color/actionbar"
-            android:layout_width="fill_parent"
-            android:layout_weight="1"
-            android:layout_height="fill_parent"
-            android:id="@+id/Create"
-            android:layout_gravity="bottom">
-        </Button>
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_colorNormal="@color/actionbar"
+            fab:fab_icon="@drawable/ic_fa_pencil"
+            fab:fab_title="  Create  "
+            fab:fab_colorPressed="#9EDCBD"/>
 
-        <Button
-            android:textAlignment="center"
-            android:text="Join"
-            android:background="@color/actionbar"
-            android:height="14dp"
-            android:textSize="15sp"
-            android:textColor="#ffffff"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/action_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_icon="@drawable/ic_fa_pencil"
+            fab:fab_colorNormal="@color/actionbar"
+            fab:fab_title="  Join  "
+            fab:fab_colorPressed="#9EDCBD"/>
 
-            android:id="@+id/Join"
-            android:layout_gravity="bottom">
-        </Button>
-    </LinearLayout>
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </RelativeLayout>
