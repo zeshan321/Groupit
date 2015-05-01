@@ -1,7 +1,5 @@
 package com.groupit;
 
-import android.graphics.Matrix;
-
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -29,25 +27,35 @@ public class Time {
             type = "PM";
         }
 
-        long diff = (time - currentTime) / 1000;
+        long diff = (currentTime - time) / 1000;
         int hours = (int) (diff / 3600);
 
-        if (hours < 12) {
+        if (hours <= 12 && hours >= 1) {
+            if (hours == 1) {
+                return hours + " hour ago";
+            }
             return hours + " hours ago";
         }
 
         int minutes = (int) (diff / 60);
 
-        if (hours == 0) {
+        if (minutes <= 60 && minutes >= 1) {
+            if (minutes == 1) {
+                return minutes + " minute ago";
+            }
             return minutes + " minutes ago";
         }
 
-        String min = String.valueOf(cal.get(Calendar.MINUTE));
-        if (min.length() == 1) {
-            min = min + "0";
+        if (minutes == 0) {
+            if (diff == 0 || diff == 1) {
+                return diff + " second ago";
+            }
+            return diff + " seconds ago";
         }
-        String time = cal.get(Calendar.HOUR) + ":" + min + " " + type;
 
-        return cal.get(Calendar.WEEK_OF_MONTH) + "/" + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.YEAR) + " " + time + " " + type;
+
+        String time = cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) + " " + type;
+
+        return cal.get(Calendar.YEAR) + "/" + cal.get(Calendar.MONTH) + "/" + cal.get(Calendar.DAY_OF_MONTH) + " " + time;
     }
 }

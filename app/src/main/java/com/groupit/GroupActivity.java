@@ -150,6 +150,10 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
                 String name = textView1.getText().toString();
 
                 MessageActivity.groupName = name;
+
+                FloatingActionsMenu actionM = (FloatingActionsMenu) findViewById(R.id.multiple_actions);
+                actionM.collapse();
+
                 Intent intent = new Intent(GroupActivity.this, MessageActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.transition.activity_to_1, R.transition.activity_to_2);
@@ -435,6 +439,8 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
         final NumberPicker s1 = (NumberPicker) v.findViewById(R.id.notiTime);
         final NumberPicker s2 = (NumberPicker) v.findViewById(R.id.notiLimit);
+        s1.setVisibility(View.GONE);
+        s2.setVisibility(View.GONE);
         final Switch s3 = (Switch) v.findViewById(R.id.notiON);
 
         s1.setMinValue(0);
