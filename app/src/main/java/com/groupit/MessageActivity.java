@@ -15,7 +15,9 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.nfc.tech.NfcF;
+import android.os.Build;
 import android.os.Parcelable;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -442,7 +444,7 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 case 1:
                     currImageURI = data.getData();
 
-                    file = new File(getRealPathFromURI(currImageURI));
+                    file = new File(new FilePath(this, currImageURI).getPath());
                     String ID = UUID.randomUUID().toString();
 
                     FTPHandler ftp = new FTPHandler(ID, FTPHandler.Type.Image, file, con, true);
@@ -451,24 +453,10 @@ public class MessageActivity extends ActionBarActivity implements NfcAdapter.Cre
                 case 2:
                     currImageURI = data.getData();
 
-                    file = new File(getRealPathFromURI(currImageURI));
+                    file = new File(new FilePath(this, currImageURI).getPath());
                     System.out.println("File Uri: " + file.getPath());
                     break;
             }
         }
-    }
-
-    public String getRealPathFromURI(Uri contentUri) {
-
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = managedQuery(contentUri,
-                proj,
-                null,
-                null,
-                null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-
-        return cursor.getString(column_index);
     }
 }

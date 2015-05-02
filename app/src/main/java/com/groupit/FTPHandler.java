@@ -90,6 +90,7 @@ public class FTPHandler {
 
 
                     } finally {
+                        if (client.isConnected())
                         client.logout();
 
                         if (send) {
