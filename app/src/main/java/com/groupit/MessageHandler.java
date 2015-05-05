@@ -36,7 +36,7 @@ public class MessageHandler {
                             opts.inTempStorage=new byte[32 * 1024];
                             Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 
-                            MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, FTPHandler.getResizedBitmap(bitmap), true, ts, line));
+                            MessageActivity.myAdapter.add(new ChatMessage(true, message, name, true, FTPHandler.getResizedBitmap(bitmap, con), true, ts, line));
 
                             MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                             MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
@@ -53,7 +53,7 @@ public class MessageHandler {
                             opts.inTempStorage=new byte[32 * 1024];
                             Bitmap bitmap = BitmapFactory.decodeFile(message, opts);
 
-                            MessageActivity.myAdapter.add(new ChatMessage(false, message, name, true, FTPHandler.getResizedBitmap(bitmap), true, ts, line));
+                            MessageActivity.myAdapter.add(new ChatMessage(false, message, name, true, FTPHandler.getResizedBitmap(bitmap, con), true, ts, line));
 
                             MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                             MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);

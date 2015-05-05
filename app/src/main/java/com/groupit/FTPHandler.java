@@ -58,7 +58,7 @@ public class FTPHandler {
 
                 String json = new JSONUtils().getJSONMessage(new Timestamp(new Date().getTime()), new UserData(con).getID(), MessageActivity.currentGroup, file.getAbsolutePath(), MessageActivity.display, true);
 
-                MessageActivity.myAdapter.add(new ChatMessage(true, file.getAbsolutePath(), MessageActivity.display, true, getResizedBitmap(bitmap), true, new Timestamp(new Date().getTime()), json));
+                MessageActivity.myAdapter.add(new ChatMessage(true, file.getAbsolutePath(), MessageActivity.display, true, getResizedBitmap(bitmap, con), true, new Timestamp(new Date().getTime()), json));
                 MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                 MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
 
@@ -159,7 +159,7 @@ public class FTPHandler {
 
                                         String json = new JSONUtils().getJSONMessage(ts, ID, group, img1.getAbsolutePath(), name, true);
 
-                                        MessageActivity.myAdapter.add(new ChatMessage(false, img1.getAbsolutePath(), name, true, getResizedBitmap(bitmap), true, ts, json));
+                                        MessageActivity.myAdapter.add(new ChatMessage(false, img1.getAbsolutePath(), name, true, getResizedBitmap(bitmap, con), true, ts, json));
                                         MessageActivity.chatMsg.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                                         MessageActivity.chatMsg.setAdapter(MessageActivity.myAdapter);
                                     }
@@ -178,12 +178,12 @@ public class FTPHandler {
         thread.start();
     }
 
-    public static Bitmap getResizedBitmap(Bitmap bitmap) {
+    public static Bitmap getResizedBitmap(Bitmap bitmap, Context con) {
         if (bitmap == null) {
             return bitmap;
         }
 
-        int newWidth = 500;
+        int newWidth = new ScreenUtils(con).getPixels();
         int newHeight = 500;
 
         Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
