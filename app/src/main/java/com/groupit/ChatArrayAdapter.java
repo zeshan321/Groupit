@@ -75,9 +75,8 @@ class ChatArrayAdapter extends ArrayAdapter<ChatMessage> {
             } else {
                 row = inflater.inflate(R.layout.list_item_message_right, parent, false);
             }
-
-        } else {
             chatMessageObj.display = "You";
+        } else {
             if (chatMessageObj.image) {
                 row = inflater.inflate(R.layout.list_item_message_left_image, parent, false);
             } else {

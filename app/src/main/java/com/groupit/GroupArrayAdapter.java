@@ -1,6 +1,7 @@
 package com.groupit;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,10 +56,10 @@ class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
         row = inflater.inflate(R.layout.groups_layout, parent, false);
 
         chatText = (TextView) row.findViewById(R.id.chatListItemName);
-        chatText.setText(chatMessageObj.message);
+        chatText.setText(Html.fromHtml(chatMessageObj.message));
 
         chatName = (TextView) row.findViewById(R.id.chatListItemHints);
-        chatName.setText(chatMessageObj.id);
+        chatName.setText(Html.fromHtml(chatMessageObj.id));
 
         image = (ImageView) row.findViewById(R.id.chatListItemImage);
 

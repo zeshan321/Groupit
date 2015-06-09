@@ -33,8 +33,6 @@ public class GroupHandler {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            addGroup("GroupIt", "GroupIt");
         }
     }
 

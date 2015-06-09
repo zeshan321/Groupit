@@ -184,7 +184,7 @@ public class FTPHandler {
         }
 
         int newWidth = new ScreenUtils(con).getPixels();
-        int newHeight = 500;
+        int newHeight = new ScreenUtils(con).getPixels();
 
         Bitmap scaledBitmap = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
 

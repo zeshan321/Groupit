@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -66,6 +67,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
         setContentView(R.layout.actvity_group);
         con = this;
+        ID = new UserData(con).getID();
 
         groupsList = (ListView) findViewById(R.id.list_group);
         myAdapter = new GroupArrayAdapter(getApplicationContext(), R.layout.groups_layout);
@@ -102,13 +104,12 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
             finishedSetup = true;
 
-            // Open socket
             MessageService.con = this;
             startService(new Intent(this, MessageService.class));
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
 
-            query.whereEqualTo("owner", ID);
+            query.whereEqualTo("owner", new UserData(con).getID());
 
             query.findInBackground(new FindCallback<ParseObject>() {
 
@@ -226,7 +227,7 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
                                 if (es1.length() > 0 && es2.length() > 0 && es1.startsWith(" ") == false && es2.startsWith(" ") == false) {
 
-                                    ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
+                                    final ParseQuery<ParseObject> query = ParseQuery.getQuery("groups");
                                     query.whereEqualTo("groupID", es2);
                                     query.findInBackground(new FindCallback<ParseObject>() {
                                         public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
@@ -239,15 +240,25 @@ public class GroupActivity  extends ActionBarActivity implements NfcAdapter.Crea
 
                                                     addMessage(es1, "Code: " + es2);
 
-                                                    ParseObject addGroup = new ParseObject("groups");
-                                                    addGroup.put("groupID", es2);
-                                                    addGroup.put("owner", ID);
-                                                    addGroup.put("locked", false);
-                                                    addGroup.put("pass", "null");
-                                                    addGroup.saveInBackground();
+                                                    Thread thread = new Thread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            ParseObject addGroup = new ParseObject("groups");
+                                                            addGroup.put("groupID", es2);
+                                                            addGroup.put("owner", ID);
+                                                            addGroup.put("locked", false);
+                                                            addGroup.put("pass", "null");
+                                                            try {
+                                                                addGroup.save();
+                                                            } catch (ParseException e3) {
+                                                                e3.printStackTrace();
+                                                            }
 
-                                                    owns.add(es2);
-                                                    settings.put(es2, addGroup.getObjectId() + " , " + "false" + " , " + "null");
+                                                            owns.add(es2);
+                                                            settings.put(es2, addGroup.getObjectId() + " , " + "false" + " , " + "null");
+                                                        }
+                                                    });
+                                                    thread.start();
                                                 }
                                             } else {
                                                 new UserData(con).sendToast("Oops! Something went wrong.");
