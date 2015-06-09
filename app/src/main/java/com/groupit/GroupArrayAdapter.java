@@ -64,7 +64,14 @@ class GroupArrayAdapter extends ArrayAdapter<GroupMessage> {
         image = (ImageView) row.findViewById(R.id.chatListItemImage);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
-        String s = String.valueOf(chatMessageObj.message.charAt(0)).toUpperCase();
+        String replaceHTML = chatMessageObj.message.replaceAll("<(.*?)>", "");
+        String s = null;
+        if (replaceHTML.length() <= 0) {
+            s = String.valueOf(chatMessageObj.message.charAt(0));
+        } else {
+            s = String.valueOf(replaceHTML.charAt(0));
+        }
+
         int color2 = generator.getColor(s);
 
         TextDrawable drawable = TextDrawable.builder()
