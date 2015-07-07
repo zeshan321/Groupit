@@ -1,0 +1,73 @@
+<style>
+.bubble{
+  clear:both;
+	float:left;
+  max-width:90%;
+  margin-left:0.8%;
+margin-right:0.8%;
+margin-top:0.2%;
+margin-bottom:0.2%;
+}
+
+
+.bubble img{
+  display: block;
+  max-width: 100%;
+  margin:auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.bubble .b-sender{
+  color: black;
+}
+.bubble .b-text{
+	color: white;
+	background-color: #3498db;
+	border-radius: 5px;
+
+	margin:8px;
+padding-top:11px;
+padding-bottom:11px;
+padding-left:18px;
+padding-right:18px;
+  text-align:left;
+  width: auto;
+  word-wrap: break-word;
+}
+
+.bubble .b-text::before{
+  margin-right: -16px;
+	width: 0;
+	height: 0;
+	content: "";
+	display: block;
+  float:left;
+  position: relative;
+  top:-18px;
+  clear:both;
+
+  border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-bottom: 8px solid #3498db;
+}
+
+.bubble.bubble--alt{
+  clear:both;
+	float:right;
+  text-align: right;
+
+}
+
+.bubble.bubble--alt .b-text{
+  background-color: #2ecc71;
+  float:right;
+}
+
+.bubble.bubble--alt .b-text::before{
+  float:right;
+  margin-right: auto;
+  margin-left: -16px;
+  border-bottom: 8px solid #2ecc71;
+}
+</style>

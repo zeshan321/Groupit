@@ -1,0 +1,73 @@
+<style>
+.navbar-toggle{
+background-color:white;
+}
+#group-list, .list-groups{
+color:white;
+background-color:#00B85C;
+}
+#group-list:hover{
+color:#00B85C;
+background-color:white;
+}
+ul li:hover ul{
+display:block;
+}
+ul li ul{
+display:none;
+}
+#buttonOne:hover{
+color:white;
+background-color:#4DDB94;	
+}
+#buttonTwo:hover{
+color:white;
+background-color:#4DDB94;	
+}
+
+</style>
+
+
+<nav class="navbar navbar-default navbar-fixed-top" style="clear:right" width="100%">
+  <div class="container-fluid" style="width:100%">
+    <div class="navbar-header" style="color:white">
+      <a class="navbar-brand" href="/" style="font-size:200%;color:white;"><b>
+<% if content_for?(:group_name) %>
+<%= yield :group_name %>
+<% else %>
+Groupit
+<% end %>
+</b></a>
+	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+    </div>
+    
+    <% if user_signed_in? %>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right" style="color:white">
+	<%= yield :share %>
+	<li><a href="#" class="user_button" data-toggle="dropdown" style="font-size:135%;color:white;" id="buttonOne">Groups</a>  
+	
+<ul class="dropdown-menu list-groups" role="menu" aria-labelledby="groups-menu">
+	
+	<% current_user.groups.each do |group| %>
+	<li class="list-groups">
+	<%= link_to group.name, group_path(group), id: :'group-list' %>
+	</li>
+	<% end %>
+
+	</ul>	
+	
+	</li>
+
+        <li style="font-size:135%;color:white;"><%= link_to "#{current_user.name}", edit_user_path(current_user), class: :user_button, id: :buttonTwo %></li>
+      </ul>
+    </div>
+    <% end %>
+  </div>
+
+</nav>

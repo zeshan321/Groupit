@@ -1,15 +1,103 @@
-<table>
-  <% @messages.each do |message| %>
-    <tr>
-      <td><%= message.user.name %>:</td>
-      <td><%= message.content %></td>
-    </tr>
-  <% end %>
-</table>
-<hr />
-<%= form_tag(controller: "messages", action: "create") do %>
-<%= text_field_tag "content" %>
-<input type = "hidden" name = "author" value = "<%= current_user.id %>">
-<input type = "hidden" name = "group" value = "<%= params[:id] %>">
-<%= submit_tag "Send" %>
+<style>
+body{
+padding-top:80px;
+padding-bottom:50px;
+}
+#messages_table {
+	padding-top:1%;
+	overflow-x: hidden;
+}
+#main {
+	width:90%;
+	left:5%;
+	position:relative;
+}
+/*
+#basic-addon1,
+#basic-addon2{
+background-color:white;
+margin:none;
+padding:none;
+height:0px;
+}
+*/
+.b-sender{
+margin-left:10px;
+margin-right:10px;
+}
+#message_text{
+width:100%;
+}
+a{
+color:#00B85C;
+}
+a:hover{
+color:#00743A;
+}
+
+hr{
+color:#eee;
+background-color:#eee;
+height:1px;
+}
+</style>
+
+<%= render partial:"bubble_style" %>
+<%= render partial:"messages_script" %>
+
+<% content_for :group_name do %>
+<%= @group.name %>
 <% end %>
+
+<% content_for :share do %>
+<li>
+<a class="user_button" href="<%= @group.id %>/qr" style="font-size:125%;">
+<span class="glyphicon glyphicon-qrcode">
+</span>
+Share
+</a>
+</li>
+<% end %>
+
+
+<div id="main">
+
+<div id="messages_table">
+
+  <% @messages.each do |message| %>
+		<div class="bubble <%= raw (message.user == current_user)? 'bubble--alt':"" %>">
+			<div class="b-sender"><%= message.user.name %></div>
+			<div class="b-text">
+			<%= message.text %>
+			<% if message.has_image %>
+			<%= image_tag(message.image.url, alt: "image") %>
+			<% end %>
+		</div>
+    </div>
+  <% end %>
+
+</div>
+
+
+<%= form_tag(group_messages_path(params[:id]), method: :post, remote: true, multipart: true, id:'message_form', style:'display:none;') do %>
+<%= hidden_field_tag :text,'OK' %>
+<%= file_field_tag :image %>
+<% end %>
+
+<div>
+<div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+<div class="input-group navbar-fixed-bottom" style="padding:1%;">
+<div class="input-group-btn">
+<button class="btn btn-default" id="open_image" onclick="$('#message_form #image').click(); return false" type="button"><span class="glyphicon glyphicon-plus"></span></button>
+</div>
+
+<input type="text" id="message_text" class="form-control" placeholder="Enter message here..." val="<br>asdfasdf</br>" autofocus/>
+
+<span class="input-group-btn">
+<input type="button" style="display:inline_block;" class="btn btn-success" onclick="send_message(); $('#message_text').focus();" value="send"/>
+</span>
+</div><!-- /input-group -->
+
+</div>
+</div> <!-- /row -->
+</div> <!-- /main -->

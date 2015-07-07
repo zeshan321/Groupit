@@ -1,0 +1,19 @@
+<style>
+a{
+color:#00B85C;
+}
+a:hover{
+color:#00743A;
+}
+
+</style>
+<div style="text-align:center;">
+<h1><a href="javascript:history.back()"><span class="glyphicon glyphicon-arrow-left" style="font-size:25px"></span></a>&nbsp;&nbsp;Join <%= @group.name %></h1>
+<%= image_tag @group.generate_qr_image "#{request.host_with_port}"%>
+<br/>
+<h2>or</h2>
+<br/>
+<h1 style="word-wrap:break-word;"><% join_url = @group.quick_join_url "#{request.host_with_port}" %>
+<%= link_to join_url,join_url %>
+</h1>
+</div>

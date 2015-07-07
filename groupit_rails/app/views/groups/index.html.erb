@@ -1,15 +1,54 @@
-<h1>All Groups</h1>
-<%= link_to 'New group', new_group_path %>
+<style>
+hr{
+background-color: #eee;
+border: 0 none;
+height: 2px;
+}
+a.button:hover{
+text-decoration:none;
+}
+a{
+color:#00B85C;
+}
+a:hover{
+color:#00743A;
+}
+</style>
+<center>
+<h2 style="padding:10px">All Groups</h2>
+
+<div class="row" style="width:100%;">
+<div class="col-xs-3"></div>
+<div style="margin-bottom:2%;display:inline-block;margin-right:1%;margin-left:1%;" class="col-xs-6 ">
+<a class="button" href="/groups/new">
+<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Create Group</button>
+</a>
+</div>
+<div class="col-xs-3"></div>
+<div style="display:inline-block;margin-right:1%;margin-left:1%;" class="col-xs-6">
+<%= form_tag '/search', method:'get', class:'form-inline float-right', role:'form' do%>
+<div class="input-group">
+<%= text_field_tag :text, nil, class:'form-control', placeholder:'Search groups...' %>
+<span class="input-group-btn">
+  <%= submit_tag 'Go!', class:'btn btn-default' %>
+</span>
+</div>
+<% end %>
+</div>
+</div>
+<hr/>
 <table>
-  <tr>
-    <th>Name</th>
-    <th colspan="2"></th>
+ <tr>
+    <th style="padding-right:200px;padding-bottom:15px;padding-top:5px;">Group</th>
+    <th style="padding-top:5px;padding-bottom:15px;">Type</th>
   </tr>
- 
+
   <% @groups.each do |group| %>
     <tr>
-      <td><%= group.name %></td>
-      <td><%= link_to 'Show', group_path(group) %></td>
+      <td style="padding:3px;"><%= link_to group.name, group_path(group) %></td>
+      <td style="padding:3px;"><%= group.public_group ? "Public" : "Private" %></td>
     </tr>
   <% end %>
+
 </table>
+</center>

@@ -1,0 +1,79 @@
+<script>
+var dispatcher = new WebSocketRails('<%= request.host_with_port() %>/websocket');
+var channel = dispatcher.subscribe_private("G<%= params[:id] %>")
+
+var appendMessage = function(text,author_name,self_message,image){
+	var message_div = document.createElement('div');
+	if (self_message) {
+		 message_div.className = "bubble bubble--alt";
+	}else{
+		message_div.className = "bubble";
+	}
+	var message_sender_div = document.createElement('div');
+	message_sender_div.className = "b-sender";
+	message_sender_div.innerHTML = author_name;
+	message_div.appendChild(message_sender_div);
+
+	var message_text_div = document.createElement('div');
+	message_text_div.className = "b-text";
+	message_text_div.innerHTML = text;
+	message_div.appendChild(message_text_div);
+
+	if (image){
+		var message_img = document.createElement('img');
+		message_img.src = image.path;
+		message_img.alt = "image";
+		message_text_div.appendChild(message_img);
+	}
+	document.getElementById("messages_table").appendChild(message_div);
+	$('#messages_table').scrollTop($('#messages_table')[0].scrollHeight);
+}
+
+channel.bind("messages.new", function(message){
+	console.log(message);
+	appendMessage(message.text,message.author_name,(message.author_id == <%= current_user.id%>),message.image);
+});
+
+dispatcher.bind("log", function(message){
+	console.log(message);
+});
+
+var send_message = function(){
+	var text = $('#message_text').val();
+	$('#message_form #text').val(text);
+	$('#message_text').val('');
+
+	$('#message_form').submit();
+
+	$('#message_form #image').val('');
+	var open_image = document.getElementById("open_image");
+	open_image.innerHTML = '<span class="glyphicon glyphicon-plus"></span>';
+};
+
+$(window).load(function(){
+	$('#messages_table').scrollTop($('#messages_table')[0].scrollHeight);
+
+});
+
+$(document).ready(function(){
+	$('#message_text').keyup(function(event){
+			if(event.keyCode == 13){
+				console.log("ENTER");
+				send_message();
+			}
+	});
+
+	$('#message_form #image').on('change',function(){
+		path = $('#message_form #image').val();
+		name = path.substr(path.lastIndexOf('\\') + 1);
+		if (name.length > 20) {
+			name = name.substr(0,17) + '...';
+		}
+		var open_image = document.getElementById("open_image");
+		open_image.firstChild.className = 'glyphicon glyphicon-remove';
+		open_image.innerHTML += name;
+	});
+});
+
+
+</script>
